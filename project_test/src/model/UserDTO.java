@@ -9,9 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
+	// 사용자 ID
     private String id;
+    // 비밀번호
     private String password;
+    // 이름
     private String userName;
+    // 전화번호
     private String phoneNumber;
-    private String locationId;
+    // 사용자 지역구
+    private String userGu;
 }

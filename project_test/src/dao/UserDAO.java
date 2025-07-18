@@ -23,7 +23,7 @@ public class UserDAO {
 	        cstmt.setString(2, user.getPassword());
 	        cstmt.setString(3, user.getUserName());
 	        cstmt.setString(4, user.getPhoneNumber());
-	        cstmt.setString(5, user.getLocationId());
+	        cstmt.setString(5, user.getUserGu());
 
 	        cstmt.execute();
 	        System.out.println("사용자 등록 성공");

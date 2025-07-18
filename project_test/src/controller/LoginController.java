@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import util.DBUtil;
 
+// 로그인 페이지 컨트롤러
 public class LoginController {
 
 	@FXML
