@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="400.0"
+	style="-fx-background-color: #c29564;"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="controller.LoginController">
+
+	<children>
+		<ImageView fitHeight="400.0" fitWidth="350.0" layoutX="45.0"
+			layoutY="-35.0" pickOnBounds="true" preserveRatio="true">
+			<image>
+				<Image url="@../resources/img/logo.png" />
+			</image>
+		</ImageView>
+
+		<!-- "Login" -->
+		<Label layoutX="152.0" layoutY="180.0"
+			style="-fx-text-fill: white;" text="Login">
+			<font>
+				<Font name="System Bold" size="36.0" />
+			</font>
+		</Label>
+
+		<!-- 이메일 입력 -->
+		<HBox layoutX="40" layoutY="180" spacing="10" />
+		<TextField fx:id="ID_text" layoutX="96.0" layoutY="259.0" prefWidth="200"
+			promptText="아이디를 입력해주세요..." />
+
+		<!-- 비밀번호 입력 -->
+		<HBox layoutX="40" layoutY="230" spacing="10" />
+		<PasswordField fx:id="PW_text" layoutX="96.0" layoutY="308.0"
+			prefWidth="200" promptText="비밀번호를 입력해주세요..." />
+
+		<!-- 로그인 버튼 -->
+		<Button layoutX="131.0" layoutY="381.0" onAction="#Login"
+			prefHeight="35" prefWidth="130"
+			style="-fx-background-color:          #e4b524; -fx-text-fill: black; -fx-font-weight: bold;"
+			text="Log in ▶" />
+
+
+		<!-- Forgot password -->
+		<Label layoutX="143.0" layoutY="350.0"
+			style="-fx-text-fill: white;" text="Forgot Password?">
+			<font>
+				<Font size="12" />
+			</font>
+		</Label>
+
+		<!-- 구분선 및 'or' -->
+		<Separator layoutX="40.0" layoutY="438.0" prefWidth="80" />
+		<Label layoutX="192.0" layoutY="434.0"
+			style="-fx-text-fill: white;" text="or" />
+		<Separator layoutX="279.0" layoutY="440.0" prefWidth="80" />
+
+		<!-- 회원가입 버튼 -->
+		<Button layoutX="131.0" layoutY="489.0" onAction="#signup"
+			prefHeight="35" prefWidth="130"
+			style="-fx-background-color:
+			#6b5623; -fx-text-fill: white; -fx-font-weight: bold;"
+			text="회원 가입 ▶" />
+
+
+	</children>
+</AnchorPane>

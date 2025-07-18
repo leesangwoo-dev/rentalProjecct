@@ -1,0 +1,53 @@
+/* 기본 폰트 설정 */
+.root {
+    -fx-font-family: "Malgun Gothic";
+}
+
+/* 네비게이션 버튼 스타일 (활성) */
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #28353d; /* 선택된 메뉴 텍스트 색상 */
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-border-color: #9747ff; /* 보라색 밑줄 */
+    -fx-border-width: 0 0 2 0; /* 아래쪽에만 테두리 */
+    -fx-padding: 5 0 5 0; /* 위아래 패딩 */
+}
+
+/* 네비게이션 버튼 스타일 (비활성) */
+.nav-button-inactive {
+    -fx-background-color: transparent;
+    -fx-text-fill: #576974; /* 비선택 메뉴 텍스트 색상 */
+    -fx-font-size: 20px;
+    -fx-padding: 5 0 5 0;
+}
+
+/* 테이블 헤더 스타일 */
+.table-view .column-header-background {
+    -fx-background-color: #eeeeee;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 40; /* 헤더 높이 */
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 10;
+}
+
+/* 테이블 셀 스타일 */
+.table-cell {
+    -fx-padding: 0.5em; /* 10px 정도의 패딩 */
+    -fx-font-size: 18px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* 아래는 컨트롤러에서 동적으로 적용할 클래스들입니다. */
+/* 컨트롤러 코드에서 status 값에 따라 이 클래스들을 추가/제거합니다. */
+.status-available { -fx-text-fill: #52cf71; } /* 대여 가능 (녹색) */
+.status-rented { -fx-text-fill: #484545; } /* 대여중 (회색) */
+.status-broken { -fx-text-fill: #cf5254; } /* 고장 (빨간색) */
+
+/* 컨트롤러에서 장비명 타입에 따라 적용할 클래스 */
+.type-buy, .type-rent { -fx-text-fill: #52cf71; }
+.type-sell { -fx-text-fill: #cf5254; }

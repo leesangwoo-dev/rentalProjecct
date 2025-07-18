@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="400.0"
+	style="-fx-background-color: #c29564;"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="controller.SignupController">
+
+	<children>
+		<ImageView fitHeight="400.0" fitWidth="350.0" layoutX="45.0"
+			layoutY="-35.0" pickOnBounds="true" preserveRatio="true">
+			<image>
+				<Image url="@../resources/img/logo.png" />
+			</image>
+		</ImageView>
+
+		<!-- "sign_UP" -->
+		<Label layoutX="152.0" layoutY="180.0"
+			style="-fx-text-fill: white;" text="회원가입">
+			<font>
+				<Font name="System Bold" size="36.0" />
+			</font>
+		</Label>
+
+		<!-- 아이디 입력 -->
+		<HBox layoutX="40" layoutY="180" spacing="10" />
+		<TextField fx:id="ID_text" layoutX="96.0" layoutY="248.0"
+			prefHeight="29.0" prefWidth="183.0" promptText="아이디를 입력해주세요..." />
+
+		<Button fx:id="ID_check"  layoutX="296.0" layoutY="248.0" mnemonicParsing="false"
+			prefHeight="29.0" prefWidth="84.0" text="중복확인" onAction="#ID_Check" />
+			
+		<Label fx:id="infolabel" layoutX="103.0" layoutY="280.0" text=""
+			textFill="YELLOW" />
+
+		<!-- 비밀번호 입력 -->
+		<HBox layoutX="40" layoutY="230" spacing="10" />
+		<PasswordField fx:id="PW_text" layoutX="96.0"
+			layoutY="314.0" prefHeight="29.0" prefWidth="183.0"
+			promptText="비밀번호를 입력해주세요..." />
+
+		<!-- 이름 입력 -->
+		<HBox layoutX="40" layoutY="180" spacing="10" />
+		<TextField fx:id="NAME_text" layoutX="97.0" layoutY="367.0"
+			prefHeight="29.0" prefWidth="183.0" promptText="이름을 입력해주세요..." />
+
+
+		<!-- 전화번호 입력 -->
+		<HBox layoutX="40" layoutY="280" spacing="10" />
+		<TextField fx:id="PHONE_text" layoutX="96.0"
+			layoutY="416.0" prefHeight="29.0" prefWidth="183.0"
+			promptText="전화번호를 입력해주세요..." />
+
+
+		<ChoiceBox fx:id="RegionChoiceBox" layoutX="149.0"
+			layoutY="463.0" prefHeight="29.0" prefWidth="130.0" />
+		<Label layoutX="105.0" layoutY="468.0" text="지역" />
+
+		<!-- 로그인 버튼 -->
+		<Button fx:id="signUpButton" layoutX="135.0" layoutY="524.0"
+			onAction="#Singup" prefHeight="35" prefWidth="130"
+			style="-fx-background-color:          #e4b524; -fx-text-fill: black; -fx-font-weight: bold;"
+			text="회원가입 ▶" />
+
+
+	</children>
+</AnchorPane>
