@@ -12,7 +12,7 @@ public class MainApp extends Application {
 		Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
 		Scene scene = new Scene(root);
 
-		primaryStage.setTitle("MainApp");
+		primaryStage.setTitle("LOGIN");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
