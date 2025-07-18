@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.UserDTO;
 
 public class SignupController {
 	
@@ -38,32 +39,40 @@ public class SignupController {
 
 	UserDAO userDAO = null;
 	
-    public void Singup(ActionEvent event) {
-        System.out.println("회원가입");
-        
-        if (ID_text.getText() == null || ID_text.getText().trim().isEmpty() ||
-                PW_text.getText() == null || PW_text.getText().trim().isEmpty() ||
-                NAME_text.getText() == null || NAME_text.getText().trim().isEmpty() ||
-                PHONE_text.getText() == null || PHONE_text.getText().trim().isEmpty() ||
-                RegionChoiceBox.getValue() == null || RegionChoiceBox.getValue().trim().isEmpty()
-                || infolabel.getText().equals("이미 존재하는 아이디입니다."))
-        {
-        	Alert alert = new Alert(AlertType.WARNING);
-        	alert.setTitle("경고");
-        	alert.setHeaderText(null); // 제목 아래 소제목. 필요 없으면 null
-        	alert.setContentText("다시 확인해주세요");
-        	alert.showAndWait();
-        }
-        else
-        {
-        	userDAO = new UserDAO();
-            userDAO.addUser(ID_text.getText(), PW_text.getText(), NAME_text.getText(), PHONE_text.getText(), RegionChoiceBox.getValue());
-            
-            Stage currentStage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            currentStage.close();
-            showLoginWindow();
-        }
-    }
+	public void Singup(ActionEvent event) {
+	    System.out.println("회원가입");
+
+	    if (ID_text.getText() == null || ID_text.getText().trim().isEmpty() ||
+	        PW_text.getText() == null || PW_text.getText().trim().isEmpty() ||
+	        NAME_text.getText() == null || NAME_text.getText().trim().isEmpty() ||
+	        PHONE_text.getText() == null || PHONE_text.getText().trim().isEmpty() ||
+	        RegionChoiceBox.getValue() == null || RegionChoiceBox.getValue().trim().isEmpty()
+	        || infolabel.getText().equals("이미 존재하는 아이디입니다."))
+	    {
+	        Alert alert = new Alert(AlertType.WARNING);
+	        alert.setTitle("경고");
+	        alert.setHeaderText(null);
+	        alert.setContentText("다시 확인해주세요");
+	        alert.showAndWait();
+	    } else {
+	        userDAO = new UserDAO();
+	        
+	        // DTO 생성
+	        UserDTO newUser = new UserDTO(
+	            ID_text.getText(),
+	            PW_text.getText(),
+	            NAME_text.getText(),
+	            PHONE_text.getText(),
+	            RegionChoiceBox.getValue()
+	        );
+
+	        userDAO.addUser(newUser);
+
+	        Stage currentStage = (Stage)((Node)event.getSource()).getScene().getWindow();
+	        currentStage.close();
+	        showLoginWindow();
+	    }
+	}
     
     public static void showLoginWindow() {
         try {

@@ -6,40 +6,38 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import model.UserDTO;
 import util.DBUtil;
 
 public class UserDAO {
-	public void addUser(String id, String password, String userName, String phoneNumber, String locationId) {
-		Connection conn = null;
-		CallableStatement cstmt = null;
+	public void addUser(UserDTO user) {
+	    Connection conn = null;
+	    CallableStatement cstmt = null;
 
-		try {
-			conn = DBUtil.getConnection();
+	    try {
+	        conn = DBUtil.getConnection();
+	        String sql = "{call ADD_USER(?, ?, ?, ?, ?)}";
+	        cstmt = conn.prepareCall(sql);
 
-			String sql = "{call ADD_USER(?, ?, ?, ?, ?)}";
-			cstmt = conn.prepareCall(sql);
+	        cstmt.setString(1, user.getId());
+	        cstmt.setString(2, user.getPassword());
+	        cstmt.setString(3, user.getUserName());
+	        cstmt.setString(4, user.getPhoneNumber());
+	        cstmt.setString(5, user.getLocationId());
 
-			cstmt.setString(1, id);
-			cstmt.setString(2, password);
-			cstmt.setString(3, userName);
-			cstmt.setString(4, phoneNumber);
-			cstmt.setString(5, locationId);
+	        cstmt.execute();
+	        System.out.println("사용자 등록 성공");
 
-			cstmt.execute();
-			System.out.println("사용자 등록 성공");
-
-		} catch (SQLException e) {
-			System.err.println("사용자 등록 실패: " + e.getMessage());
-		} finally {
-			try {
-				if (cstmt != null)
-					cstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+	    } catch (SQLException e) {
+	        System.err.println("사용자 등록 실패: " + e.getMessage());
+	    } finally {
+	        try {
+	            if (cstmt != null) cstmt.close();
+	            if (conn != null) conn.close();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 	}
 
 	public boolean isIdDuplicated(String userID) {
