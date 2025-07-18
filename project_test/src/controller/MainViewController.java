@@ -1,11 +1,20 @@
 package controller;
 
+import java.io.IOException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
 import model.Equipment;
 
 public class MainViewController {
@@ -22,6 +31,8 @@ public class MainViewController {
     private TableColumn<Equipment, String> costCol;
     @FXML
     private TableColumn<Equipment, String> statusCol;
+    @FXML
+    private Button myInfo;
 
     @FXML
     public void initialize() {
@@ -67,5 +78,21 @@ public class MainViewController {
             new Equipment("test3", "전동 드릴", "1000원", "대여 가능", "1/2")
         );
         equipmentTable.setItems(data);
+    }
+    
+    public void handleMyInfo(ActionEvent event) {
+    	try {
+            // FXML 파일 로드 (패키지 경로 맞춰주세요!)
+            Parent myInfo = FXMLLoader.load(getClass().getResource("/view/my_info.fxml"));
+
+            // 현재 창(Stage)을 얻어서 씬 변경
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(myInfo));
+            stage.setTitle("내 정보");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
