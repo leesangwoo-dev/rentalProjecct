@@ -2,12 +2,23 @@ package controller;
 
 import java.util.List;
 import dao.EquipmentDAO; // DAO 이름이 EquipmentDAO라고 가정
+import java.io.IOException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent; // awt.event.MouseEvent가 아닌 javafx.scene.input.MouseEvent 사용
 import model.EquipmentViewDTO; // 수정한 DTO를 임포트
+import javafx.stage.Stage;
+import model.EquipmentDTO;
 
 // 메인 페이지(장비 조회)_사용자 컨트롤러
 public class MainViewController {
@@ -28,6 +39,9 @@ public class MainViewController {
     
     // ImageView가 있다면 FXML에 선언하고 여기에 추가
     // @FXML private ImageView equipmentImageView;
+    // private TableColumn<Equipment, String> statusCol;
+    @FXML
+    private Button myInfo;
 
     @FXML
     public void initialize() {
@@ -100,6 +114,22 @@ public class MainViewController {
                 System.out.println("선택된 아이템: " + selectedItem.getEqName());
                 // 여기서 상세 정보 창을 띄우거나 다른 작업을 수행할 수 있습니다.
             }
+        }
+    }
+    
+    public void handleMyInfo(ActionEvent event) {
+    	try {
+            // FXML 파일 로드 (패키지 경로 맞춰주세요!)
+            Parent myInfo = FXMLLoader.load(getClass().getResource("/view/my_info.fxml"));
+
+            // 현재 창(Stage)을 얻어서 씬 변경
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(myInfo));
+            stage.setTitle("내 정보");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
