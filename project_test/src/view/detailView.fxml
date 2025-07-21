@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="565.0" prefWidth="817.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DetailViewController">
+	<children>
+		<!-- 왼쪽 정보 영역 (수정된 부분) -->
+		<AnchorPane AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0" />
+
+		<Label layoutX="175.0" layoutY="36.0" prefHeight="56.0" prefWidth="131.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="&lt;장비 이미지&gt;" />
+		<StackPane layoutX="6.0" layoutY="82.0" prefHeight="454.0" prefWidth="468.0">
+			<children>
+				<ImageView fx:id="toolImageView" fitHeight="454.0" fitWidth="468.0" preserveRatio="true" smooth="true" />
+			</children>
+		</StackPane>
+
+
+
+		<!-- 오른쪽 장비 설명 -->
+		<VBox layoutX="272.0" layoutY="315.0" spacing="10" />
+		<VBox layoutX="483.0" layoutY="20.0" prefHeight="282.0" prefWidth="320.0" spacing="10">
+			<children>
+				<HBox spacing="10">
+					<children>
+						<Label fx:id="eqNameLabel" prefHeight="28.0" prefWidth="255.0" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="장비명" />
+						<Label fx:id="stateLabel" prefHeight="29.0" prefWidth="119.0" style="-fx-alignment: center; -fx-font-size: 20px; -fx-padding: 2 6; -fx-border-radius: 4; -fx-background-radius: 4;" text="대여 가능" />
+
+					</children>
+				</HBox>
+
+				<TextArea fx:id="eqInfoArea" editable="false" prefHeight="246.0" prefWidth="320.0" text="장비 설명" />
+			</children>
+		</VBox>
+		<!-- 대여소 및 대여 정보 -->
+		<VBox layoutX="483.0" layoutY="315.0" prefHeight="224.0" prefWidth="326.0" spacing="10">
+			<children>
+				<GridPane hgap="10" vgap="10">
+					<children>
+						<Label text="일련번호:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+						<Label fx:id="SerialNumLabel" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+						<Label text="대여료:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+						<Label fx:id="costLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+						<Label text="대여소:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+						<Label fx:id="officeLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+						<Label text="전화번호:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+						<Label fx:id="phoneLabel" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+						<Label text="대여일:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+						<DatePicker fx:id="rentDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+						<Label text="반납일:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+						<DatePicker fx:id="returnDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+					</children>
+					<columnConstraints>
+						<ColumnConstraints maxWidth="226.0" minWidth="76.0" prefWidth="104.0" />
+						<ColumnConstraints maxWidth="200.0" minWidth="50.0" prefWidth="172.0" />
+					</columnConstraints>
+					<rowConstraints>
+						<RowConstraints />
+						<RowConstraints />
+						<RowConstraints />
+						<RowConstraints />
+						<RowConstraints />
+						<RowConstraints />
+					</rowConstraints>
+				</GridPane>
+
+				<Button fx:id="rentButton" onAction="#handleRent" prefHeight="29.0" prefWidth="286.0" style="-fx-background-color: #8D5C59; -fx-text-fill: white; -fx-font-weight: bold;" text="장비 대여"/>
+			</children>
+		</VBox>
+	</children>
+</AnchorPane>

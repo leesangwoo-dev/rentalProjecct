@@ -2,6 +2,7 @@
 package controller;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import dao.UserDAO;
 import javafx.event.ActionEvent;
@@ -15,7 +16,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import util.DBUtil;
+import static util.DBUtil.getConnection;
+import static util.Session.userLoginId;
 
 // 로그인 페이지 컨트롤러
 public class LoginController {
@@ -30,7 +32,7 @@ public class LoginController {
 	public void initialize()
 	{
 		try {
-			conn = DBUtil.getConnection();
+			conn = getConnection();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -47,7 +49,7 @@ public class LoginController {
 			try {
 				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				currentStage.close();
-
+				userLoginId = ID_text.getText();
 				MainStage();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -76,10 +78,10 @@ public class LoginController {
 	public void MainStage() throws Exception {
 
 		Stage newStage = new Stage();
-		Parent parent = FXMLLoader.load(getClass().getResource("/view/root.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
 		Scene dd = new Scene(parent);
 
-		newStage.setTitle("test");
+		newStage.setTitle("MainView");
 		newStage.setScene(dd);
 		newStage.show();
 
@@ -107,6 +109,12 @@ public class LoginController {
 		if (userDao.isLoginValid(conn, userId, password)) {
 			// 로그인 성공
 			System.out.println("로그인 성공");
+			// 로그인 성공시 db연결 해제
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			return true;
 			// 다음 화면으로 전환 등
 		} else {

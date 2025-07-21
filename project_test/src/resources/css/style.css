@@ -44,9 +44,9 @@
 
 /* 아래는 컨트롤러에서 동적으로 적용할 클래스들입니다. */
 /* 컨트롤러 코드에서 status 값에 따라 이 클래스들을 추가/제거합니다. */
-.status-available { -fx-text-fill: #52cf71; } /* 대여 가능 (녹색) */
-.status-rented { -fx-text-fill: #484545; } /* 대여중 (회색) */
-.status-broken { -fx-text-fill: #cf5254; } /* 고장 (빨간색) */
+.status-available { -fx-text-fill: #28a745; -fx-font-weight: bold; } /* 대여 가능 (초록) */
+.status-rented { -fx-text-fill: #dc3545; -fx-font-weight: bold; } /* 대여중 (빨강) */
+.status-broken { -fx-text-fill: #ffc107; -fx-font-weight: bold; } /* 고장 (노랑) */
 
 /* 컨트롤러에서 장비명 타입에 따라 적용할 클래스 */
 .type-buy, .type-rent { -fx-text-fill: #52cf71; }

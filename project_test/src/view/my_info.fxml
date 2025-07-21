@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import java.net.URL?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0"
+	prefWidth="420.0" style="-fx-background-color: #c29564;"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="controller.MyInfoController">
+
+	<stylesheets>
+		<URL value="@../resources/css/style.css" />
+	</stylesheets>
+
+	<center>
+		<VBox alignment="TOP_CENTER" spacing="25.0"
+			BorderPane.alignment="CENTER">
+			<padding>
+				<Insets top="40.0" right="30.0" bottom="30.0" left="30.0" />
+			</padding>
+			<children>
+				<Label
+					style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: white;"
+					text="내 정보 수정" />
+
+				<GridPane hgap="10" vgap="18" alignment="CENTER">
+					<columnConstraints>
+						<ColumnConstraints halignment="RIGHT"
+							prefWidth="100.0" />
+						<ColumnConstraints hgrow="ALWAYS" />
+					</columnConstraints>
+					<rowConstraints>
+						<RowConstraints />
+						<RowConstraints />
+						<RowConstraints />
+						<RowConstraints />
+						<RowConstraints />
+					</rowConstraints>
+					<children>
+						<!-- 이름 수정 -->
+						<Label text="이름" style="-fx-text-fill: white;"
+							GridPane.rowIndex="0" />
+						<TextField fx:id="nameField" promptText="이름"
+							GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+						<!-- 기존 비밀번호 입력 -->
+						<Label text="기존 비밀번호" style="-fx-text-fill: white;"
+							GridPane.rowIndex="1" />
+						<PasswordField fx:id="passwordField"
+							promptText="기존 비밀번호" GridPane.columnIndex="1"
+							GridPane.rowIndex="1" />
+
+						<!-- 새 비밀번호 입력 -->
+						<Label text="새 비밀번호" style="-fx-text-fill: white;"
+							GridPane.rowIndex="2" />
+						<PasswordField fx:id="newPasswordField"
+							promptText="새 비밀번호 (선택 사항)" GridPane.columnIndex="1"
+							GridPane.rowIndex="2" />
+
+						<!-- 휴대폰 번호 수정 -->
+						<Label text="휴대폰 번호" style="-fx-text-fill: white;"
+							GridPane.rowIndex="3" />
+						<TextField fx:id="phoneField" promptText="010-1234-5678"
+							GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+						<!-- 사는 지역 수정 -->
+						<Label text="사는 지역" style="-fx-text-fill: white;"
+							GridPane.rowIndex="4" />
+						<ChoiceBox fx:id="guChoiceBox" prefHeight="32.0"
+							prefWidth="173.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+					</children>
+				</GridPane>
+
+				<!-- 수정 완료 버튼 -->
+				<Button fx:id="updateButton" onAction="#handleUpdateButton"
+					text="수정 완료"
+					style="-fx-background-color: #f8f8f8; -fx-text-fill: #c29564; -fx-font-size: 16px; -fx-padding: 10 20; -fx-border-radius: 5; -fx-background-radius: 5;" />
+			</children>
+		</VBox>
+	</center>
+</BorderPane>
