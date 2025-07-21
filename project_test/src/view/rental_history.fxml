@@ -67,10 +67,13 @@
 							text="장비명" />
 						<TableColumn fx:id="rentalDateCol" prefWidth="171.0"
 							text="대여일&#10;반납일" />
-						<TableColumn fx:id="returnStatusCol" prefWidth="141.0"
-							text="상태" />
+						<TableColumn fx:id="returnActionCol"  prefWidth="171.0"
+							text="반납" />
+						<!-- <TableColumn fx:id="returnStatusCol" prefWidth="141.0"
+							text="상태" /> -->
 						<TableColumn fx:id="overdueDaysCol" prefWidth="250.0"
 							text="연체일&#10;연체료" />
+
 					</columns>
 				</TableView>
 			</children>
