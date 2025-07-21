@@ -40,9 +40,14 @@ public class MainViewController {
 
 	// ImageView가 있다면 FXML에 선언하고 여기에 추가
 	// @FXML private ImageView equipmentImageView;
-
+	// private TableColumn<Equipment, String> statusCol;
 	@FXML
 	private Button myInfo;
+	@FXML
+	private Button rentalHistory;
+
+	// ImageView가 있다면 FXML에 선언하고 여기에 추가
+	// @FXML private ImageView equipmentImageView;
 
 	@FXML
 	public void initialize() {
@@ -152,6 +157,22 @@ public class MainViewController {
 			alert.setHeaderText("페이지 로드 실패");
 			alert.setContentText("내 정보 수정 화면을 불러오는 데 실패했습니다.");
 			alert.showAndWait();
+		}
+	}
+
+	public void handleRentalHistory(ActionEvent event) {
+		try {
+			// FXML 파일 로드 (패키지 경로 맞춰주세요!)
+			Parent handleRentalHistory = FXMLLoader.load(getClass().getResource("/view/rental_history.fxml"));
+
+			// 현재 창(Stage)을 얻어서 씬 변경
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.setScene(new Scene(handleRentalHistory));
+			stage.setTitle("대여내역");
+			stage.show();
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

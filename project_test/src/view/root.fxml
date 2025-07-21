@@ -46,7 +46,7 @@
 				<HBox HBox.hgrow="ALWAYS" />
 				<!-- 각 버튼에 CSS 클래스 부여 -->
 				<Button mnemonicParsing="false" styleClass="nav-button" text="장비조회" />
-				<Button mnemonicParsing="false" styleClass="nav-button-inactive" text="대여내역" />
+				<Button fx:id="rentalHistory" onAction="#handleRentalHistory" mnemonicParsing="false" styleClass="nav-button-inactive" text="대여내역" />
 				<Button fx:id="myInfo" onAction="#handleMyInfo" mnemonicParsing="false" styleClass="nav-button-inactive" text="내정보" />
 			</children>
 		</HBox>
