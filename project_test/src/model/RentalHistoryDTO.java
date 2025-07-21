@@ -10,6 +10,8 @@ public class RentalHistoryDTO {
     private Long rentalNum;
     // 대여소명
     private String officeName;   
+ // 장비 시리얼 번호 (FK)
+    private String serialNum;
     // 장비명
     private String eqName;         
     // 대여일
