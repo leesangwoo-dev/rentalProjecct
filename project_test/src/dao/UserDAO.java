@@ -42,7 +42,7 @@ public class UserDAO {
 	    }
 	}
 
-	public boolean isIdDuplicated(String userID) {
+	public boolean isIdDuplicated(String loginId) {
 		boolean result = false;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -52,7 +52,7 @@ public class UserDAO {
 			conn = DBUtil.getConnection();
 			String sql = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, userID);
+			pstmt.setString(1, loginId);
 			rs = pstmt.executeQuery();
 
 			if (rs.next() && rs.getInt(1) > 0) {
@@ -81,7 +81,7 @@ public class UserDAO {
 		return result;
 	}
 	
-	public boolean isLoginValid(Connection conn, String userId, String password) {
+	public boolean isLoginValid(Connection conn, String loginId, String password) {
 	    boolean isValid = false;
 	    PreparedStatement pstmt = null;
 	    ResultSet rs = null;
@@ -89,7 +89,7 @@ public class UserDAO {
 	    try {
 	        String sql = "SELECT * FROM USERS WHERE ID = ? AND PASSWORD = ?";
 	        pstmt = conn.prepareStatement(sql);
-	        pstmt.setString(1, userId);
+	        pstmt.setString(1, loginId);
 	        pstmt.setString(2, password);
 	        rs = pstmt.executeQuery();
 
@@ -112,7 +112,7 @@ public class UserDAO {
 	    return isValid;
 	}
 	
-	public String updateUserInfo(String userId, String oldPassword, String newName, String newPhoneNumber, String newGu, String newPassword) {
+	public String updateUserInfo(String loginId, String oldPassword, String newName, String newPhoneNumber, String newGu, String newPassword) {
         Connection conn = null;
         CallableStatement cstmt = null;
         String resultStatus = "UNKNOWN_ERROR";
@@ -125,7 +125,7 @@ public class UserDAO {
             cstmt = conn.prepareCall(sql);
 
             // IN 파라미터 설정 (비밀번호를 평문 그대로 전달)
-            cstmt.setString(1, userId);
+            cstmt.setString(1, loginId);
             cstmt.setString(2, oldPassword);
             cstmt.setString(3, newName);
             cstmt.setString(4, newPhoneNumber);
@@ -160,4 +160,23 @@ public class UserDAO {
         }
         return resultStatus;
     }
+	
+	// 사용자 ID 조회
+	public Long getUserIdByLoginID(String loginId) {
+	    String sql = "{ call get_user_id_by_login_id(?, ?) }";
+	    try (Connection conn = DBUtil.getConnection();
+	         CallableStatement cs = conn.prepareCall(sql)) {
+
+	        cs.setString(1, loginId);
+	        cs.registerOutParameter(2, Types.NUMERIC);
+
+	        cs.execute();
+	        return cs.getLong(2);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+
 }

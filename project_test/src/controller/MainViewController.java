@@ -1,10 +1,9 @@
 package controller;
 
-import java.util.List;
-import dao.EquipmentDAO; // DAO 이름이 EquipmentDAO라고 가정
 import java.io.IOException;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import java.util.List;
+
+import dao.EquipmentDAO; 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,121 +14,173 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent; // awt.event.MouseEvent가 아닌 javafx.scene.input.MouseEvent 사용
-import model.EquipmentViewDTO; // 수정한 DTO를 임포트
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import model.EquipmentDTO;
+import model.EquipmentViewDTO; // 수정한 DTO를 임포트
 
 // 메인 페이지(장비 조회)_사용자 컨트롤러
 public class MainViewController {
 
-    // 1. TableView와 Column의 타입을 EquipmentViewDTO로 변경
-    @FXML
-    private TableView<EquipmentViewDTO> equipmentTable;
-    @FXML
-    private TableColumn<EquipmentViewDTO, String> rentalOfficeCol;
-    @FXML
-    private TableColumn<EquipmentViewDTO, String> nameCol; // 이름은 String이므로 타입 변경
-    @FXML
-    private TableColumn<EquipmentViewDTO, String> SerialNumCol; 
-    @FXML
-    private TableColumn<EquipmentViewDTO, Number> costCol; // 비용은 숫자 타입이므로 Number로 변경
-    @FXML
-    private TableColumn<EquipmentViewDTO, String> statusCol;
-    
-    // ImageView가 있다면 FXML에 선언하고 여기에 추가
-    // @FXML private ImageView equipmentImageView;
-    // private TableColumn<Equipment, String> statusCol;
-    @FXML
-    private Button myInfo;
+	@FXML
+	private TableView<EquipmentViewDTO> equipmentTable;
+	@FXML
+	private TableColumn<EquipmentViewDTO, String> rentalOfficeCol;
+	@FXML
+	private TableColumn<EquipmentViewDTO, String> nameCol; 
+	@FXML
+	private TableColumn<EquipmentViewDTO, String> SerialNumCol;
+	@FXML
+	private TableColumn<EquipmentViewDTO, Number> costCol; 
+	@FXML
+	private TableColumn<EquipmentViewDTO, String> statusCol;
+	@FXML
+	private ImageView equipmentImage;
+	@FXML
+	private TextArea equipmentInfo;
 
-    @FXML
-    public void initialize() {
-        setupTableColumns();
-        loadTableData();
-    }
+	@FXML
+	private Button myInfo;
 
-    private void setupTableColumns() {
-        // 2. 각 컬럼과 EquipmentViewDTO의 프로퍼티를 연결
-        rentalOfficeCol.setCellValueFactory(cellData -> cellData.getValue().officeNameProperty());
-        nameCol.setCellValueFactory(cellData -> cellData.getValue().eqNameProperty());
-        costCol.setCellValueFactory(cellData -> cellData.getValue().rentalFeeProperty());
-        statusCol.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
-        SerialNumCol.setCellValueFactory(cellData -> cellData.getValue().serialNumProperty());
-        // 'quantityCol'은 DTO에 없는 필드. 개별 장비를 보여주므로 수량은 항상 1
-        
-        // 'Status' 컬럼 커스텀 렌더링 (타입만 EquipmentViewDTO로 변경)
-        statusCol.setCellFactory(col -> new TableCell<EquipmentViewDTO, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    // 스타일 클래스 초기화
-                    getStyleClass().removeAll("status-available", "status-rented", "status-broken");
-                } else {
-                    setText(item);
-                    getStyleClass().removeAll("status-available", "status-rented", "status-broken");
-                    // DB에서 가져온 상태값(STATE 컬럼)에 따라 스타일 적용
-                    // 나중에 바꿔야함(대여 가능, 대여중, 고장 등) DB의 실제 값과 일치해야 함
-                    if (item.equals("사용가능")) { 
-                        getStyleClass().add("status-available");
-                    } else if (item.equals("대여")) {
-                        getStyleClass().add("status-rented");
-                    } else if (item.equals("수리")) {
-                        getStyleClass().add("status-broken");
-                    }
-                }
-            }
-        });
-    }
+	@FXML
+	public void initialize() {
+		setupTableColumns();
+		loadTableData();
+		tableClickEvent();
+		imgClickEvent();
+	}
 
-    private void loadTableData() {
-        EquipmentDAO dao = new EquipmentDAO();
-        // DB 프로시저에 "대여가능" 상태를 전달하여 데이터 조회
-        List<EquipmentViewDTO> equipmentData = dao.findEquipmentByState();
+	private void setupTableColumns() {
+		// 각 열과 EquipmentViewDTO의 프로퍼티를 연결
+		// 열이 어떤 데이터를 보여줄지 결정
+		rentalOfficeCol.setCellValueFactory(cellData -> cellData.getValue().officeNameProperty());
+		nameCol.setCellValueFactory(cellData -> cellData.getValue().eqNameProperty());
+		costCol.setCellValueFactory(cellData -> cellData.getValue().rentalFeeProperty());
+		statusCol.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
+		SerialNumCol.setCellValueFactory(cellData -> cellData.getValue().serialNumProperty());
+		
+		// Status에 따른 css 적용(색상이나 폰트 등)
+		statusCol.setCellFactory(col -> new TableCell<EquipmentViewDTO, String>() {
+			@Override
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty || item == null) {
+					setText(null);
+					// 스타일 클래스 초기화
+					getStyleClass().removeAll("status-available", "status-rented", "status-broken");
+				} else {
+					setText(item);
+					getStyleClass().removeAll("status-available", "status-rented", "status-broken");
+					// DB에서 가져온 상태값(STATE 컬럼)에 따라 스타일 적용
+					// 나중에 바꿔야함(대여 가능, 대여중, 고장 등) DB의 실제 값과 일치해야 함
+					if (item.equals("사용가능")) {
+						getStyleClass().add("status-available");
+					} else if (item.equals("대여중")) {
+						getStyleClass().add("status-rented");
+					} else if (item.equals("수리")) {
+						getStyleClass().add("status-broken");
+					}
+				}
+			}
+		});
+	}
 
-        // 3. 가져온 데이터를 TableView에 설정 (주석 해제!)
-        equipmentTable.getItems().setAll(equipmentData);
+	public void loadTableData() {
+		EquipmentDAO dao = new EquipmentDAO();
+		// DB 프로시저를 이용해서 데이터 조회
+		List<EquipmentViewDTO> equipmentData = dao.findEquipmentByState();
 
-        // 첫 번째 아이템의 이미지를 ImageView에 표시하는 예시
-        if (!equipmentData.isEmpty()) {
-            String imagePath = equipmentData.get(0).getImg();
-            // File file = new File(imagePath);
-            // if(file.exists()) {
-            //    Image image = new Image(file.toURI().toString());
-            //    equipmentImageView.setImage(image);
-            // }
-        }
+		// 가져온 데이터를 TableView에 설정
+		equipmentTable.getItems().setAll(equipmentData);
 
-        System.out.println("조회된 장비 수: " + equipmentData.size());
-    }
+		// 로그용
+		System.out.println("조회된 장비 수: " + equipmentData.size());
+	}
 
-    // 4. 이벤트 핸들러의 타입도 JavaFX 것으로 변경
-    @FXML
-    public void doubleClickItem(MouseEvent event) {
-        if (event.getClickCount() == 2) { // 더블 클릭 확인
-            EquipmentViewDTO selectedItem = equipmentTable.getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                System.out.println("선택된 아이템: " + selectedItem.getEqName());
-                // 여기서 상세 정보 창을 띄우거나 다른 작업을 수행할 수 있습니다.
-            }
-        }
-    }
-    
-    public void handleMyInfo(ActionEvent event) {
-    	try {
-            // FXML 파일 로드 (패키지 경로 맞춰주세요!)
-            Parent myInfo = FXMLLoader.load(getClass().getResource("/view/my_info.fxml"));
+	public void handleMyInfo(ActionEvent event) {
+		try {
+			// FXML 파일 로드 (패키지 경로 맞춰주세요!)
+			Parent myInfo = FXMLLoader.load(getClass().getResource("/view/my_info.fxml"));
 
-            // 현재 창(Stage)을 얻어서 씬 변경
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(myInfo));
-            stage.setTitle("내 정보");
-            stage.show();
+			// 현재 창(Stage)을 얻어서 씬 변경
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.setScene(new Scene(myInfo));
+			stage.setTitle("내 정보");
+			stage.show();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// 대여하기 버튼
+	@FXML
+	private void RentButton() {
+		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
+		if (selected != null) {
+			openDetailView(selected);
+		}
+	}
+
+	// 클릭 이벤트 설정
+	public void tableClickEvent() {
+		equipmentTable.setOnMouseClicked(event -> {
+			EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
+			if (selected != null) {
+				// 단일 클릭: 오른쪽 이미지와 설명 표시
+				equipmentInfo.setText(selected.getEqInfo());
+				equipmentImage.setImage(new Image(selected.getImg()));
+			}
+
+			// 더블 클릭: 상세 보기 띄우기
+			if (event.getClickCount() == 2 && selected != null) {
+				openDetailView(selected);
+			}
+		});
+	}
+
+	// 이미지 클릭 시 사진 띄우기
+	public void imgClickEvent() {
+		equipmentImage.setOnMouseClicked(event -> {
+			if (event.getClickCount() == 2) {
+				showEnlargedImage(equipmentImage.getImage());
+			}
+		});
+	}
+	// 이미지 클릭 시 사진 띄우기
+	private void showEnlargedImage(Image image) {
+		Stage stage = new Stage();
+		ImageView enlargedView = new ImageView(image);
+		enlargedView.setPreserveRatio(true);
+		enlargedView.setFitWidth(600); // 원하는 크기
+
+		StackPane root = new StackPane(enlargedView);
+		Scene scene = new Scene(root, 600, 400); // 크기 조정 가능
+		stage.setScene(scene);
+		stage.setTitle("이미지 확대 보기");
+		stage.show();
+	}
+
+	// 더블 클릭시 상세페이지 띄우기
+	private void openDetailView(EquipmentViewDTO equipment) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/detailView.fxml"));
+			Parent root = loader.load();
+
+			DetailViewController controller = loader.getController();
+			controller.setSerialNumber(equipment.getSerialNum());
+			controller.setMainController(this);
+
+			Stage stage = new Stage();
+			stage.setTitle("장비 상세정보");
+			stage.setScene(new Scene(root));
+			stage.show();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
