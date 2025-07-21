@@ -1,10 +1,9 @@
 package controller;
 
-import java.util.List;
-import dao.EquipmentDAO; // DAO 이름이 EquipmentDAO라고 가정
 import java.io.IOException;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import java.util.List;
+
+import dao.EquipmentDAO; // DAO 이름이 EquipmentDAO라고 가정
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,9 +15,8 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent; // awt.event.MouseEvent가 아닌 javafx.scene.input.MouseEvent 사용
-import model.EquipmentViewDTO; // 수정한 DTO를 임포트
 import javafx.stage.Stage;
-import model.EquipmentDTO;
+import model.EquipmentViewDTO; // 수정한 DTO를 임포트
 
 // 메인 페이지(장비 조회)_사용자 컨트롤러
 public class MainViewController {
@@ -42,6 +40,8 @@ public class MainViewController {
     // private TableColumn<Equipment, String> statusCol;
     @FXML
     private Button myInfo;
+    @FXML
+    private Button rentalHistory;
 
     @FXML
     public void initialize() {
@@ -126,6 +126,22 @@ public class MainViewController {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(myInfo));
             stage.setTitle("내 정보");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void handleRentalHistory(ActionEvent event) {
+    	try {
+            // FXML 파일 로드 (패키지 경로 맞춰주세요!)
+            Parent handleRentalHistory = FXMLLoader.load(getClass().getResource("/view/rental_history.fxml"));
+
+            // 현재 창(Stage)을 얻어서 씬 변경
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(handleRentalHistory));
+            stage.setTitle("대여내역");
             stage.show();
 
         } catch (IOException e) {
