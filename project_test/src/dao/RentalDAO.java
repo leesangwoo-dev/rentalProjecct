@@ -2,19 +2,18 @@ package dao;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-<<<<<<< HEAD
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.RentalDTO;
 import model.RentalHistoryDTO;
 import oracle.jdbc.OracleTypes;
 import util.DBUtil;
 
 public class RentalDAO {
-
     // 대여내역 가져오기 (SP_GET_RENTAL_HISTORY가 RENTAL 테이블을 사용하고 OVERDUE_FEE 등을 정확히 가져와야 함)
     public List<RentalHistoryDTO> findRentalsByUserId(String userId) {
         List<RentalHistoryDTO> list = new ArrayList<>();
@@ -102,17 +101,7 @@ public class RentalDAO {
         }
         return status;
     }
-}
-=======
-import java.sql.Timestamp;
-
-import java.time.LocalDateTime;
-
-import model.RentalDTO;
-import util.DBUtil;
-
-public class RentalDAO {
-
+    
     public boolean insertRental(RentalDTO rental) {
         String sql = "{ call insert_rental_proc(?, ?, ?, ?) }";
 
@@ -133,4 +122,3 @@ public class RentalDAO {
         }
     }
 }
->>>>>>> refs/heads/HYUNSEOK

@@ -16,13 +16,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-<<<<<<< HEAD
 import static util.DBUtil.getConnection;
-import static util.Session.userId;
-=======
-import util.DBUtil;
-import static util.Session.userLoginId;;
->>>>>>> refs/heads/HYUNSEOK
+import static util.Session.userLoginId;
 
 // 로그인 페이지 컨트롤러
 public class LoginController {

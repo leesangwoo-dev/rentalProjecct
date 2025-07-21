@@ -1,6 +1,6 @@
 package controller;
 
-import static util.Session.userId;
+import static util.Session.userLoginId;
 
 import java.io.IOException;
 import java.net.URL;
@@ -157,7 +157,7 @@ public class RentalHistoryController implements Initializable {
     }
 
     private void loadRentalHistory() {
-        List<RentalHistoryDTO> list = rentalDAO.findRentalsByUserId(userId);
+        List<RentalHistoryDTO> list = rentalDAO.findRentalsByUserId(userLoginId);
         ObservableList<RentalHistoryDTO> observableList = FXCollections.observableArrayList(list);
         rentalTable.setItems(observableList);
     }
