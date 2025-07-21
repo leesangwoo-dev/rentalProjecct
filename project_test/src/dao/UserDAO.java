@@ -44,7 +44,7 @@ public class UserDAO {
 		}
 	}
 
-	public boolean isIdDuplicated(String userID) {
+	public boolean isIdDuplicated(String loginId) {
 		boolean result = false;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -54,7 +54,7 @@ public class UserDAO {
 			conn = getConnection();
 			String sql = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, userID);
+			pstmt.setString(1, loginId);
 			rs = pstmt.executeQuery();
 
 			if (rs.next() && rs.getInt(1) > 0) {
@@ -85,18 +85,35 @@ public class UserDAO {
 
 		return result;
 	}
+<<<<<<< HEAD
 
 	public boolean isLoginValid(Connection conn, String userId, String password) {
 		boolean isValid = false;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+=======
+	
+	public boolean isLoginValid(Connection conn, String loginId, String password) {
+	    boolean isValid = false;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+>>>>>>> refs/heads/HYUNSEOK
 
+<<<<<<< HEAD
 		try {
 			String sql = "SELECT * FROM USERS WHERE ID = ? AND PASSWORD = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, userId);
 			pstmt.setString(2, password);
 			rs = pstmt.executeQuery();
+=======
+	    try {
+	        String sql = "SELECT * FROM USERS WHERE ID = ? AND PASSWORD = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, loginId);
+	        pstmt.setString(2, password);
+	        rs = pstmt.executeQuery();
+>>>>>>> refs/heads/HYUNSEOK
 
 			if (rs.next()) {
 				// 로그인 성공 (결과가 있음)
@@ -125,6 +142,14 @@ public class UserDAO {
 
 		return isValid;
 	}
+<<<<<<< HEAD
+=======
+	
+	public String updateUserInfo(String loginId, String oldPassword, String newName, String newPhoneNumber, String newGu, String newPassword) {
+        Connection conn = null;
+        CallableStatement cstmt = null;
+        String resultStatus = "UNKNOWN_ERROR";
+>>>>>>> refs/heads/HYUNSEOK
 
 	public String updateUserInfo(String userId, String oldPassword, String newName, String newPhoneNumber, String newGu,
 			String newPassword) {
@@ -135,9 +160,19 @@ public class UserDAO {
 		try {
 			conn = getConnection();
 
+<<<<<<< HEAD
 			// 저장 프로시저 호출 구문: UPDATE_USER_INFO_PLAIN 사용
 			String sql = "{call UPDATE_USER_INFO(?, ?, ?, ?, ?, ?, ?)}"; // 프로시저명 변경
 			cstmt = conn.prepareCall(sql);
+=======
+            // IN 파라미터 설정 (비밀번호를 평문 그대로 전달)
+            cstmt.setString(1, loginId);
+            cstmt.setString(2, oldPassword);
+            cstmt.setString(3, newName);
+            cstmt.setString(4, newPhoneNumber);
+            cstmt.setString(5, newGu);
+            cstmt.setString(6, (newPassword != null && !newPassword.isEmpty()) ? newPassword : null);
+>>>>>>> refs/heads/HYUNSEOK
 
 			// IN 파라미터 설정 (비밀번호를 평문 그대로 전달)
 			cstmt.setString(1, userId);
@@ -153,6 +188,7 @@ public class UserDAO {
 			// 프로시저 실행
 			cstmt.execute();
 
+<<<<<<< HEAD
 			// OUT 파라미터 값 가져오기
 			resultStatus = cstmt.getString(7);
 
@@ -176,4 +212,44 @@ public class UserDAO {
 		}
 		return resultStatus;
 	}
+=======
+        } catch (SQLException e) {
+            System.err.println("데이터베이스 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            resultStatus = "ERROR: " + e.getMessage();
+        } catch (Exception e) {
+            System.err.println("일반 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            resultStatus = "ERROR: " + e.getMessage();
+        }
+        finally {
+            try {
+                if (cstmt != null) cstmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.err.println("자원 해제 중 오류 발생: " + e.getMessage());
+            }
+        }
+        return resultStatus;
+    }
+	
+	// 사용자 ID 조회
+	public Long getUserIdByLoginID(String loginId) {
+	    String sql = "{ call get_user_id_by_login_id(?, ?) }";
+	    try (Connection conn = DBUtil.getConnection();
+	         CallableStatement cs = conn.prepareCall(sql)) {
+
+	        cs.setString(1, loginId);
+	        cs.registerOutParameter(2, Types.NUMERIC);
+
+	        cs.execute();
+	        return cs.getLong(2);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}
+
+>>>>>>> refs/heads/HYUNSEOK
 }

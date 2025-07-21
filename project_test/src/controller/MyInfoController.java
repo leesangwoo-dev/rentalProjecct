@@ -47,9 +47,15 @@ public class MyInfoController {
 	}
 
 	public void handleEqList(ActionEvent event) {
+<<<<<<< HEAD
 		try {
 			// FXML 파일 로드 (패키지 경로 맞춰주세요!)
 			Parent mainView = FXMLLoader.load(getClass().getResource("/view/root.fxml"));
+=======
+    	try {
+            // FXML 파일 로드 (패키지 경로 맞춰주세요!)
+            Parent mainView = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
+>>>>>>> refs/heads/HYUNSEOK
 
 			// 현재 창(Stage)을 얻어서 씬 변경
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -81,7 +87,7 @@ public class MyInfoController {
 		// UserDAO를 통해 DB 업데이트 프로시저 호출 (평문 버전)
 		String updateStatus;
 		try {
-			updateStatus = userDAO.updateUserInfo(userId, oldPassword, name, phoneNumber, gu, finalNewPassword);
+			updateStatus = userDAO.updateUserInfo(userLoginId, oldPassword, name, phoneNumber, gu, finalNewPassword);
 			// 결과에 따른 사용자 피드백
 			switch (updateStatus) {
 			case "SUCCESS":

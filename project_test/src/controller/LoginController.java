@@ -16,8 +16,13 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+<<<<<<< HEAD
 import static util.DBUtil.getConnection;
 import static util.Session.userId;
+=======
+import util.DBUtil;
+import static util.Session.userLoginId;;
+>>>>>>> refs/heads/HYUNSEOK
 
 // 로그인 페이지 컨트롤러
 public class LoginController {
@@ -49,7 +54,7 @@ public class LoginController {
 			try {
 				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				currentStage.close();
-				userId = ID_text.getText();
+				userLoginId = ID_text.getText();
 				MainStage();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -78,7 +83,7 @@ public class LoginController {
 	public void MainStage() throws Exception {
 
 		Stage newStage = new Stage();
-		Parent parent = FXMLLoader.load(getClass().getResource("/view/root.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
 		Scene dd = new Scene(parent);
 
 		newStage.setTitle("MainView");
