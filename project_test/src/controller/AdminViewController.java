@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import dao.EquipmentDAO;
@@ -13,15 +14,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.EquipmentViewDTO; // 수정한 DTO를 임포트
 
@@ -168,21 +170,52 @@ public class AdminViewController {
 		}
 	}
 
-	// 대여하기 버튼
+	// 장비 추가
 	@FXML
-	private void EqAddButton() {
-		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
-		if (selected != null) {
-			openDetailView(selected);
-		}
+	private void AddEqButton() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AddEqView.fxml"));
+			Parent root = loader.load();
+
+			AddEqController controller = loader.getController();
+			controller.setMainController(this);
+
+			Stage stage = new Stage();
+			stage.setTitle("장비 추가 정보");
+			stage.setScene(new Scene(root));
+			stage.show();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
 	}
-	
+
+	// 장비 상태 변경
 	@FXML
-	private void EqDeleteButton() {
+	private void changeStatusButton() {
 		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
-		if (selected != null) {
-			openDetailView(selected);
+		if (selected == null) {
+			showAlert(AlertType.WARNING, "장비를 선택하세요.");
+			return;
 		}
+
+		// 상태 옵션 제공
+		List<String> statusOptions = Arrays.asList("사용가능", "수리", "대여중");
+		ChoiceDialog<String> dialog = new ChoiceDialog<>(selected.getState(), statusOptions);
+		dialog.setTitle("장비 상태 변경");
+		dialog.setHeaderText("현재 상태: " + selected.getState());
+		dialog.setContentText("장비 상태 변경:");
+
+		dialog.showAndWait().ifPresent(newState -> {
+			EquipmentDAO dao = new EquipmentDAO();
+			boolean success = dao.updateState(selected.getSerialNum(), newState);
+			if (success) {
+				showAlert(AlertType.INFORMATION, "상태가 [" + newState + "](으)로 변경되었습니다.");
+				loadTableData(); // 테이블 갱신
+			} else {
+				showAlert(AlertType.ERROR, "상태 변경 실패");
+			}
+		});
 	}
 
 	// 클릭 이벤트 설정
@@ -197,7 +230,7 @@ public class AdminViewController {
 
 			// 더블 클릭: 상세 보기 띄우기
 			if (event.getClickCount() == 2 && selected != null) {
-				openDetailView(selected);
+				// openDetailView(selected);
 			}
 		});
 	}
@@ -233,7 +266,7 @@ public class AdminViewController {
 
 			DetailViewController controller = loader.getController();
 			controller.setSerialNumber(equipment.getSerialNum());
-			//controller.setMainController(this);
+			// controller.setMainController(this);
 
 			Stage stage = new Stage();
 			stage.setTitle("장비 상세정보");
@@ -244,4 +277,11 @@ public class AdminViewController {
 			e.printStackTrace();
 		}
 	}
+
+	public void showAlert(Alert.AlertType type, String message) {
+		Alert alert = new Alert(type);
+		alert.setContentText(message);
+		alert.showAndWait();
+	}
+
 }
