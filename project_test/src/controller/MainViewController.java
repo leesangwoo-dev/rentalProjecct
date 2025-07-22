@@ -55,6 +55,7 @@ public class MainViewController {
 		imgClickEvent();
 	}
 
+	//
 	private void setupTableColumns() {
 		// 각 열과 EquipmentViewDTO의 프로퍼티를 연결
 		// 열이 어떤 데이터를 보여줄지 결정

@@ -21,7 +21,7 @@ public class UserDAO {
 			String sql = "{call ADD_USER(?, ?, ?, ?, ?)}";
 			cstmt = conn.prepareCall(sql);
 
-			cstmt.setString(1, user.getId());
+			cstmt.setString(1, user.getLoginId());
 			cstmt.setString(2, user.getPassword());
 			cstmt.setString(3, user.getUserName());
 			cstmt.setString(4, user.getPhoneNumber());
