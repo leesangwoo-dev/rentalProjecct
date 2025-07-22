@@ -23,9 +23,9 @@ import static util.Session.userLoginId;
 public class LoginController {
 
 	@FXML
-	private TextField ID_text;
+	private TextField idTextField;
 	@FXML
-	private PasswordField PW_text;
+	private PasswordField passwordTextField;
 
 	Connection conn;
 	@FXML
@@ -41,15 +41,15 @@ public class LoginController {
 
 	public void Login(ActionEvent event) {
 		System.out.println("로그인 버튼 클릭");
-		System.out.println(ID_text.getText());
-		System.out.println(PW_text.getText());
+		System.out.println(idTextField.getText());
+		System.out.println(passwordTextField.getText());
 		
 		if(handleLogin(event))
 		{
 			try {
 				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				currentStage.close();
-				userLoginId = ID_text.getText();
+				userLoginId = idTextField.getText();
 				MainStage();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -90,7 +90,7 @@ public class LoginController {
 	public void signUpPopup() throws Exception {
 
 		Stage newStage = new Stage();
-		Parent parent = FXMLLoader.load(getClass().getResource("/view/sign_up.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getResource("/view/SignupView.fxml"));
 		Scene dd = new Scene(parent);
 
 		newStage.setTitle("회원가입");
@@ -102,8 +102,8 @@ public class LoginController {
 	}// end
 
 	public boolean handleLogin(ActionEvent event) {
-		String userId = ID_text.getText();
-		String password = PW_text.getText();
+		String userId = idTextField.getText();
+		String password = passwordTextField.getText();
 
 		UserDAO userDao = new UserDAO();
 		if (userDao.isLoginValid(conn, userId, password)) {

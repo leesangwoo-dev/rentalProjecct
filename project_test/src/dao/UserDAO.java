@@ -13,90 +13,58 @@ import static util.Session.*;
 
 public class UserDAO {
 	public void addUser(UserDTO user) {
-		Connection conn = null;
-		CallableStatement cstmt = null;
+		// try-with-resources를 사용하여 Connection과 CallableStatement를 자동으로 닫도록 변경
+        try (Connection conn = getConnection(); // Connection을 try-with-resources에 포함
+             CallableStatement cstmt = conn.prepareCall("{call SP_ADD_USER(?, ?, ?, ?, ?)}")) { // CallableStatement도 포함
 
-		try {
-			conn = getConnection();
-			String sql = "{call ADD_USER(?, ?, ?, ?, ?)}";
-			cstmt = conn.prepareCall(sql);
+            // SQL 쿼리 문자열은 prepareCall 메서드 내부로 바로 전달 가능
+            // String sql = "{call SP_ADD_USER(?, ?, ?, ?, ?)}"; // 이 줄은 이제 필요 없습니다.
 
-			cstmt.setString(1, user.getLoginId());
-			cstmt.setString(2, user.getPassword());
-			cstmt.setString(3, user.getUserName());
-			cstmt.setString(4, user.getPhoneNumber());
-			cstmt.setString(5, user.getUserGu());
+            cstmt.setString(1, user.getLoginId());
+            cstmt.setString(2, user.getPassword());
+            cstmt.setString(3, user.getUserName());
+            cstmt.setString(4, user.getPhoneNumber());
+            cstmt.setString(5, user.getUserGu());
 
-			cstmt.execute();
-			System.out.println("사용자 등록 성공");
+            cstmt.execute();
+            System.out.println("사용자 등록 성공");
 
-		} catch (SQLException e) {
-			System.err.println("사용자 등록 실패: " + e.getMessage());
-		} finally {
-			try {
-				if (cstmt != null)
-					cstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+        } catch (SQLException e) {
+            System.err.println("사용자 등록 실패: " + e.getMessage());
+            e.printStackTrace();
+        }
 	}
 
 	public boolean isIdDuplicated(String loginId) {
 		boolean result = false;
-		Connection conn = null;
+		String sql = "SELECT COUNT(*) FROM USERS WHERE LOGIN_ID = ?";
+		try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, loginId);
+			try (ResultSet rs = pstmt.executeQuery();) {
+				while (rs.next()) {
+					int count = rs.getInt(1); // 첫 번째 컬럼(COUNT(*))의 값을 가져옴
+					if (count > 0) { // 개수가 0보다 크면 중복
+						result = true;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public boolean isLoginValid(Connection conn, String loginId, String password) {
+		boolean isValid = false;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
-			conn = getConnection();
-			String sql = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
+			String sql = "SELECT * FROM USERS WHERE LOGIN_ID = ? AND PASSWORD = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, loginId);
+			pstmt.setString(2, password);
 			rs = pstmt.executeQuery();
-
-			if (rs.next() && rs.getInt(1) > 0) {
-				result = true; // 중복됨
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				if (pstmt != null)
-					pstmt.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		return result;
-	}
-	
-	public boolean isLoginValid(Connection conn, String loginId, String password) {
-	    boolean isValid = false;
-	    PreparedStatement pstmt = null;
-	    ResultSet rs = null;
-
-	    try {
-	        String sql = "SELECT * FROM USERS WHERE ID = ? AND PASSWORD = ?";
-	        pstmt = conn.prepareStatement(sql);
-	        pstmt.setString(1, loginId);
-	        pstmt.setString(2, password);
-	        rs = pstmt.executeQuery();
 
 			if (rs.next()) {
 				// 로그인 성공 (결과가 있음)
@@ -125,11 +93,12 @@ public class UserDAO {
 
 		return isValid;
 	}
-	
-	public String updateUserInfo(String loginId, String oldPassword, String newName, String newPhoneNumber, String newGu, String newPassword) {
-        Connection conn = null;
-        CallableStatement cstmt = null;
-        String resultStatus = "UNKNOWN_ERROR";
+
+	public String updateUserInfo(String loginId, String oldPassword, String newName, String newPhoneNumber,
+			String newGu, String newPassword) {
+		Connection conn = null;
+		CallableStatement cstmt = null;
+		String resultStatus = "UNKNOWN_ERROR";
 
 		try {
 			conn = getConnection();
@@ -139,12 +108,12 @@ public class UserDAO {
 			cstmt = conn.prepareCall(sql);
 
 			// IN 파라미터 설정 (비밀번호를 평문 그대로 전달)
-            cstmt.setString(1, loginId);
-            cstmt.setString(2, oldPassword);
-            cstmt.setString(3, newName);
-            cstmt.setString(4, newPhoneNumber);
-            cstmt.setString(5, newGu);
-            cstmt.setString(6, (newPassword != null && !newPassword.isEmpty()) ? newPassword : null);
+			cstmt.setString(1, loginId);
+			cstmt.setString(2, oldPassword);
+			cstmt.setString(3, newName);
+			cstmt.setString(4, newPhoneNumber);
+			cstmt.setString(5, newGu);
+			cstmt.setString(6, (newPassword != null && !newPassword.isEmpty()) ? newPassword : null);
 
 			// OUT 파라미터 등록
 			cstmt.registerOutParameter(7, Types.VARCHAR);
@@ -175,23 +144,22 @@ public class UserDAO {
 		}
 		return resultStatus;
 	}
-	
+
 	// 사용자 ID 조회
 	public Long getUserIdByLoginID(String loginId) {
-	    String sql = "{ call get_user_id_by_login_id(?, ?) }";
-	    try (Connection conn = getConnection();
-	         CallableStatement cs = conn.prepareCall(sql)) {
+		String sql = "{ call get_user_id_by_login_id(?, ?) }";
+		try (Connection conn = getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 
-	        cs.setString(1, loginId);
-	        cs.registerOutParameter(2, Types.NUMERIC);
+			cs.setString(1, loginId);
+			cs.registerOutParameter(2, Types.NUMERIC);
 
-	        cs.execute();
-	        return cs.getLong(2);
+			cs.execute();
+			return cs.getLong(2);
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return null;
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
