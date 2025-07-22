@@ -49,7 +49,7 @@ public class MyInfoController {
 	public void handleEqList(ActionEvent event) {
     	try {
             // FXML 파일 로드 (패키지 경로 맞춰주세요!)
-            Parent mainView = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
+            Parent mainView = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
 
 			// 현재 창(Stage)을 얻어서 씬 변경
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

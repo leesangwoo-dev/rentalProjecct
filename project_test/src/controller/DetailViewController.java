@@ -73,7 +73,7 @@ public class DetailViewController {
 			stateLabel.setStyle(
 					"-fx-background-color: #B5F3C1; -fx-text-fill: green; -fx-alignment: center; -fx-font-size: 18px; -fx-padding: 2 6; -fx-border-radius: 4; -fx-background-radius: 4;");
 			break;
-		case "대여":
+		case "대여중":
 			stateLabel.setStyle(
 					"-fx-background-color: #FFB6B6; -fx-text-fill: red; -fx-alignment: center; -fx-font-size: 18px; -fx-padding: 2 6; -fx-border-radius: 4; -fx-background-radius: 4;");
 			break;

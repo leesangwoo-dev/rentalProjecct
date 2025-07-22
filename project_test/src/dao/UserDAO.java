@@ -18,7 +18,7 @@ public class UserDAO {
 
 		try {
 			conn = getConnection();
-			String sql = "{call ADD_USER(?, ?, ?, ?, ?)}";
+			String sql = "{call SP_ADD_USER(?, ?, ?, ?, ?)}";
 			cstmt = conn.prepareCall(sql);
 
 			cstmt.setString(1, user.getLoginId());
@@ -52,7 +52,7 @@ public class UserDAO {
 
 		try {
 			conn = getConnection();
-			String sql = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
+			String sql = "SELECT COUNT(*) FROM USERS WHERE LOGIN_ID = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, loginId);
 			rs = pstmt.executeQuery();
@@ -92,7 +92,7 @@ public class UserDAO {
 	    ResultSet rs = null;
 
 	    try {
-	        String sql = "SELECT * FROM USERS WHERE ID = ? AND PASSWORD = ?";
+	        String sql = "SELECT * FROM USERS WHERE LOGIN_ID = ? AND PASSWORD = ?";
 	        pstmt = conn.prepareStatement(sql);
 	        pstmt.setString(1, loginId);
 	        pstmt.setString(2, password);
@@ -135,7 +135,7 @@ public class UserDAO {
 			conn = getConnection();
 
 			// 저장 프로시저 호출 구문: UPDATE_USER_INFO_PLAIN 사용
-			String sql = "{call UPDATE_USER_INFO(?, ?, ?, ?, ?, ?, ?)}"; // 프로시저명 변경
+			String sql = "{call SP_UPDATE_USER_INFO(?, ?, ?, ?, ?, ?, ?)}"; // 프로시저명 변경
 			cstmt = conn.prepareCall(sql);
 
 			// IN 파라미터 설정 (비밀번호를 평문 그대로 전달)
@@ -178,7 +178,7 @@ public class UserDAO {
 	
 	// 사용자 ID 조회
 	public Long getUserIdByLoginID(String loginId) {
-	    String sql = "{ call get_user_id_by_login_id(?, ?) }";
+	    String sql = "{ call SP_GET_USER_ID_BY_LOGIN_ID(?, ?) }";
 	    try (Connection conn = getConnection();
 	         CallableStatement cs = conn.prepareCall(sql)) {
 

@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 import model.EquipmentViewDTO; // 수정한 DTO를 임포트
 
 // 메인 페이지(장비 조회)_사용자 컨트롤러
-public class MainViewController {
+public class AdminViewController {
 	@FXML
 	private TableView<EquipmentViewDTO> equipmentTable;
 	@FXML
@@ -170,7 +170,15 @@ public class MainViewController {
 
 	// 대여하기 버튼
 	@FXML
-	private void RentButton() {
+	private void EqAddButton() {
+		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
+		if (selected != null) {
+			openDetailView(selected);
+		}
+	}
+	
+	@FXML
+	private void EqDeleteButton() {
 		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
 		if (selected != null) {
 			openDetailView(selected);
@@ -217,15 +225,15 @@ public class MainViewController {
 		stage.show();
 	}
 
-	// 더블 클릭시 상세페이지 띄우기
-	private void openDetailView(EquipmentViewDTO equipment) {
+	// 더블 클릭시 장비 추가창 띄우기
+	private void openEqAddView(EquipmentViewDTO equipment) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/DetailView.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EqAddView.fxml"));
 			Parent root = loader.load();
 
 			DetailViewController controller = loader.getController();
 			controller.setSerialNumber(equipment.getSerialNum());
-			controller.setMainController(this);
+			//controller.setMainController(this);
 
 			Stage stage = new Stage();
 			stage.setTitle("장비 상세정보");

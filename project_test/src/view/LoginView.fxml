@@ -25,11 +25,11 @@
 
 		<!-- 이메일 입력 -->
 		<HBox layoutX="40" layoutY="180" spacing="10" />
-		<TextField fx:id="ID_text" layoutX="91.0" layoutY="361.0" prefWidth="200" promptText="아이디를 입력해주세요..." />
+		<TextField fx:id="IdTextField" layoutX="91.0" layoutY="361.0" prefWidth="200" promptText="아이디를 입력해주세요..." />
 
 		<!-- 비밀번호 입력 -->
 		<HBox layoutX="40" layoutY="230" spacing="10" />
-		<PasswordField fx:id="PW_text" layoutX="91.0" layoutY="410.0" prefWidth="200" promptText="비밀번호를 입력해주세요..." />
+		<PasswordField fx:id="PwTextField" layoutX="91.0" layoutY="410.0" prefWidth="200" promptText="비밀번호를 입력해주세요..." />
 
 		<!-- 로그인 버튼 -->
 		<Button layoutX="91.0" layoutY="483.0" onAction="#Login" prefHeight="35" prefWidth="200.0" style="-fx-background-color: #e6bc2f  #e4b524; -fx-text-fill: #ffffff; -fx-font-weight: bold;" text="Log in ▶" />

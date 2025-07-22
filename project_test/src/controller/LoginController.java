@@ -1,6 +1,9 @@
 // src/controller/RootController.java
 package controller;
 
+import static util.DBUtil.getConnection;
+import static util.Session.userLoginId;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -16,16 +19,14 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import static util.DBUtil.getConnection;
-import static util.Session.userLoginId;
 
 // 로그인 페이지 컨트롤러
 public class LoginController {
 
 	@FXML
-	private TextField ID_text;
+	private TextField IdTextField;
 	@FXML
-	private PasswordField PW_text;
+	private PasswordField PwTextField;
 
 	Connection conn;
 	@FXML
@@ -41,15 +42,15 @@ public class LoginController {
 
 	public void Login(ActionEvent event) {
 		System.out.println("로그인 버튼 클릭");
-		System.out.println(ID_text.getText());
-		System.out.println(PW_text.getText());
+		System.out.println(IdTextField.getText());
+		System.out.println(PwTextField.getText());
 		
 		if(handleLogin(event))
 		{
 			try {
 				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				currentStage.close();
-				userLoginId = ID_text.getText();
+				userLoginId = IdTextField.getText();
 				MainStage();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -78,10 +79,11 @@ public class LoginController {
 	public void MainStage() throws Exception {
 
 		Stage newStage = new Stage();
-		Parent parent = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
+		//Parent parent = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getResource("/view/AdminView.fxml"));
 		Scene dd = new Scene(parent);
 
-		newStage.setTitle("MainView");
+		newStage.setTitle("관리자 페이지");
 		newStage.setScene(dd);
 		newStage.show();
 
@@ -90,7 +92,7 @@ public class LoginController {
 	public void signUpPopup() throws Exception {
 
 		Stage newStage = new Stage();
-		Parent parent = FXMLLoader.load(getClass().getResource("/view/sign_up.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getResource("/view/SignupView.fxml"));
 		Scene dd = new Scene(parent);
 
 		newStage.setTitle("회원가입");
@@ -102,8 +104,8 @@ public class LoginController {
 	}// end
 
 	public boolean handleLogin(ActionEvent event) {
-		String userId = ID_text.getText();
-		String password = PW_text.getText();
+		String userId = IdTextField.getText();
+		String password = PwTextField.getText();
 
 		UserDAO userDao = new UserDAO();
 		if (userDao.isLoginValid(conn, userId, password)) {
