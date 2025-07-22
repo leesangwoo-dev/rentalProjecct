@@ -13,15 +13,15 @@ import static util.Session.*;
 
 public class UserDAO {
 	public void addUser(UserDTO user) {
-		Connection conn = null;
-		CallableStatement cstmt = null;
+		// try-with-resources를 사용하여 Connection과 CallableStatement를 자동으로 닫도록 변경
+		try (Connection conn = getConnection(); // Connection을 try-with-resources에 포함
+				CallableStatement cstmt = conn.prepareCall("{call SP_ADD_USER(?, ?, ?, ?, ?)}")) { // CallableStatement도
+																									// 포함
 
-		try {
-			conn = getConnection();
-			String sql = "{call ADD_USER(?, ?, ?, ?, ?)}";
-			cstmt = conn.prepareCall(sql);
+			// SQL 쿼리 문자열은 prepareCall 메서드 내부로 바로 전달 가능
+			// String sql = "{call SP_ADD_USER(?, ?, ?, ?, ?)}"; // 이 줄은 이제 필요 없습니다.
 
-			cstmt.setString(1, user.getId());
+			cstmt.setString(1, user.getLoginId());
 			cstmt.setString(2, user.getPassword());
 			cstmt.setString(3, user.getUserName());
 			cstmt.setString(4, user.getPhoneNumber());
@@ -32,119 +32,67 @@ public class UserDAO {
 
 		} catch (SQLException e) {
 			System.err.println("사용자 등록 실패: " + e.getMessage());
-		} finally {
-			try {
-				if (cstmt != null)
-					cstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			e.printStackTrace();
 		}
 	}
 
 	public boolean isIdDuplicated(String loginId) {
 		boolean result = false;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			conn = getConnection();
-			String sql = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
-			pstmt = conn.prepareStatement(sql);
+		String sql = "SELECT COUNT(*) FROM USERS WHERE LOGIN_ID = ?";
+		try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, loginId);
-			rs = pstmt.executeQuery();
-
-			if (rs.next() && rs.getInt(1) > 0) {
-				result = true; // 중복됨
+			try (ResultSet rs = pstmt.executeQuery();) {
+				while (rs.next()) {
+					int count = rs.getInt(1); // 첫 번째 컬럼(COUNT(*))의 값을 가져옴
+					if (count > 0) { // 개수가 0보다 크면 중복
+						result = true;
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				if (pstmt != null)
-					pstmt.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
-
 		return result;
 	}
-	
+
 	public boolean isLoginValid(Connection conn, String loginId, String password) {
-	    boolean isValid = false;
-	    PreparedStatement pstmt = null;
-	    ResultSet rs = null;
+		boolean isValid = false;
+		String sql = "SELECT * FROM USERS WHERE LOGIN_ID = ? AND PASSWORD = ?";
 
-	    try {
-	        String sql = "SELECT * FROM USERS WHERE ID = ? AND PASSWORD = ?";
-	        pstmt = conn.prepareStatement(sql);
-	        pstmt.setString(1, loginId);
-	        pstmt.setString(2, password);
-	        rs = pstmt.executeQuery();
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) { // pstmt만 먼저 생성
+			pstmt.setString(1, loginId); // 첫 번째 바인딩 변수 설정
+			pstmt.setString(2, password); // 두 번째 바인딩 변수 설정
 
-			if (rs.next()) {
-				// 로그인 성공 (결과가 있음)
-				isValid = true;
-				userPassword = rs.getString("PASSWORD");
-				userName = rs.getString("USER_NAME");
-				userPhoneNumber = rs.getString("PHONE_NUMBER");
-				userGu = rs.getString("USER_GU");
-			}
-		} catch (Exception e) {
+			try (ResultSet rs = pstmt.executeQuery()) { // 바인딩 변수 설정 후 쿼리 실행
+				if (rs.next()) {
+					isValid = true;
+					userPassword = rs.getString("PASSWORD");
+					userName = rs.getString("USER_NAME");
+					userPhoneNumber = rs.getString("PHONE_NUMBER");
+					userGu = rs.getString("USER_GU");
+				}
+			} // rs가 이 블록을 벗어나면 자동으로 close() 됨
+		} catch (Exception e) { // SQLException으로 특정하는 것이 더 좋음
 			e.printStackTrace();
-		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				if (pstmt != null)
-					pstmt.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
-
 		return isValid;
 	}
-	
-	public String updateUserInfo(String loginId, String oldPassword, String newName, String newPhoneNumber, String newGu, String newPassword) {
-        Connection conn = null;
-        CallableStatement cstmt = null;
-        String resultStatus = "UNKNOWN_ERROR";
 
-		try {
-			conn = getConnection();
+	public String updateUserInfo(String loginId, String oldPassword, String newName, String newPhoneNumber,
+			String newGu, String newPassword) {
+		String resultStatus = "UNKNOWN_ERROR";
 
-			// 저장 프로시저 호출 구문: UPDATE_USER_INFO_PLAIN 사용
-			String sql = "{call UPDATE_USER_INFO(?, ?, ?, ?, ?, ?, ?)}"; // 프로시저명 변경
-			cstmt = conn.prepareCall(sql);
+		// try-with-resources를 사용하여 Connection과 CallableStatement를 자동으로 닫도록 변경
+		try (Connection conn = getConnection(); // Connection을 try-with-resources에 포함
+				CallableStatement cstmt = conn.prepareCall("{call SP_UPDATE_USER_INFO(?, ?, ?, ?, ?, ?, ?)}")) {
 
-			// IN 파라미터 설정 (비밀번호를 평문 그대로 전달)
-            cstmt.setString(1, loginId);
-            cstmt.setString(2, oldPassword);
-            cstmt.setString(3, newName);
-            cstmt.setString(4, newPhoneNumber);
-            cstmt.setString(5, newGu);
-            cstmt.setString(6, (newPassword != null && !newPassword.isEmpty()) ? newPassword : null);
+			// IN 파라미터 설정
+			cstmt.setString(1, loginId);
+			cstmt.setString(2, oldPassword);
+			cstmt.setString(3, newName);
+			cstmt.setString(4, newPhoneNumber);
+			cstmt.setString(5, newGu);
+			cstmt.setString(6, (newPassword != null && !newPassword.isEmpty()) ? newPassword : null);
 
 			// OUT 파라미터 등록
 			cstmt.registerOutParameter(7, Types.VARCHAR);
@@ -155,43 +103,34 @@ public class UserDAO {
 			// OUT 파라미터 값 가져오기
 			resultStatus = cstmt.getString(7);
 
-		} catch (SQLException e) {
+		} catch (SQLException e) { // 데이터베이스 관련 예외는 SQLException으로 특정하는 것이 좋습니다.
 			System.err.println("데이터베이스 오류 발생: " + e.getMessage());
-			e.printStackTrace();
-			resultStatus = "ERROR: " + e.getMessage();
-		} catch (Exception e) {
+			e.printStackTrace(); // 스택 트레이스는 디버깅에 매우 중요합니다.
+			resultStatus = "ERROR: " + e.getMessage(); // 오류 메시지를 반환하여 UI에 표시 가능
+		} catch (Exception e) { // 그 외 예상치 못한 모든 예외 처리
 			System.err.println("일반 오류 발생: " + e.getMessage());
 			e.printStackTrace();
-			resultStatus = "ERROR: " + e.getMessage();
-		} finally {
-			try {
-				if (cstmt != null)
-					cstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (SQLException e) {
-				System.err.println("자원 해제 중 오류 발생: " + e.getMessage());
-			}
+			resultStatus = "ERROR: " + e.getMessage(); // 오류 메시지를 반환
 		}
+
 		return resultStatus;
 	}
-	
+
 	// 사용자 ID 조회
 	public Long getUserIdByLoginID(String loginId) {
-	    String sql = "{ call get_user_id_by_login_id(?, ?) }";
-	    try (Connection conn = getConnection();
-	         CallableStatement cs = conn.prepareCall(sql)) {
+		String sql = "{ call get_user_id_by_login_id(?, ?) }";
+		try (Connection conn = getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 
-	        cs.setString(1, loginId);
-	        cs.registerOutParameter(2, Types.NUMERIC);
+			cs.setString(1, loginId);
+			cs.registerOutParameter(2, Types.NUMERIC);
 
-	        cs.execute();
-	        return cs.getLong(2);
+			cs.execute();
+			return cs.getLong(2);
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return null;
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

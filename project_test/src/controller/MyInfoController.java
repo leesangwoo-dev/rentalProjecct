@@ -23,15 +23,13 @@ import javafx.stage.Stage;
 public class MyInfoController {
 
 	@FXML
-	private Button eqList;
+	private TextField nameTextField;
 	@FXML
-	private TextField nameField;
+	private TextField passwordTextField;
 	@FXML
-	private TextField passwordField;
+	private TextField newPasswordTextField;
 	@FXML
-	private TextField newPasswordField;
-	@FXML
-	private TextField phoneField;
+	private TextField phoneNumberTextField;
 	@FXML
 	private ChoiceBox<String> guChoiceBox;
 	@FXML
@@ -39,8 +37,8 @@ public class MyInfoController {
 
 	@FXML
 	public void initialize() {
-		nameField.setText(userName);
-		phoneField.setText(userPhoneNumber);
+		nameTextField.setText(userName);
+		phoneNumberTextField.setText(userPhoneNumber);
 		ObservableList<String> guOptions = FXCollections.observableArrayList("중구", "유성구", "서구", "동구", "대덕구");
 		guChoiceBox.setItems(guOptions);
 		guChoiceBox.setValue(userGu);
@@ -63,10 +61,10 @@ public class MyInfoController {
 
 	@FXML
 	private void handleUpdateButton(ActionEvent event) {
-		String name = nameField.getText();
-		String oldPassword = passwordField.getText();
-		String newPassword = newPasswordField.getText();
-		String phoneNumber = phoneField.getText();
+		String name = nameTextField.getText();
+		String oldPassword = passwordTextField.getText();
+		String newPassword = newPasswordTextField.getText();
+		String phoneNumber = phoneNumberTextField.getText();
 		String gu = guChoiceBox.getValue();
 		UserDAO userDAO = new UserDAO();
 
@@ -90,15 +88,15 @@ public class MyInfoController {
 				userName = name;
 				userPhoneNumber = phoneNumber;
 				userGu = gu;
-				passwordField.clear();
-				newPasswordField.clear();
+				passwordTextField.clear();
+				newPasswordTextField.clear();
 				// 현재 창 닫기
 				Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				stage.close(); // 현재 창을 닫습니다.
 				break;
 			case "WRONG_PASSWORD":
 				showAlert(AlertType.ERROR, "정보 수정 실패", "기존 비밀번호가 올바르지 않습니다.");
-				passwordField.clear();
+				passwordTextField.clear();
 				break;
 			default:
 				showAlert(AlertType.ERROR, "오류 발생", "사용자 정보 수정 중 오류가 발생했습니다:\n" + updateStatus); // 메시지 변경

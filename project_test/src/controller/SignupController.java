@@ -20,96 +20,91 @@ import javafx.stage.Stage;
 import model.UserDTO;
 
 public class SignupController {
-	
-	@FXML private ChoiceBox<String> RegionChoiceBox;
-	@FXML private TextField ID_text;
-    @FXML private PasswordField PW_text;
-    @FXML private TextField NAME_text;
-    @FXML private TextField PHONE_text;
-    @FXML private Label infolabel; 
-    @FXML private Button ID_check;
-    @FXML private Button signUpButton;
+
+	@FXML
+	private ChoiceBox<String> guChoiceBox;
+	@FXML
+	private TextField idTextField;
+	@FXML
+	private PasswordField passwordTextField;
+	@FXML
+	private TextField nameTextField;
+	@FXML
+	private TextField phoneNumberTextField;
+	@FXML
+	private Label infoLabel;
+	@FXML
+	private Button idCheckButton;
+	@FXML
+	private Button signupButton;
 
 	@FXML
 	public void initialize() {
-		RegionChoiceBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
-		RegionChoiceBox.setValue("유성구"); // 기본 값
-		Platform.runLater(() -> signUpButton.requestFocus());
+		guChoiceBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
+		guChoiceBox.setValue("유성구"); // 기본 값
+		Platform.runLater(() -> signupButton.requestFocus());
 	}
 
 	UserDAO userDAO = null;
-	
+
 	public void Singup(ActionEvent event) {
-	    System.out.println("회원가입");
+		System.out.println("회원가입");
 
-	    if (ID_text.getText() == null || ID_text.getText().trim().isEmpty() ||
-	        PW_text.getText() == null || PW_text.getText().trim().isEmpty() ||
-	        NAME_text.getText() == null || NAME_text.getText().trim().isEmpty() ||
-	        PHONE_text.getText() == null || PHONE_text.getText().trim().isEmpty() ||
-	        RegionChoiceBox.getValue() == null || RegionChoiceBox.getValue().trim().isEmpty()
-	        || infolabel.getText().equals("이미 존재하는 아이디입니다."))
-	    {
-	        Alert alert = new Alert(AlertType.WARNING);
-	        alert.setTitle("경고");
-	        alert.setHeaderText(null);
-	        alert.setContentText("다시 확인해주세요");
-	        alert.showAndWait();
-	    } else {
-	        userDAO = new UserDAO();
-	        
-	        // DTO 생성
-	        UserDTO newUser = new UserDTO(
-	            ID_text.getText(),
-	            PW_text.getText(),
-	            NAME_text.getText(),
-	            PHONE_text.getText(),
-	            RegionChoiceBox.getValue()
-	        );
+		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty()
+				|| passwordTextField.getText() == null || passwordTextField.getText().trim().isEmpty()
+				|| nameTextField.getText() == null || nameTextField.getText().trim().isEmpty()
+				|| phoneNumberTextField.getText() == null || phoneNumberTextField.getText().trim().isEmpty()
+				|| guChoiceBox.getValue() == null || guChoiceBox.getValue().trim().isEmpty()
+				|| infoLabel.getText().equals("이미 존재하는 아이디입니다.")) {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("경고");
+			alert.setHeaderText(null);
+			alert.setContentText("다시 확인해주세요");
+			alert.showAndWait();
+		} else {
+			userDAO = new UserDAO();
 
-	        userDAO.addUser(newUser);
+			// DTO 생성
+			UserDTO newUser = new UserDTO(idTextField.getText(), passwordTextField.getText(), nameTextField.getText(),
+					phoneNumberTextField.getText(), guChoiceBox.getValue());
 
-	        Stage currentStage = (Stage)((Node)event.getSource()).getScene().getWindow();
-	        currentStage.close();
-	        showLoginWindow();
-	    }
+			userDAO.addUser(newUser);
+
+			Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			currentStage.close();
+			showLoginWindow();
+		}
 	}
-    
-    public static void showLoginWindow() {
-        try {
-            Parent root = FXMLLoader.load(LoginController.class.getResource("/view/login.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("로그인");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void ID_Check()
-    {
-    	userDAO = new UserDAO();
-    	boolean check = userDAO.isIdDuplicated(ID_text.getText());
-    	if(check)
-    	{
-    		infolabel.setText("이미 존재하는 아이디입니다.");
-    		infolabel.setStyle("-fx-text-fill: yellow; ");
-    	}
-    	else
-    	{
-    		infolabel.setText("사용가능한 아이디입니다.");
-    		infolabel.setStyle("-fx-text-fill: green; ");
-    	}
-    }
-    
-    public void setStage(Stage newStage) {
-    	newStage.setOnCloseRequest(event -> {
-            // 회원가입 창 닫을 때 로그인 창 다시 열기
-            showLoginWindow();
-        });
-    }
 
-	
+	public static void showLoginWindow() {
+		try {
+			Parent root = FXMLLoader.load(LoginController.class.getResource("/view/LoginView.fxml"));
+			Stage stage = new Stage();
+			stage.setTitle("로그인");
+			stage.setScene(new Scene(root));
+			stage.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
+	public void idCheck() {
+		userDAO = new UserDAO();
+		boolean check = userDAO.isIdDuplicated(idTextField.getText());
+		if (check) {
+			infoLabel.setText("이미 존재하는 아이디입니다.");
+			infoLabel.setStyle("-fx-text-fill: yellow; ");
+		} else {
+			infoLabel.setText("사용가능한 아이디입니다.");
+			infoLabel.setStyle("-fx-text-fill: green; ");
+		}
+	}
+
+	public void setStage(Stage newStage) {
+		newStage.setOnCloseRequest(event -> {
+			// 회원가입 창 닫을 때 로그인 창 다시 열기
+			showLoginWindow();
+		});
+	}
 
 }

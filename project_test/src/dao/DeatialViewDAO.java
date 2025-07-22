@@ -5,12 +5,12 @@ import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.Types;
 
-import model.EquipmentDetailViewDTO;
+import model.DetailViewDTO;
 import util.DBUtil;
 
 public class DeatialViewDAO {
-	public EquipmentDetailViewDTO getEachEquipmentDetail(String serialNum) {
-		EquipmentDetailViewDTO dto = new EquipmentDetailViewDTO();
+	public DetailViewDTO getEachEquipmentDetail(String serialNum) {
+		DetailViewDTO dto = new DetailViewDTO();
 	    String sql = "{ call get_each_equipment_info(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
 
 	    try (Connection conn = DBUtil.getConnection();

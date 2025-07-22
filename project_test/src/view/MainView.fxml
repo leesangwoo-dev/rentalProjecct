@@ -47,7 +47,7 @@
 				<!-- 각 버튼에 CSS 클래스 부여 -->
 				<Button mnemonicParsing="false" styleClass="nav-button" text="장비조회" />
 				<Button fx:id="rentalHistory" onAction="#handleRentalHistory" mnemonicParsing="false" styleClass="nav-button-inactive" text="대여내역" />
-				<Button fx:id="myInfo" onAction="#handleMyInfo" mnemonicParsing="false" styleClass="nav-button-inactive" text="내정보" />
+				<Button fx:id="myInfoButton" onAction="#handleMyInfo" mnemonicParsing="false" styleClass="nav-button-inactive" text="내정보" />
 			</children>
 		</HBox>
 	</top>
@@ -63,10 +63,10 @@
 						<Label text="Exchange : All" />
 						<HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
 							<children>
-								<ComboBox prefHeight="29.0" prefWidth="104.0" promptText="자치구" />
-								<ComboBox prefHeight="29.0" prefWidth="196.0" promptText="동 대여소" />
-								<TextField prefHeight="29.0" prefWidth="163.0" promptText="검색..." />
-								<Button mnemonicParsing="false" text="검색" />
+								<ComboBox fx:id="guComboBox" prefHeight="29.0" prefWidth="104.0" promptText="자치구" />
+								<ComboBox fx:id="officeComboBox" prefHeight="29.0" prefWidth="196.0" promptText="동 대여소" />
+								<TextField fx:id="searchTextField" prefHeight="29.0" prefWidth="163.0" promptText="검색..." />
+								<Button fx:id="searchButton" onAction="#search" mnemonicParsing="false" text="검색" />
 							</children>
 						</HBox>
 					</children>
@@ -90,15 +90,16 @@
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="                 &lt;장비 이미지&gt;" />
-            <ImageView fitHeight="267.0" fitWidth="281.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="equipmentImage" fitHeight="267.0" fitWidth="281.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@/resources/img/de6-1dd15058c1d4.PNG" />
+                  <Image url="@/resources/img/logo.PNG" />
                </image>
             </ImageView>
-            <TextArea prefHeight="303.0" prefWidth="281.0" text="&#10;장비 설명:&#10;  전기를 이용해 회전 동작을 &#10; 수행하는 다목적 공구&#10; &#10;사용 매뉴얼:&#10;  드릴 비트 장착 → 전원 연결&#10;  → 스위치 조작으로 작업 수행&#10; &#10;사용처:&#10; 목재, 금속,  콘크리트 등의&#10; 천공 및 조립 작업" />
+            <TextArea fx:id="equipmentInfo" prefHeight="303.0" prefWidth="281.0" 
+            text="장비 설명" />
             <Pane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <Button layoutX="33.0" layoutY="32.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="201.0" text="대여하기" />
+                  <Button onAction="#RentButton" layoutX="33.0" layoutY="32.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="201.0" text="대여하기" />
                </children>
             </Pane>
          </children>

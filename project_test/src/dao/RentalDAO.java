@@ -17,6 +17,7 @@ public class RentalDAO {
     // 대여내역 가져오기 (SP_GET_RENTAL_HISTORY가 RENTAL 테이블을 사용하고 OVERDUE_FEE 등을 정확히 가져와야 함)
     public List<RentalHistoryDTO> findRentalsByUserId(String userId) {
         List<RentalHistoryDTO> list = new ArrayList<>();
+        System.out.println("testtest");
         String sql = "{call SP_GET_RENTAL_HISTORY(?, ?)}"; 
 
         try (Connection conn = DBUtil.getConnection();

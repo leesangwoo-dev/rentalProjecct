@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/view/LoginView.fxml"));
 		Scene scene = new Scene(root);
 
 		primaryStage.setTitle("로그인");

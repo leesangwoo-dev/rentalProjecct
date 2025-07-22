@@ -49,7 +49,6 @@
 			</children>
 		</HBox>
 	</top>
-
 	<center>
 		<VBox spacing="10">
 			<padding>

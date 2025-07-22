@@ -1,17 +1,23 @@
 package model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class RentalOfficeDTO {
-	// 대여소 고유번호 (PK)
-	private Long officeId;
-	// 대여소 이름
-	private String officeName;
-	// 대여소 전화번호
-	private String officeNumber;
-	// 대여소 지역 (구)
-	private String officeGu;
-	// 대여소 상세 주소
-	private String officeAddress;
+	
+	private Integer officeId;
+    private String officeName;
+    private String officeNumber;
+    private String officeGu;
+    private String officeAddress;
+
+    // ComboBox에 이 객체가 표시될 때 어떤 문자열로 보일지 정의합니다.
+    @Override
+    public String toString() {
+        return this.officeName;
+    }
 }

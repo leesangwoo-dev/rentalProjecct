@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EquipmentDetailViewDTO {
+public class DetailViewDTO {
 	private String eqName;
 	private String state;
 	private Date getDate;
