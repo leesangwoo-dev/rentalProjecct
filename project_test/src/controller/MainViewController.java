@@ -118,7 +118,7 @@ public class MainViewController {
 	private void handleMyInfo(ActionEvent event) {
 		try {
 			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/my_info.fxml")); // FXML 파일명 확인!
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/myInfoView.fxml")); // FXML 파일명 확인!
 			Parent myInfoView = loader.load();
 
 			// 1. 새로운 Stage (팝업 창) 생성

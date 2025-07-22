@@ -56,26 +56,26 @@ public class UserDAO {
 	}
 
 	public boolean isLoginValid(Connection conn, String loginId, String password) {
-	    boolean isValid = false;
-	    String sql = "SELECT * FROM USERS WHERE LOGIN_ID = ? AND PASSWORD = ?";
+		boolean isValid = false;
+		String sql = "SELECT * FROM USERS WHERE LOGIN_ID = ? AND PASSWORD = ?";
 
-	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) { // pstmt만 먼저 생성
-	        pstmt.setString(1, loginId); // 첫 번째 바인딩 변수 설정
-	        pstmt.setString(2, password); // 두 번째 바인딩 변수 설정
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) { // pstmt만 먼저 생성
+			pstmt.setString(1, loginId); // 첫 번째 바인딩 변수 설정
+			pstmt.setString(2, password); // 두 번째 바인딩 변수 설정
 
-	        try (ResultSet rs = pstmt.executeQuery()) { // 바인딩 변수 설정 후 쿼리 실행
-	            if (rs.next()) {
-	                isValid = true;
-	                userPassword = rs.getString("PASSWORD");
-	                userName = rs.getString("USER_NAME");
-	                userPhoneNumber = rs.getString("PHONE_NUMBER");
-	                userGu = rs.getString("USER_GU");
-	            }
-	        } // rs가 이 블록을 벗어나면 자동으로 close() 됨
-	    } catch (Exception e) { // SQLException으로 특정하는 것이 더 좋음
-	        e.printStackTrace();
-	    }
-	    return isValid;
+			try (ResultSet rs = pstmt.executeQuery()) { // 바인딩 변수 설정 후 쿼리 실행
+				if (rs.next()) {
+					isValid = true;
+					userPassword = rs.getString("PASSWORD");
+					userName = rs.getString("USER_NAME");
+					userPhoneNumber = rs.getString("PHONE_NUMBER");
+					userGu = rs.getString("USER_GU");
+				}
+			} // rs가 이 블록을 벗어나면 자동으로 close() 됨
+		} catch (Exception e) { // SQLException으로 특정하는 것이 더 좋음
+			e.printStackTrace();
+		}
+		return isValid;
 	}
 
 	public String updateUserInfo(String loginId, String oldPassword, String newName, String newPhoneNumber,
@@ -84,7 +84,7 @@ public class UserDAO {
 
 		// try-with-resources를 사용하여 Connection과 CallableStatement를 자동으로 닫도록 변경
 		try (Connection conn = getConnection(); // Connection을 try-with-resources에 포함
-				CallableStatement cstmt = conn.prepareCall("{call UPDATE_USER_INFO(?, ?, ?, ?, ?, ?, ?)}")) {
+				CallableStatement cstmt = conn.prepareCall("{call SP_UPDATE_USER_INFO(?, ?, ?, ?, ?, ?, ?)}")) {
 
 			// IN 파라미터 설정
 			cstmt.setString(1, loginId);
