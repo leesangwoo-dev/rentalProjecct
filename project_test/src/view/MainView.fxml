@@ -47,7 +47,7 @@
 				<!-- 각 버튼에 CSS 클래스 부여 -->
 				<Button mnemonicParsing="false" styleClass="nav-button" text="장비조회" />
 				<Button fx:id="rentalHistory" onAction="#handleRentalHistory" mnemonicParsing="false" styleClass="nav-button-inactive" text="대여내역" />
-				<Button fx:id="myInfo" onAction="#handleMyInfo" mnemonicParsing="false" styleClass="nav-button-inactive" text="내정보" />
+				<Button fx:id="myInfoButton" onAction="#handleMyInfo" mnemonicParsing="false" styleClass="nav-button-inactive" text="내정보" />
 			</children>
 		</HBox>
 	</top>
@@ -63,10 +63,10 @@
 						<Label text="Exchange : All" />
 						<HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
 							<children>
-								<ComboBox prefHeight="29.0" prefWidth="104.0" promptText="자치구" />
-								<ComboBox prefHeight="29.0" prefWidth="196.0" promptText="동 대여소" />
-								<TextField prefHeight="29.0" prefWidth="163.0" promptText="검색..." />
-								<Button mnemonicParsing="false" text="검색" />
+								<ComboBox fx:id="guComboBox" prefHeight="29.0" prefWidth="104.0" promptText="자치구" />
+								<ComboBox fx:id="officeComboBox" prefHeight="29.0" prefWidth="196.0" promptText="동 대여소" />
+								<TextField fx:id="searchTextField" prefHeight="29.0" prefWidth="163.0" promptText="검색..." />
+								<Button fx:id="searchButton" onAction="#search" mnemonicParsing="false" text="검색" />
 							</children>
 						</HBox>
 					</children>
