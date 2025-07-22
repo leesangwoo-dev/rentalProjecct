@@ -109,12 +109,6 @@ public class LoginController {
 		if (userDao.isLoginValid(conn, userId, password)) {
 			// 로그인 성공
 			System.out.println("로그인 성공");
-			// 로그인 성공시 db연결 해제
-			try {
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 			return true;
 			// 다음 화면으로 전환 등
 		} else {
