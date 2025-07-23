@@ -15,15 +15,14 @@ import util.DBUtil;
 
 public class RentalDAO {
     // 대여내역 가져오기 (SP_GET_RENTAL_HISTORY가 RENTAL 테이블을 사용하고 OVERDUE_FEE 등을 정확히 가져와야 함)
-    public List<RentalHistoryDTO> findRentalsByUserId(String userId) {
+    public List<RentalHistoryDTO> findRentalsByUserId(String loginId) {
         List<RentalHistoryDTO> list = new ArrayList<>();
-        System.out.println("testtest");
         String sql = "{call SP_GET_RENTAL_HISTORY(?, ?)}"; 
 
         try (Connection conn = DBUtil.getConnection();
              CallableStatement cstmt = conn.prepareCall(sql)) {
 
-            cstmt.setString(1, userId);
+            cstmt.setString(1, loginId);
             cstmt.registerOutParameter(2, OracleTypes.CURSOR);
             cstmt.execute();
 
@@ -104,7 +103,7 @@ public class RentalDAO {
     }
     
     public boolean insertRental(RentalDTO rental) {
-        String sql = "{ call insert_rental_proc(?, ?, ?, ?) }";
+        String sql = "{ call SP_INSERT_RENTAL(?, ?, ?, ?) }";
 
         try (Connection conn = DBUtil.getConnection();
              CallableStatement cs = conn.prepareCall(sql)) {

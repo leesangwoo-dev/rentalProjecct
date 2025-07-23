@@ -27,6 +27,7 @@
 		<HBox layoutX="40" layoutY="180" spacing="10" />
 		<TextField fx:id="idTextField" layoutX="91.0" layoutY="361.0" prefWidth="200" promptText="아이디를 입력해주세요..." />
 
+
 		<!-- 비밀번호 입력 -->
 		<HBox layoutX="40" layoutY="230" spacing="10" />
 		<PasswordField fx:id="passwordTextField" layoutX="91.0" layoutY="410.0" prefWidth="200" promptText="비밀번호를 입력해주세요..." />

@@ -30,25 +30,30 @@
 
 		<!-- 아이디 입력 -->
 		<HBox layoutX="40" layoutY="180" spacing="10" />
-		<TextField fx:id="idTextField" layoutX="96.0" layoutY="248.0"
-			prefHeight="29.0" prefWidth="183.0" promptText="아이디를 입력해주세요..." />
 
-		<Button fx:id="idCheckButton"  layoutX="296.0" layoutY="248.0" mnemonicParsing="false"
-			prefHeight="29.0" prefWidth="84.0" text="중복확인" onAction="#idCheck" />
-			
+		<TextField fx:id="idTextField" layoutX="96.0"
+			layoutY="248.0" prefHeight="29.0" prefWidth="183.0"
+			promptText="아이디를 입력해주세요..." />
+
+		<Button fx:id="idCheckButton" layoutX="296.0" layoutY="248.0"
+			mnemonicParsing="false" prefHeight="29.0" prefWidth="84.0"
+			text="중복확인" onAction="#idCheckButton" />
+
 		<Label fx:id="infoLabel" layoutX="103.0" layoutY="280.0" text=""
 			textFill="YELLOW" />
 
 		<!-- 비밀번호 입력 -->
 		<HBox layoutX="40" layoutY="230" spacing="10" />
+
 		<PasswordField fx:id="passwordTextField" layoutX="96.0"
 			layoutY="314.0" prefHeight="29.0" prefWidth="183.0"
 			promptText="비밀번호를 입력해주세요..." />
 
 		<!-- 이름 입력 -->
 		<HBox layoutX="40" layoutY="180" spacing="10" />
-		<TextField fx:id="nameTextField" layoutX="97.0" layoutY="367.0"
-			prefHeight="29.0" prefWidth="183.0" promptText="이름을 입력해주세요..." />
+		<TextField fx:id="nameTextField" layoutX="97.0"
+			layoutY="367.0" prefHeight="29.0" prefWidth="183.0"
+			promptText="이름을 입력해주세요..." />
 
 
 		<!-- 전화번호 입력 -->

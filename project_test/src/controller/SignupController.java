@@ -22,6 +22,7 @@ import model.UserDTO;
 public class SignupController {
 
 	@FXML
+
 	private ChoiceBox<String> guChoiceBox;
 	@FXML
 	private TextField idTextField;
@@ -50,12 +51,11 @@ public class SignupController {
 	public void Singup(ActionEvent event) {
 		System.out.println("회원가입");
 
-		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty()
-				|| passwordTextField.getText() == null || passwordTextField.getText().trim().isEmpty()
-				|| nameTextField.getText() == null || nameTextField.getText().trim().isEmpty()
-				|| phoneNumberTextField.getText() == null || phoneNumberTextField.getText().trim().isEmpty()
-				|| guChoiceBox.getValue() == null || guChoiceBox.getValue().trim().isEmpty()
-				|| infoLabel.getText().equals("이미 존재하는 아이디입니다.")) {
+		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty() || passwordTextField.getText() == null
+				|| passwordTextField.getText().trim().isEmpty() || nameTextField.getText() == null
+				|| nameTextField.getText().trim().isEmpty() || phoneNumberTextField.getText() == null
+				|| phoneNumberTextField.getText().trim().isEmpty() || guChoiceBox.getValue() == null
+				|| guChoiceBox.getValue().trim().isEmpty() || infoLabel.getText().equals("이미 존재하는 아이디입니다.")) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("경고");
 			alert.setHeaderText(null);
@@ -88,7 +88,7 @@ public class SignupController {
 		}
 	}
 
-	public void idCheck() {
+	public void idCheckButton() {
 		userDAO = new UserDAO();
 		boolean check = userDAO.isIdDuplicated(idTextField.getText());
 		if (check) {
