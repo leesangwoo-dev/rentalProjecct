@@ -161,7 +161,7 @@ public class AdminViewController {
 		} else {
 			officeComboBox.setValue(null); // 대여소가 없는 경우 선택 해제
 		}
-		loadTableData();
+		loadTableData(searchTextField.getText().trim());
 	}
 
 	// 4. 이벤트 핸들러의 타입도 JavaFX 것으로 변경
@@ -270,7 +270,7 @@ public class AdminViewController {
 			boolean success = dao.updateState(selected.getSerialNum(), newState);
 			if (success) {
 				showAlert(AlertType.INFORMATION, "알림", "상태가 [" + newState + "](으)로 변경되었습니다.");
-				loadTableData(); // 테이블 갱신
+				loadTableData(searchTextField.getText().trim()); // 테이블 갱신
 			} else {
 				showAlert(AlertType.ERROR, "오류", "상태 변경 실패");
 			}
@@ -357,14 +357,14 @@ public class AdminViewController {
 			officeId = selectedOfficeDTO.getOfficeId();
 		}
 		// 만약 '전체'를 선택했을 때 officeId가 null이 되게 하려면 위의 조건문만으로 충분합니다.
-		loadTableData();
+		loadTableData(searchText);
 	}
 
-	public void loadTableData() {
+	public void loadTableData(String searchText) {
 		String selectedGu = guComboBox.getValue();
-
-		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentByState(null);
-
+		String selectedOffice = officeComboBox.getValue().getOfficeName();
+		
+		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentList(selectedGu, selectedOffice, searchText);
 		// 4. 가져온 데이터를 TableView에 설정합니다.
 		equipmentTable.getItems().setAll(equipmentData);
 
