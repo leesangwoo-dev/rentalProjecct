@@ -9,13 +9,16 @@ import java.time.LocalDate;
 import dao.DeatilViewDAO;
 import dao.RentalDAO;
 import dao.UserDAO;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import model.DetailViewDTO;
 import model.RentalDTO;
 
@@ -125,7 +128,7 @@ public class DetailViewController {
 
 	// 대여하기
 	@FXML
-	private void handleRent() {
+	private void handleRent(ActionEvent event) {
 		// 유효성 검사
 		if (rentDatePicker.getValue() == null || returnDatePicker.getValue() == null) {
 			showAlert(Alert.AlertType.WARNING, "날짜를 모두 선택해주세요.");
@@ -144,11 +147,17 @@ public class DetailViewController {
 		rental.setReturnStatus("대여중");
 		rental.setOverdueFee(0L);
 		rental.setActualReturnDate(null); // 초기에는 null
-
-		boolean success = rentalDAO.insertRental(rental);
+		
+		boolean success = false;
+		if(stateLabel.getText().equals("사용가능")) {
+			success = rentalDAO.insertRental(rental);
+		}
 
 		if (success) {
 			showAlert(Alert.AlertType.INFORMATION, "대여가 완료되었습니다.");
+			// 대여가 완료되면 대여하기 화면이 종료
+			Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			currentStage.close();
 		} else {
 			showAlert(Alert.AlertType.ERROR, "대여에 실패했습니다.");
 		}
