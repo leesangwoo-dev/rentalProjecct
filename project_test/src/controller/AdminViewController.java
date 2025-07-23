@@ -2,7 +2,9 @@ package controller;
 
 import static util.Session.userGu;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,7 +74,7 @@ public class AdminViewController {
 		this.equipmentDAO = new EquipmentDAO();
 		this.rentalOfficeDAO = new RentalOfficeDAO();
 	}
-	
+
 	@FXML
 	public void initialize() {
 		guComboBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
@@ -246,7 +248,7 @@ public class AdminViewController {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 
 	// 장비 상태 변경
@@ -284,7 +286,16 @@ public class AdminViewController {
 			if (selected != null) {
 				// 단일 클릭: 오른쪽 이미지와 설명 표시
 				equipmentInfo.setText(selected.getEqInfo());
-				equipmentImage.setImage(new Image(selected.getImg()));
+				System.out.println(selected.getImg());
+				String dbPath = selected.getImg();
+				
+				File imgFile = new File(dbPath);
+				URI uri = imgFile.toURI();
+
+				System.out.println("파일 존재?: " + imgFile.exists());
+				System.out.println("URI: " + uri.toString());
+
+				equipmentImage.setImage(new Image(uri.toASCIIString()));
 			}
 
 			// 더블 클릭: 상세 보기 띄우기
@@ -336,7 +347,7 @@ public class AdminViewController {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@FXML
 	private void search() {
 		System.out.println("검색 실행!");
@@ -363,7 +374,7 @@ public class AdminViewController {
 	public void loadTableData(String searchText) {
 		String selectedGu = guComboBox.getValue();
 		String selectedOffice = officeComboBox.getValue().getOfficeName();
-		
+
 		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentList(selectedGu, selectedOffice, searchText);
 		// 4. 가져온 데이터를 TableView에 설정합니다.
 		equipmentTable.getItems().setAll(equipmentData);
@@ -372,6 +383,18 @@ public class AdminViewController {
 		System.out.println("조회된 장비 수: " + equipmentData.size() + " (구: " + selectedGu + ")");
 	}
 
+	public void loadTableData() {
+		String selectedGu = guComboBox.getValue();
+		String selectedOffice = officeComboBox.getValue().getOfficeName();
+
+		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentList(selectedGu, selectedOffice,
+				searchTextField.getText().trim());
+		// 4. 가져온 데이터를 TableView에 설정합니다.
+		equipmentTable.getItems().setAll(equipmentData);
+
+		// 5. 로그 출력 및 결과 알림 (선택 사항)
+		System.out.println("조회된 장비 수: " + equipmentData.size() + " (구: " + selectedGu + ")");
+	}
 
 	private void showAlert(AlertType type, String title, String message) {
 		Alert alert = new Alert(type);

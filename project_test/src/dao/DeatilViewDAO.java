@@ -8,7 +8,7 @@ import java.sql.Types;
 import model.DetailViewDTO;
 import util.DBUtil;
 
-public class DeatialViewDAO {
+public class DeatilViewDAO {
 	public DetailViewDTO getEachEquipmentDetail(String serialNum) {
 		DetailViewDTO dto = new DetailViewDTO();
 	    String sql = "{ call SP_GET_EACH_EQUIPMENT_INFO(?, ?, ?, ?, ?, ?, ?, ?, ?) }";

@@ -2,7 +2,9 @@ package controller;
 
 import static util.Session.userGu;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -253,7 +255,17 @@ public class MainViewController {
 			if (selected != null) {
 				// 단일 클릭: 오른쪽 이미지와 설명 표시
 				equipmentInfo.setText(selected.getEqInfo());
-				equipmentImage.setImage(new Image(selected.getImg()));
+				
+				String dbPath = selected.getImg();
+				
+				File imgFile = new File(dbPath);
+				URI uri = imgFile.toURI();
+
+				System.out.println("파일 존재?: " + imgFile.exists());
+				System.out.println("URI: " + uri.toString());
+
+				equipmentImage.setImage(new Image(uri.toASCIIString()));
+
 			}
 
 			// 더블 클릭: 상세 보기 띄우기

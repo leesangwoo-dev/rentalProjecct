@@ -35,5 +35,94 @@ public class RentalOfficeDAO {
 
 		return offices;
 	}
+	
+	public List<String> getAllOfficeNames() {
+	    List<String> officeList = new ArrayList<>();
+	    String sql = "SELECT office_name FROM rental_office ORDER BY office_name";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql);
+	         ResultSet rs = pstmt.executeQuery()) {
+
+	        while (rs.next()) {
+	            officeList.add(rs.getString("office_name"));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return officeList;
+	}
+	
+	public List<String> getDistinctGuList() {
+	    List<String> guList = new ArrayList<>();
+	    String sql = "SELECT DISTINCT office_gu FROM rental_office ORDER BY office_gu";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql);
+	         ResultSet rs = pstmt.executeQuery()) {
+
+	        while (rs.next()) {
+	            guList.add(rs.getString("office_gu"));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return guList;
+	}
+	
+	public List<String> getOfficeNamesByGu(String officeGu) {
+	    List<String> nameList = new ArrayList<>();
+	    String sql = "SELECT office_name FROM rental_office WHERE office_gu = ? ORDER BY office_name";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+	        pstmt.setString(1, officeGu);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                nameList.add(rs.getString("office_name"));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return nameList;
+	}
+	
+	public String getPhoneByOfficeName(String officeName) {
+	    String phone = "";
+	    String sql = "SELECT office_number FROM rental_office WHERE office_name = ?";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+	        pstmt.setString(1, officeName);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                phone = rs.getString("office_number");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return phone;
+	}
+	
+	public int getOfficeIdByName(String name) {
+	    String sql = "SELECT office_id FROM rental_office WHERE office_name = ?";
+	    try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, name);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return -1;
+	}
+
+
 
 }

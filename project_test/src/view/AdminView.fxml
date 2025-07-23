@@ -80,25 +80,13 @@
 			<children>
 				<HBox alignment="CENTER_LEFT" spacing="10.0">
 					<children>
-						<Label text="Order Date : 25-SEP-2024" />
-						<Label text="Exchange : All" />
-						<HBox alignment="CENTER_LEFT" spacing="10.0">
+						<Label fx:id="todayLabel" text="Order Date : 25-SEP-2024" />
+						<HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
 							<children>
-								<Label text="Order Date : 25-SEP-2024" />
-								<Label text="Exchange : All" />
-								<HBox alignment="CENTER_RIGHT" spacing="10.0"
-									HBox.hgrow="ALWAYS">
-									<children>
-										<ComboBox fx:id="guComboBox" prefHeight="29.0"
-											prefWidth="104.0" promptText="자치구" />
-										<ComboBox fx:id="officeComboBox" prefHeight="29.0"
-											prefWidth="196.0" promptText="동 대여소" />
-										<TextField fx:id="searchTextField" prefHeight="29.0"
-											prefWidth="163.0" promptText="검색..." />
-										<Button fx:id="searchButton" 
-											mnemonicParsing="false" text="검색" />
-									</children>
-								</HBox>
+								<ComboBox fx:id="guComboBox" prefHeight="29.0" prefWidth="104.0" promptText="자치구" />
+								<ComboBox fx:id="officeComboBox" prefHeight="29.0" prefWidth="196.0" promptText="동 대여소" />
+								<TextField fx:id="searchTextField" prefHeight="29.0" prefWidth="163.0" promptText="장비명을 검색하세요." />
+								<Button fx:id="searchButton" onAction="#search" mnemonicParsing="false" text="검색" />
 							</children>
 						</HBox>
 					</children>

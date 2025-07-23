@@ -2,9 +2,11 @@ package controller;
 
 import static util.Session.userLoginId;
 
+import java.io.File;
+import java.net.URI;
 import java.time.LocalDate;
 
-import dao.DeatialViewDAO;
+import dao.DeatilViewDAO;
 import dao.RentalDAO;
 import dao.UserDAO;
 import javafx.fxml.FXML;
@@ -44,7 +46,7 @@ public class DetailViewController {
 	@FXML
 	private DatePicker returnDatePicker; // 반납일
 
-	private final DeatialViewDAO dao = new DeatialViewDAO();
+	private final DeatilViewDAO dao = new DeatilViewDAO();
 	private final RentalDAO rentalDAO = new RentalDAO();
 	private final UserDAO userDAO = new UserDAO();
 
@@ -103,8 +105,15 @@ public class DetailViewController {
 		// 이미지 처리
 		try {
 			if (dto.getImgPath() != null) {
-				toolImageView.setImage(new Image(dto.getImgPath()));
-				System.out.println(dto.getImgPath());
+				String dbPath = dto.getImgPath();
+				
+				File imgFile = new File(dbPath);
+				URI uri = imgFile.toURI();
+
+				System.out.println("파일 존재?: " + imgFile.exists());
+				System.out.println("URI: " + uri.toString());
+
+				toolImageView.setImage(new Image(uri.toASCIIString()));
 			} else {
 				toolImageView.setImage(null);
 			}
