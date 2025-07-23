@@ -140,7 +140,7 @@
 							mnemonicParsing="false" onAction="#AddEqButton" prefHeight="64.0"
 							prefWidth="117.0" text="장비 추가" />
 						<Button layoutX="162.0" layoutY="24.0"
-							mnemonicParsing="false" onAction="#changeStatusButton"
+							mnemonicParsing="false" onAction="#EditEqButton"
 							prefHeight="64.0" prefWidth="119.0" text="상태 변경" />
 
 					</children>

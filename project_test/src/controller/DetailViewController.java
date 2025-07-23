@@ -106,7 +106,7 @@ public class DetailViewController {
 		try {
 			if (dto.getImgPath() != null) {
 				String dbPath = dto.getImgPath();
-				
+
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
 
