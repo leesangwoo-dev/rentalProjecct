@@ -3,6 +3,7 @@ package controller;
 import static util.Session.userGu;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import dao.EquipmentDAO;
@@ -17,6 +18,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -34,6 +36,8 @@ import model.RentalOfficeDTO;
 
 // 메인 페이지(장비 조회)_사용자 컨트롤러
 public class MainViewController {
+	@FXML
+	private Label todayLabel;
 	@FXML
 	private ComboBox<String> guComboBox;
 	@FXML
@@ -73,6 +77,8 @@ public class MainViewController {
 
 	@FXML
 	public void initialize() {
+		LocalDate now = LocalDate.now();
+		todayLabel.setText("Today : " + now.toString());
 		guComboBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
 		guComboBox.setValue(userGu);
 		loadOfficesByGu(userGu);

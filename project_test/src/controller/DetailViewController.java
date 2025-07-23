@@ -143,7 +143,7 @@ public class DetailViewController {
 		} else {
 			showAlert(Alert.AlertType.ERROR, "대여에 실패했습니다.");
 		}
-		//mainController.loadTableData();
+		mainController.loadTableData("");
 	}
 
 	private void showAlert(Alert.AlertType type, String message) {
