@@ -11,48 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.EquipmentViewDTO;
-import oracle.jdbc.OracleTypes; // Oracle JDBC 드라이버에 포함된 클래스;
+import oracle.jdbc.OracleTypes;
+import util.DBUtil; // Oracle JDBC 드라이버에 포함된 클래스;
 
 public class EquipmentDAO {
-
-	/**
-	 * 장비 목록을 DB에서 조회하는 메서드
-	 * 
-	 * @return EquipmentViewDto 객체 리스트
-	 */
-	public List<EquipmentViewDTO> getEquipmentList(String gu) {
-		List<EquipmentViewDTO> equipmentList = new ArrayList<>();
-		String sql = "{call SP_GET_EQUIPMENT_VIEW(?, ?, ?)}";
-
-		try (Connection conn = getConnection(); CallableStatement cstmt = conn.prepareCall(sql)) {
-			cstmt.setNull(1, java.sql.Types.VARCHAR);
-			cstmt.setString(2, gu);
-			// 2. 출력 파라미터 설정
-			cstmt.registerOutParameter(3, OracleTypes.CURSOR);
-
-			// 3. 프로시저 실행 및 결과 처리
-			cstmt.execute();
-			try (ResultSet rs = (ResultSet) cstmt.getObject(3)) {
-				while (rs.next()) {
-					EquipmentViewDTO dto = new EquipmentViewDTO();
-					dto.setOfficeName(rs.getString("OFFICE_NAME"));
-					dto.setEqName(rs.getString("EQ_NAME"));
-					dto.setSerialNum(rs.getString("SERIAL_NUM"));
-					dto.setRentalFee(rs.getInt("RENTAL_FEE"));
-					dto.setState(rs.getString("STATE"));
-					dto.setImg(rs.getString("IMG"));
-					dto.setEqInfo(rs.getString("EQ_INFO"));
-					dto.setOfficeGu(rs.getString("OFFICE_GU"));
-					equipmentList.add(dto);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return equipmentList;
-	}
-<<<<<<< HEAD
-	
 	/**
      * 특정 상태의 장비 목록을 조회합니다.
      * 이 메서드는 SP_GET_EQUIPMENT_VIEW 프로시저를 호출하며,
@@ -114,7 +76,6 @@ public class EquipmentDAO {
         }
         return equipmentList;
     }
-=======
 
 	// 장비 상태변경
 	public boolean updateState(String serialNum, String newState) {
@@ -131,6 +92,4 @@ public class EquipmentDAO {
 			return false;
 		}
 	}
-
->>>>>>> refs/heads/HYUNSEOK
 }

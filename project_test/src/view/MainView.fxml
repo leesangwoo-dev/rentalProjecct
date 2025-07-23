@@ -46,13 +46,8 @@
 				<HBox HBox.hgrow="ALWAYS" />
 				<!-- 각 버튼에 CSS 클래스 부여 -->
 				<Button mnemonicParsing="false" styleClass="nav-button" text="장비조회" />
-<<<<<<< HEAD
 				<Button fx:id="rentalHistory" onAction="#handleRentalHistory" mnemonicParsing="false" styleClass="nav-button-inactive" text="대여내역" />
 				<Button fx:id="myInfoButton" onAction="#handleMyInfo" mnemonicParsing="false" styleClass="nav-button-inactive" text="내정보" />
-=======
-				<Button fx:id="rentalHistory" mnemonicParsing="false" onAction="#handleRentalHistory" styleClass="nav-button-inactive" text="대여내역" />
-				<Button fx:id="myInfo" mnemonicParsing="false" onAction="#handleMyInfo" styleClass="nav-button-inactive" text="내정보" />
->>>>>>> refs/heads/HYUNSEOK
 			</children>
 		</HBox>
 	</top>

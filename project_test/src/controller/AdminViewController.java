@@ -1,10 +1,13 @@
 package controller;
 
+import static util.Session.userGu;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import dao.EquipmentDAO;
+import dao.RentalOfficeDAO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,10 +18,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -26,9 +32,18 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.EquipmentViewDTO; // 수정한 DTO를 임포트
+import model.RentalOfficeDTO;
 
 // 메인 페이지(장비 조회)_사용자 컨트롤러
 public class AdminViewController {
+	@FXML
+	private ComboBox<String> guComboBox;
+	@FXML
+	private ComboBox<RentalOfficeDTO> officeComboBox;
+	@FXML
+	private TextField searchTextField;
+	@FXML
+	private Button searchButton;
 	@FXML
 	private TableView<EquipmentViewDTO> equipmentTable;
 	@FXML
@@ -50,10 +65,43 @@ public class AdminViewController {
 	@FXML
 	private Button rentalHistory;
 
+	private EquipmentDAO equipmentDAO; // EquipmentDAO 인스턴스
+	private RentalOfficeDAO rentalOfficeDAO; // RentalOfficeDAO 인스턴스
+
+	public AdminViewController() {
+		this.equipmentDAO = new EquipmentDAO();
+		this.rentalOfficeDAO = new RentalOfficeDAO();
+	}
+	
 	@FXML
 	public void initialize() {
+		guComboBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
+		guComboBox.setValue(userGu);
+		guComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal != null && !newVal.equals(oldVal)) {
+				System.out.println("구 콤보박스 변경: " + oldVal + " -> " + newVal);
+				loadOfficesByGu(newVal);
+				search();
+			} else if (newVal == null) {
+				officeComboBox.getItems().clear();
+				officeComboBox.setValue(null);
+				search();
+			}
+		});
+
+		String initialGu;
+		if (userGu != null && !userGu.trim().isEmpty() && guComboBox.getItems().contains(userGu)) {
+			initialGu = userGu;
+			System.out.println("사용자 기본 '구': " + userGu + "로 설정됨.");
+		} else {
+			initialGu = "유성구"; // 사용자 기본 설정이 없거나 유효하지 않으면 "유성구"로 초기 설정
+			System.out.println("사용자 기본 '구' 정보가 없거나 유효하지 않아 '유성구'로 설정됨.");
+		}
+
+		guComboBox.setValue(initialGu); // guComboBox의 초기값 설정 (리스너가 여기서 트리거될 수 있음)
+		loadOfficesByGu(initialGu); // 초기 '구'에 해당하는 대여소 목록 로드
+
 		setupTableColumns();
-		loadTableData();
 		tableClickEvent();
 		imgClickEvent();
 	}
@@ -62,11 +110,11 @@ public class AdminViewController {
 	private void setupTableColumns() {
 		// 각 열과 EquipmentViewDTO의 프로퍼티를 연결
 		// 열이 어떤 데이터를 보여줄지 결정
-		rentalOfficeCol.setCellValueFactory(cellData -> cellData.getValue().officeNameProperty());
-		nameCol.setCellValueFactory(cellData -> cellData.getValue().eqNameProperty());
-		costCol.setCellValueFactory(cellData -> cellData.getValue().rentalFeeProperty());
-		statusCol.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
-		SerialNumCol.setCellValueFactory(cellData -> cellData.getValue().serialNumProperty());
+		rentalOfficeCol.setCellValueFactory(new PropertyValueFactory<>("officeName"));
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("eqName"));
+		SerialNumCol.setCellValueFactory(new PropertyValueFactory<>("serialNum"));
+		costCol.setCellValueFactory(new PropertyValueFactory<>("rentalFee")); // rentalFee 필드명
+		statusCol.setCellValueFactory(new PropertyValueFactory<>("state")); // state 필드명
 
 		// Status에 따른 css 적용(색상이나 폰트 등)
 		statusCol.setCellFactory(col -> new TableCell<EquipmentViewDTO, String>() {
@@ -94,15 +142,26 @@ public class AdminViewController {
 		});
 	}
 
-	public void loadTableData() {
-		EquipmentDAO dao = new EquipmentDAO();
-		// DB 프로시저에 "대여가능" 상태를 전달하여 데이터 조회
-		List<EquipmentViewDTO> equipmentData = dao.findEquipmentByState();
+	private void loadOfficesByGu(String selectedGu) {
+		officeComboBox.setValue(null); // 현재 선택된 값도 초기화
 
-		// 가져온 데이터를 TableView에 설정
-		equipmentTable.getItems().setAll(equipmentData);
-		// 로그용
-		System.out.println("조회된 장비 수: " + equipmentData.size());
+		// RentalOfficeDAO를 사용하여 DB에서 대여소 목록 가져오기
+		List<RentalOfficeDTO> offices = rentalOfficeDAO.getOfficesByGu(selectedGu);
+
+		// '전체' 옵션 추가 (선택 사항: ID가 null인 RentalOfficeDTO 객체)
+		RentalOfficeDTO allOption = new RentalOfficeDTO(null, "전체", null, null, null); // ID는 null, 이름은 "전체"
+		officeComboBox.getItems().add(allOption);
+
+		// 콤보박스에 항목 추가
+		officeComboBox.getItems().addAll(offices);
+
+		// 기본값 설정: '전체' 또는 첫 번째 실제 대여소를 기본으로
+		if (!offices.isEmpty()) {
+			officeComboBox.setValue(allOption); // '전체'를 기본으로 선택
+		} else {
+			officeComboBox.setValue(null); // 대여소가 없는 경우 선택 해제
+		}
+		loadTableData();
 	}
 
 	// 4. 이벤트 핸들러의 타입도 JavaFX 것으로 변경
@@ -195,7 +254,7 @@ public class AdminViewController {
 	private void changeStatusButton() {
 		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
 		if (selected == null) {
-			showAlert(AlertType.WARNING, "장비를 선택하세요.");
+			showAlert(AlertType.WARNING, "경고", "장비를 선택하세요.");
 			return;
 		}
 
@@ -210,10 +269,10 @@ public class AdminViewController {
 			EquipmentDAO dao = new EquipmentDAO();
 			boolean success = dao.updateState(selected.getSerialNum(), newState);
 			if (success) {
-				showAlert(AlertType.INFORMATION, "상태가 [" + newState + "](으)로 변경되었습니다.");
+				showAlert(AlertType.INFORMATION, "알림", "상태가 [" + newState + "](으)로 변경되었습니다.");
 				loadTableData(); // 테이블 갱신
 			} else {
-				showAlert(AlertType.ERROR, "상태 변경 실패");
+				showAlert(AlertType.ERROR, "오류", "상태 변경 실패");
 			}
 		});
 	}
@@ -277,9 +336,47 @@ public class AdminViewController {
 			e.printStackTrace();
 		}
 	}
+	
+	@FXML
+	private void search() {
+		System.out.println("검색 실행!");
+		String searchText = searchTextField.getText().trim(); // 검색 필드 텍스트
+		String selectedGu = guComboBox.getValue(); // 선택된 '구'
+		RentalOfficeDTO selectedOfficeDTO = officeComboBox.getValue(); // 선택된 '동 대여소' DTO
 
-	public void showAlert(Alert.AlertType type, String message) {
+		// 입력값 유효성 검사
+		if (selectedGu == null || selectedGu.isEmpty()) {
+			showAlert(AlertType.WARNING, "검색 오류", "'구'를 선택해주세요.");
+			equipmentTable.getItems().clear();
+			return;
+		}
+
+		Integer officeId = null;
+		// '동 대여소'가 선택되었고, '전체' 옵션이 아니라면 officeId 설정
+		if (selectedOfficeDTO != null && selectedOfficeDTO.getOfficeId() != null) {
+			officeId = selectedOfficeDTO.getOfficeId();
+		}
+		// 만약 '전체'를 선택했을 때 officeId가 null이 되게 하려면 위의 조건문만으로 충분합니다.
+		loadTableData();
+	}
+
+	public void loadTableData() {
+		String selectedGu = guComboBox.getValue();
+
+		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentByState(null);
+
+		// 4. 가져온 데이터를 TableView에 설정합니다.
+		equipmentTable.getItems().setAll(equipmentData);
+
+		// 5. 로그 출력 및 결과 알림 (선택 사항)
+		System.out.println("조회된 장비 수: " + equipmentData.size() + " (구: " + selectedGu + ")");
+	}
+
+
+	private void showAlert(AlertType type, String title, String message) {
 		Alert alert = new Alert(type);
+		alert.setTitle(title);
+		alert.setHeaderText(null);
 		alert.setContentText(message);
 		alert.showAndWait();
 	}

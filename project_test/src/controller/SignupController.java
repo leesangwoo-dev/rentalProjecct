@@ -22,7 +22,7 @@ import model.UserDTO;
 public class SignupController {
 
 	@FXML
-<<<<<<< HEAD
+
 	private ChoiceBox<String> guChoiceBox;
 	@FXML
 	private TextField idTextField;
@@ -38,35 +38,12 @@ public class SignupController {
 	private Button idCheckButton;
 	@FXML
 	private Button signupButton;
-=======
-	private ChoiceBox<String> RegionChoiceBox;
-	@FXML
-	private TextField IdTextField;
-	@FXML
-	private PasswordField PwTextField;
-	@FXML
-	private TextField NameTextField;
-	@FXML
-	private TextField PhoneTextField;
-	@FXML
-	private Label InfoLabel;
-	@FXML
-	private Button IdCheckButton;
-	@FXML
-	private Button SignupButton;
->>>>>>> refs/heads/HYUNSEOK
 
 	@FXML
 	public void initialize() {
-<<<<<<< HEAD
 		guChoiceBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
 		guChoiceBox.setValue("유성구"); // 기본 값
 		Platform.runLater(() -> signupButton.requestFocus());
-=======
-		RegionChoiceBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
-		RegionChoiceBox.setValue("유성구"); // 기본 값
-		Platform.runLater(() -> SignupButton.requestFocus());
->>>>>>> refs/heads/HYUNSEOK
 	}
 
 	UserDAO userDAO = null;
@@ -74,20 +51,11 @@ public class SignupController {
 	public void Singup(ActionEvent event) {
 		System.out.println("회원가입");
 
-<<<<<<< HEAD
-		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty()
-				|| passwordTextField.getText() == null || passwordTextField.getText().trim().isEmpty()
-				|| nameTextField.getText() == null || nameTextField.getText().trim().isEmpty()
-				|| phoneNumberTextField.getText() == null || phoneNumberTextField.getText().trim().isEmpty()
-				|| guChoiceBox.getValue() == null || guChoiceBox.getValue().trim().isEmpty()
-				|| infoLabel.getText().equals("이미 존재하는 아이디입니다.")) {
-=======
-		if (IdTextField.getText() == null || IdTextField.getText().trim().isEmpty() || PwTextField.getText() == null
-				|| PwTextField.getText().trim().isEmpty() || NameTextField.getText() == null
-				|| NameTextField.getText().trim().isEmpty() || PhoneTextField.getText() == null
-				|| PhoneTextField.getText().trim().isEmpty() || RegionChoiceBox.getValue() == null
-				|| RegionChoiceBox.getValue().trim().isEmpty() || InfoLabel.getText().equals("이미 존재하는 아이디입니다.")) {
->>>>>>> refs/heads/HYUNSEOK
+		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty() || passwordTextField.getText() == null
+				|| passwordTextField.getText().trim().isEmpty() || nameTextField.getText() == null
+				|| nameTextField.getText().trim().isEmpty() || phoneNumberTextField.getText() == null
+				|| phoneNumberTextField.getText().trim().isEmpty() || guChoiceBox.getValue() == null
+				|| guChoiceBox.getValue().trim().isEmpty() || infoLabel.getText().equals("이미 존재하는 아이디입니다.")) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("경고");
 			alert.setHeaderText(null);
@@ -97,13 +65,8 @@ public class SignupController {
 			userDAO = new UserDAO();
 
 			// DTO 생성
-<<<<<<< HEAD
 			UserDTO newUser = new UserDTO(idTextField.getText(), passwordTextField.getText(), nameTextField.getText(),
 					phoneNumberTextField.getText(), guChoiceBox.getValue());
-=======
-			UserDTO newUser = new UserDTO(IdTextField.getText(), PwTextField.getText(), NameTextField.getText(),
-					PhoneTextField.getText(), RegionChoiceBox.getValue());
->>>>>>> refs/heads/HYUNSEOK
 
 			userDAO.addUser(newUser);
 
@@ -125,8 +88,7 @@ public class SignupController {
 		}
 	}
 
-<<<<<<< HEAD
-	public void idCheck() {
+	public void idCheckButton() {
 		userDAO = new UserDAO();
 		boolean check = userDAO.isIdDuplicated(idTextField.getText());
 		if (check) {
@@ -135,17 +97,6 @@ public class SignupController {
 		} else {
 			infoLabel.setText("사용가능한 아이디입니다.");
 			infoLabel.setStyle("-fx-text-fill: green; ");
-=======
-	public void IdCheckButton() {
-		userDAO = new UserDAO();
-		boolean check = userDAO.isIdDuplicated(IdTextField.getText());
-		if (check) {
-			InfoLabel.setText("이미 존재하는 아이디입니다.");
-			InfoLabel.setStyle("-fx-text-fill: yellow; ");
-		} else {
-			InfoLabel.setText("사용가능한 아이디입니다.");
-			InfoLabel.setStyle("-fx-text-fill: green; ");
->>>>>>> refs/heads/HYUNSEOK
 		}
 	}
 

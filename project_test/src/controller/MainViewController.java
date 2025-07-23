@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import dao.EquipmentDAO;
-<<<<<<< HEAD
 import dao.RentalOfficeDAO;
-=======
->>>>>>> refs/heads/HYUNSEOK
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -66,7 +63,6 @@ public class MainViewController {
 	@FXML
 	private Button rentalHistory;
 
-<<<<<<< HEAD
 	private EquipmentDAO equipmentDAO; // EquipmentDAO 인스턴스
 	private RentalOfficeDAO rentalOfficeDAO; // RentalOfficeDAO 인스턴스
 
@@ -75,8 +71,6 @@ public class MainViewController {
 		this.rentalOfficeDAO = new RentalOfficeDAO();
 	}
 
-=======
->>>>>>> refs/heads/HYUNSEOK
 	@FXML
 	public void initialize() {
 		guComboBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
@@ -169,19 +163,11 @@ public class MainViewController {
 	private void setupTableColumns() {
 		// 각 열과 EquipmentViewDTO의 프로퍼티를 연결
 		// 열이 어떤 데이터를 보여줄지 결정
-<<<<<<< HEAD
 		rentalOfficeCol.setCellValueFactory(new PropertyValueFactory<>("officeName"));
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("eqName"));
 		SerialNumCol.setCellValueFactory(new PropertyValueFactory<>("serialNum"));
 		costCol.setCellValueFactory(new PropertyValueFactory<>("rentalFee")); // rentalFee 필드명
 		statusCol.setCellValueFactory(new PropertyValueFactory<>("state")); // state 필드명
-=======
-		rentalOfficeCol.setCellValueFactory(cellData -> cellData.getValue().officeNameProperty());
-		nameCol.setCellValueFactory(cellData -> cellData.getValue().eqNameProperty());
-		costCol.setCellValueFactory(cellData -> cellData.getValue().rentalFeeProperty());
-		statusCol.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
-		SerialNumCol.setCellValueFactory(cellData -> cellData.getValue().serialNumProperty());
->>>>>>> refs/heads/HYUNSEOK
 
 		// Status에 따른 css 적용(색상이나 폰트 등)
 		statusCol.setCellFactory(col -> new TableCell<EquipmentViewDTO, String>() {
@@ -212,20 +198,13 @@ public class MainViewController {
 	public void loadTableData() {
 		String selectedGu = guComboBox.getValue();
 
-<<<<<<< HEAD
-		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentList(selectedGu);
+		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentByState(null);
 
 		// 4. 가져온 데이터를 TableView에 설정합니다.
 		equipmentTable.getItems().setAll(equipmentData);
 
 		// 5. 로그 출력 및 결과 알림 (선택 사항)
 		System.out.println("조회된 장비 수: " + equipmentData.size() + " (구: " + selectedGu + ")");
-=======
-		// 가져온 데이터를 TableView에 설정
-		equipmentTable.getItems().setAll(equipmentData);
-		// 로그용
-		System.out.println("조회된 장비 수: " + equipmentData.size());
->>>>>>> refs/heads/HYUNSEOK
 	}
 
 	@FXML
@@ -243,11 +222,8 @@ public class MainViewController {
 	private void handleMyInfo(ActionEvent event) {
 		try {
 			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
-<<<<<<< HEAD
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/myInfoView.fxml")); // FXML 파일명 확인!
-=======
+
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
->>>>>>> refs/heads/HYUNSEOK
 			Parent myInfoView = loader.load();
 
 			// 1. 새로운 Stage (팝업 창) 생성
