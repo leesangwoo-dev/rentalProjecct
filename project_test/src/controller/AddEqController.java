@@ -145,7 +145,7 @@ public class AddEqController {
 
 		RentalOfficeDAO officeDAO = new RentalOfficeDAO();
 		EquipmentDAO eqDAO = new EquipmentDAO();
-		
+
 		int officeId = officeDAO.getOfficeIdByName(officeName); // office_name → office_id
 		int eqNum = eqDAO.insertEquipmentAndGetId(eqName, eqInfo, unitPrice, rentalFee);
 
@@ -158,21 +158,22 @@ public class AddEqController {
 			System.out.println("장비 등록 실패");
 		}
 	}
-	
+
 	public String saveImageToUploads(File originalFile) {
-	    if (originalFile == null) return null;
+		if (originalFile == null)
+			return null;
 
-	    String fileName = System.currentTimeMillis() + "_" + originalFile.getName();
-	    Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "img", "equipment");
-	    Path targetPath = uploadDir.resolve(fileName);
+		String fileName = System.currentTimeMillis() + "_" + originalFile.getName();
+		Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "img", "equipment");
+		Path targetPath = uploadDir.resolve(fileName);
 
-	    try {
-	        Files.createDirectories(uploadDir);
-	        Files.copy(originalFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-	        return "uploads/img/equipment/" + fileName; // DB에 저장
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return null;
-	    }
+		try {
+			Files.createDirectories(uploadDir);
+			Files.copy(originalFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+			return "uploads/img/equipment/" + fileName; // DB에 저장
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

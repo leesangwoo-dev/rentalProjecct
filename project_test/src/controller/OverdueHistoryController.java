@@ -27,10 +27,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.OverdueHistoryDTO;
-import model.RentalHistoryDTO;
 
 public class OverdueHistoryController implements Initializable {
 
@@ -284,34 +282,34 @@ public class OverdueHistoryController implements Initializable {
 	}
 
 	// 대여정보 nav
-		@FXML
-		private void handleAdminRentalList(ActionEvent event) {
-			try {
-				Parent adminRnetalView = FXMLLoader.load(getClass().getResource("/view/AdminRentalHistoryView.fxml"));
-				Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				stage.setScene(new Scene(adminRnetalView));
-				stage.setTitle("전체 대여내역 조회");
-				stage.show();
-			} catch (IOException e) {
-				e.printStackTrace();
-				showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
-			}
+	@FXML
+	private void handleAdminRentalList(ActionEvent event) {
+		try {
+			Parent adminRnetalView = FXMLLoader.load(getClass().getResource("/view/AdminRentalHistoryView.fxml"));
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.setScene(new Scene(adminRnetalView));
+			stage.setTitle("전체 대여내역 조회");
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+			showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
 		}
-		
-		// 연체정보 nav
-		@FXML
-		private void handleOverdueHistory(ActionEvent event) {
-			try {
-				Parent adminRnetalView = FXMLLoader.load(getClass().getResource("/view/OverdueHistoryView.fxml"));
-				Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				stage.setScene(new Scene(adminRnetalView));
-				stage.setTitle("전체 대여내역 조회");
-				stage.show();
-			} catch (IOException e) {
-				e.printStackTrace();
-				showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
-			}
+	}
+
+	// 연체정보 nav
+	@FXML
+	private void handleOverdueHistory(ActionEvent event) {
+		try {
+			Parent adminRnetalView = FXMLLoader.load(getClass().getResource("/view/OverdueHistoryView.fxml"));
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.setScene(new Scene(adminRnetalView));
+			stage.setTitle("전체 대여내역 조회");
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+			showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
 		}
+	}
 
 	// ========== 일반적인 알림창 메서드 ==========
 	private void showAlert(String title, String header, String content) {

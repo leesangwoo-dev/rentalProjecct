@@ -255,9 +255,9 @@ public class MainViewController {
 			if (selected != null) {
 				// 단일 클릭: 오른쪽 이미지와 설명 표시
 				equipmentInfo.setText(selected.getEqInfo());
-				
+
 				String dbPath = selected.getImg();
-				
+
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
 

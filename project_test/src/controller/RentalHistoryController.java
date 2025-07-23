@@ -182,16 +182,12 @@ public class RentalHistoryController implements Initializable {
 		ObservableList<RentalHistoryDTO> observableList = FXCollections.observableArrayList(list);
 		rentalTable.setItems(observableList);
 	}
-	
+
 	private void showOverduePaymentProcess(RentalHistoryDTO rental) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
-		showAlert(
-				"연체료 발생", 
-				rental.getEqName() + " (대여번호: " + rental.getRentalNum() + ")",
-				"이 장비는 현재 연체되었습니다.\n" + 
-				"연체일: " + rental.getOverdueDays() + "일\n" + 
-				"납부할 연체료: "+ String.format("%,d원", rental.getOverdueFee())
-		);
+		showAlert("연체료 발생", rental.getEqName() + " (대여번호: " + rental.getRentalNum() + ")",
+				"이 장비는 현재 연체되었습니다.\n" + "연체일: " + rental.getOverdueDays() + "일\n" + "납부할 연체료: "
+						+ String.format("%,d원", rental.getOverdueFee()));
 		processReturnOnly(rental);
 	}
 
@@ -229,7 +225,7 @@ public class RentalHistoryController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	
+
 //	@FXML
 //	public void handleAdminEqList(ActionEvent event) {
 //		try {

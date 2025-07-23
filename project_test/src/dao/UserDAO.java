@@ -1,5 +1,13 @@
 package dao;
 
+import static util.DBUtil.getConnection;
+import static util.Session.userGu;
+import static util.Session.userLoginId;
+import static util.Session.userName;
+import static util.Session.userPassword;
+import static util.Session.userPhoneNumber;
+import static util.Session.userRole;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,8 +16,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import model.UserDTO;
-import static util.DBUtil.getConnection;
-import static util.Session.*;
 
 public class UserDAO {
 
@@ -56,7 +62,7 @@ public class UserDAO {
 		try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, loginId);
 			pstmt.setString(2, password);
-			
+
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
 					isValid = true;
@@ -108,11 +114,9 @@ public class UserDAO {
 	public Long getUserIdByLoginID(String loginId) {
 		String sql = "{ call SP_GET_USER_ID_BY_LOGIN_ID(?, ?) }";
 		try (Connection conn = getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
-
 			cs.setString(1, loginId);
 			cs.registerOutParameter(2, Types.NUMERIC);
 			cs.execute();
-
 			return cs.getLong(2);
 		} catch (Exception e) {
 			e.printStackTrace();

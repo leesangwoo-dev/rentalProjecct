@@ -10,8 +10,4 @@ public class Session {
     public static String userGu;
     public static String userRole;
 
-    // 예: 로그인 상태 확인용 메서드
-    public static boolean isLogIn() {
-        return userLoginId != null;
-    }
 }

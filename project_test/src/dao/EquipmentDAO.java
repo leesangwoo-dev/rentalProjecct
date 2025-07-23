@@ -4,12 +4,12 @@ import static util.DBUtil.getConnection;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.List;
 
 import model.EquipmentViewDTO;
@@ -56,56 +56,55 @@ public class EquipmentDAO {
 		}
 		return equipmentList;
 	}
-	
+
 	public int insertEquipmentAndGetId(String name, String info, int unitPrice, int rentalFee) {
-	    String sql = "INSERT INTO equipment (eq_name, eq_info, unit_price, rental_fee) VALUES (?, ?, ?, ?)";
-	    int generatedId = -1;
+		String sql = "INSERT INTO equipment (eq_name, eq_info, unit_price, rental_fee) VALUES (?, ?, ?, ?)";
+		int generatedId = -1;
 
-	    try (Connection conn = getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql, new String[] { "eq_num" })) {
+		try (Connection conn = getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql, new String[] { "eq_num" })) {
 
-	        ps.setString(1, name);
-	        ps.setString(2, info);
-	        ps.setInt(3, unitPrice);
-	        ps.setInt(4, rentalFee);
-	        ps.executeUpdate();
+			ps.setString(1, name);
+			ps.setString(2, info);
+			ps.setInt(3, unitPrice);
+			ps.setInt(4, rentalFee);
+			ps.executeUpdate();
 
-	        try (ResultSet rs = ps.getGeneratedKeys()) {
-	            if (rs.next()) {
-	                generatedId = rs.getInt(1);
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+			try (ResultSet rs = ps.getGeneratedKeys()) {
+				if (rs.next()) {
+					generatedId = rs.getInt(1);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	    return generatedId;
+		return generatedId;
 	}
 
-	public boolean insertEachEq(String serial, int eqNum, int officeId, String state, LocalDate getDate, String imgPath) {
-	    String sql = "INSERT INTO each_eq (serial_num, eq_num, office_id, state, get_date, img) VALUES (?, ?, ?, ?, ?, ?)";
+	public boolean insertEachEq(String serial, int eqNum, int officeId, String state, LocalDate getDate,
+			String imgPath) {
+		String sql = "INSERT INTO each_eq (serial_num, eq_num, office_id, state, get_date, img) VALUES (?, ?, ?, ?, ?, ?)";
 
-	    try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-	        ps.setString(1, serial);
-	        ps.setInt(2, eqNum);
-	        ps.setInt(3, officeId);
-	        ps.setString(4, state);
-	        ps.setDate(5, Date.valueOf(getDate));
-	        ps.setString(6, imgPath);
-	        return ps.executeUpdate() == 1;
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return false;
-	    }
+		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, serial);
+			ps.setInt(2, eqNum);
+			ps.setInt(3, officeId);
+			ps.setString(4, state);
+			ps.setDate(5, Date.valueOf(getDate));
+			ps.setString(6, imgPath);
+			return ps.executeUpdate() == 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
-
 
 	// 장비 상태변경
 	public boolean updateState(String serialNum, String newState) {
 		String sql = "UPDATE each_eq SET state = ? WHERE serial_num = ?";
 
-		try (Connection conn = DBUtil.getConnection(); 
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			pstmt.setString(1, newState);
 			pstmt.setString(2, serialNum);

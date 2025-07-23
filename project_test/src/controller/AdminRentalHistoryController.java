@@ -41,7 +41,7 @@ public class AdminRentalHistoryController implements Initializable {
 	@FXML
 	private TableColumn<OverdueHistoryDTO, String> idCol; // userLoginId
 	@FXML
-    private TableColumn<OverdueHistoryDTO, String> userNameCol;
+	private TableColumn<OverdueHistoryDTO, String> userNameCol;
 	@FXML
 	private TableColumn<OverdueHistoryDTO, String> phoneNumberCol; // 이름/번호
 	@FXML
@@ -60,8 +60,7 @@ public class AdminRentalHistoryController implements Initializable {
 	@FXML
 	private Button adminRentalList;
 	@FXML
-    private Button overdueHistory; // FXML에 fx:id="overdueHistory" 추가할 예정
-    
+	private Button overdueHistory; // FXML에 fx:id="overdueHistory" 추가할 예정
 
 	private RentalDAO rentalDAO = new RentalDAO(); // DAO 인스턴스
 
@@ -214,12 +213,12 @@ public class AdminRentalHistoryController implements Initializable {
 	}
 
 	// 모든 대여 목록을 로드하는 메서드
-    private void loadAllRentals() {
-        // 이 부분에 모든 대여 기록을 가져오는 DAO 메서드를 호출하도록 변경해야 합니다.
-        List<OverdueHistoryDTO> list = rentalDAO.findAllRentalsForAdmin(); // 새로 만들 DAO 메서드
-        ObservableList<OverdueHistoryDTO> observableList = FXCollections.observableArrayList(list);
-        rentalTable.setItems(observableList);
-    }
+	private void loadAllRentals() {
+		// 이 부분에 모든 대여 기록을 가져오는 DAO 메서드를 호출하도록 변경해야 합니다.
+		List<OverdueHistoryDTO> list = rentalDAO.findAllRentalsForAdmin(); // 새로 만들 DAO 메서드
+		ObservableList<OverdueHistoryDTO> observableList = FXCollections.observableArrayList(list);
+		rentalTable.setItems(observableList);
+	}
 
 	// 관리자 연체 처리 프로세스
 	private void showAdminOverdueProcess(OverdueHistoryDTO rental) {
@@ -301,7 +300,7 @@ public class AdminRentalHistoryController implements Initializable {
 			showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
 		}
 	}
-	
+
 	// 연체정보 nav
 	@FXML
 	private void handleOverdueHistory(ActionEvent event) {
@@ -316,7 +315,6 @@ public class AdminRentalHistoryController implements Initializable {
 			showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
 		}
 	}
-	
 
 	// ========== 일반적인 알림창 메서드 ==========
 	private void showAlert(String title, String header, String content) {
