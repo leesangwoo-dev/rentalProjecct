@@ -31,6 +31,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.RentalHistoryDTO;
 
@@ -267,7 +268,7 @@ public class RentalHistoryController implements Initializable {
 	// ========== 내비게이션 메서드 (기존과 동일, 변경 없음) ==========
 	public void handleEqList(ActionEvent event) {
 		try {
-			Parent mainView = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
+			Parent mainView = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			stage.setScene(new Scene(mainView));
 			stage.setTitle("MainView");
@@ -276,18 +277,44 @@ public class RentalHistoryController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-
-	public void handleMyInfo(ActionEvent event) {
+	
+	@FXML
+	private void handleMyInfo(ActionEvent event) {
 		try {
-			Parent myInfoView = FXMLLoader.load(getClass().getResource("/view/my_info.fxml"));
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.setScene(new Scene(myInfoView));
-			stage.setTitle("내 정보");
-			stage.show();
+			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
+			Parent myInfoView = loader.load();
+
+			// 1. 새로운 Stage (팝업 창) 생성
+			Stage myInfoStage = new Stage();
+			myInfoStage.setTitle("내 정보 수정");
+			myInfoStage.setScene(new Scene(myInfoView));
+
+			// 2. 모달리티 설정: APPLICATION_MODAL 또는 WINDOW_MODAL
+			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단합니다.
+			// WINDOW_MODAL: 특정 부모 창만 차단합니다.
+			myInfoStage.initModality(Modality.APPLICATION_MODAL); // <-- 이 부분이 핵심!
+
+			// 3. 부모 창 설정 (선택 사항이지만 권장):
+			// 팝업 창이 어떤 창에 종속되는지 지정합니다.
+			// 이렇게 하면 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
+			Stage ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			myInfoStage.initOwner(ownerStage); // <-- 이 부분이 부모 창을 지정합니다.
+
+			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록됩니다.
+			myInfoStage.showAndWait(); // <-- show() 대신 showAndWait() 사용!
+
 		} catch (IOException e) {
 			e.printStackTrace();
+			// 오류 발생 시 사용자에게 알림
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("오류");
+			alert.setHeaderText("페이지 로드 실패");
+			alert.setContentText("내 정보 수정 화면을 불러오는 데 실패했습니다.");
+			alert.showAndWait();
 		}
 	}
+
 
 	// ========== 일반적인 알림창 메서드 ==========
 	private void showAlert(String title, String header, String content) {

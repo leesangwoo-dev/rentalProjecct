@@ -44,7 +44,7 @@
 					text="장비조회" />
 				<Button mnemonicParsing="false" styleClass="nav-button"
 					text="대여내역" />
-				<Button mnemonicParsing="false"
+				<Button mnemonicParsing="false" onAction="#handleMyInfo"
 					styleClass="nav-button-inactive" text="내정보" />
 			</children>
 		</HBox>

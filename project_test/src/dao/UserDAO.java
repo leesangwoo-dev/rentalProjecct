@@ -18,8 +18,15 @@ public class UserDAO {
 				CallableStatement cstmt = conn.prepareCall("{call SP_ADD_USER(?, ?, ?, ?, ?)}")) { // CallableStatement도
 																									// 포함
 
+<<<<<<< HEAD
 			// SQL 쿼리 문자열은 prepareCall 메서드 내부로 바로 전달 가능
 			// String sql = "{call SP_ADD_USER(?, ?, ?, ?, ?)}"; // 이 줄은 이제 필요 없습니다.
+=======
+		try {
+			conn = getConnection();
+			String sql = "{call SP_ADD_USER(?, ?, ?, ?, ?)}";
+			cstmt = conn.prepareCall(sql);
+>>>>>>> refs/heads/HYUNSEOK
 
 			cstmt.setString(1, user.getLoginId());
 			cstmt.setString(2, user.getPassword());
@@ -38,8 +45,19 @@ public class UserDAO {
 
 	public boolean isIdDuplicated(String loginId) {
 		boolean result = false;
+<<<<<<< HEAD
 		String sql = "SELECT COUNT(*) FROM USERS WHERE LOGIN_ID = ?";
 		try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+=======
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+			String sql = "SELECT COUNT(*) FROM USERS WHERE LOGIN_ID = ?";
+			pstmt = conn.prepareStatement(sql);
+>>>>>>> refs/heads/HYUNSEOK
 			pstmt.setString(1, loginId);
 			try (ResultSet rs = pstmt.executeQuery();) {
 				while (rs.next()) {
@@ -59,9 +77,18 @@ public class UserDAO {
 		boolean isValid = false;
 		String sql = "SELECT * FROM USERS WHERE LOGIN_ID = ? AND PASSWORD = ?";
 
+<<<<<<< HEAD
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) { // pstmt만 먼저 생성
 			pstmt.setString(1, loginId); // 첫 번째 바인딩 변수 설정
 			pstmt.setString(2, password); // 두 번째 바인딩 변수 설정
+=======
+	    try {
+	        String sql = "SELECT * FROM USERS WHERE LOGIN_ID = ? AND PASSWORD = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, loginId);
+	        pstmt.setString(2, password);
+	        rs = pstmt.executeQuery();
+>>>>>>> refs/heads/HYUNSEOK
 
 			try (ResultSet rs = pstmt.executeQuery()) { // 바인딩 변수 설정 후 쿼리 실행
 				if (rs.next()) {
@@ -82,9 +109,15 @@ public class UserDAO {
 			String newGu, String newPassword) {
 		String resultStatus = "UNKNOWN_ERROR";
 
+<<<<<<< HEAD
 		// try-with-resources를 사용하여 Connection과 CallableStatement를 자동으로 닫도록 변경
 		try (Connection conn = getConnection(); // Connection을 try-with-resources에 포함
 				CallableStatement cstmt = conn.prepareCall("{call SP_UPDATE_USER_INFO(?, ?, ?, ?, ?, ?, ?)}")) {
+=======
+			// 저장 프로시저 호출 구문: UPDATE_USER_INFO_PLAIN 사용
+			String sql = "{call SP_UPDATE_USER_INFO(?, ?, ?, ?, ?, ?, ?)}"; // 프로시저명 변경
+			cstmt = conn.prepareCall(sql);
+>>>>>>> refs/heads/HYUNSEOK
 
 			// IN 파라미터 설정
 			cstmt.setString(1, loginId);
@@ -118,8 +151,14 @@ public class UserDAO {
 
 	// 사용자 ID 조회
 	public Long getUserIdByLoginID(String loginId) {
+<<<<<<< HEAD
 		String sql = "{ call get_user_id_by_login_id(?, ?) }";
 		try (Connection conn = getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
+=======
+	    String sql = "{ call SP_GET_USER_ID_BY_LOGIN_ID(?, ?) }";
+	    try (Connection conn = getConnection();
+	         CallableStatement cs = conn.prepareCall(sql)) {
+>>>>>>> refs/heads/HYUNSEOK
 
 			cs.setString(1, loginId);
 			cs.registerOutParameter(2, Types.NUMERIC);

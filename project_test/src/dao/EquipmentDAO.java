@@ -4,6 +4,7 @@ import static util.DBUtil.getConnection;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class EquipmentDAO {
 
 	/**
 	 * 장비 목록을 DB에서 조회하는 메서드
+	 * 
 	 * @return EquipmentViewDto 객체 리스트
 	 */
 	public List<EquipmentViewDTO> getEquipmentList(String gu) {
@@ -49,6 +51,7 @@ public class EquipmentDAO {
 		}
 		return equipmentList;
 	}
+<<<<<<< HEAD
 	
 	/**
      * 특정 상태의 장비 목록을 조회합니다.
@@ -111,4 +114,23 @@ public class EquipmentDAO {
         }
         return equipmentList;
     }
+=======
+
+	// 장비 상태변경
+	public boolean updateState(String serialNum, String newState) {
+		String sql = "UPDATE each_eq SET state = ? WHERE serial_num = ?";
+
+		try (Connection conn = DBUtil.getConnection(); 
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setString(1, newState);
+			pstmt.setString(2, serialNum);
+			return pstmt.executeUpdate() > 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+>>>>>>> refs/heads/HYUNSEOK
 }

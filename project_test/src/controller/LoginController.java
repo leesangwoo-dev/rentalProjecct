@@ -1,6 +1,9 @@
 // src/controller/RootController.java
 package controller;
 
+import static util.DBUtil.getConnection;
+import static util.Session.userLoginId;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -16,16 +19,22 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import static util.DBUtil.getConnection;
-import static util.Session.userLoginId;
 
 // 로그인 페이지 컨트롤러
 public class LoginController {
 
 	@FXML
+<<<<<<< HEAD
 	private TextField idTextField;
+=======
+	private TextField IdTextField;
+>>>>>>> refs/heads/HYUNSEOK
 	@FXML
+<<<<<<< HEAD
 	private PasswordField passwordTextField;
+=======
+	private PasswordField PwTextField;
+>>>>>>> refs/heads/HYUNSEOK
 
 	Connection conn;
 	@FXML
@@ -41,15 +50,24 @@ public class LoginController {
 
 	public void Login(ActionEvent event) {
 		System.out.println("로그인 버튼 클릭");
+<<<<<<< HEAD
 		System.out.println(idTextField.getText());
 		System.out.println(passwordTextField.getText());
+=======
+		System.out.println(IdTextField.getText());
+		System.out.println(PwTextField.getText());
+>>>>>>> refs/heads/HYUNSEOK
 		
 		if(handleLogin(event))
 		{
 			try {
 				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				currentStage.close();
+<<<<<<< HEAD
 				userLoginId = idTextField.getText();
+=======
+				userLoginId = IdTextField.getText();
+>>>>>>> refs/heads/HYUNSEOK
 				MainStage();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -78,10 +96,11 @@ public class LoginController {
 	public void MainStage() throws Exception {
 
 		Stage newStage = new Stage();
-		Parent parent = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
+		//Parent parent = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getResource("/view/AdminView.fxml"));
 		Scene dd = new Scene(parent);
 
-		newStage.setTitle("MainView");
+		newStage.setTitle("관리자 페이지");
 		newStage.setScene(dd);
 		newStage.show();
 
@@ -102,8 +121,13 @@ public class LoginController {
 	}// end
 
 	public boolean handleLogin(ActionEvent event) {
+<<<<<<< HEAD
 		String userId = idTextField.getText();
 		String password = passwordTextField.getText();
+=======
+		String userId = IdTextField.getText();
+		String password = PwTextField.getText();
+>>>>>>> refs/heads/HYUNSEOK
 
 		UserDAO userDao = new UserDAO();
 		if (userDao.isLoginValid(conn, userId, password)) {
