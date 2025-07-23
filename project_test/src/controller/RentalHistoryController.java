@@ -7,7 +7,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import dao.RentalDAO;
@@ -24,13 +23,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.RentalHistoryDTO;
 
@@ -153,13 +152,10 @@ public class RentalHistoryController implements Initializable {
 						returnButton.setOnAction(event -> {
 							System.out.println("반납하기 클릭: " + rental.getRentalNum() + " - " + rental.getEqName());
 
-							// 중요: 최신 연체료 정보를 다시 로드하는 로직이 필요할 수 있습니다.
-							// 현재는 DTO의 overdueFee를 사용하지만, 클릭 시점에 DB의 최신값을 조회하는 것이 안전합니다.
-							// 예시에서는 DTO의 값을 사용합니다.
 							long currentOverdueFee = rental.getOverdueFee();
 
 							if (currentOverdueFee > 0) {
-								showOverduePaymentProcess(rental); // 연체료 결제 프로세스 시작
+								showOverduePaymentProcess(rental); // 연체료 발생시 프로세스 시작
 							} else {
 								processReturnOnly(rental); // 일반 반납 처리
 							}
@@ -186,60 +182,17 @@ public class RentalHistoryController implements Initializable {
 		ObservableList<RentalHistoryDTO> observableList = FXCollections.observableArrayList(list);
 		rentalTable.setItems(observableList);
 	}
-
-	// ========== 연체료 결제 프로세스 시작 메서드 (새로 추가되거나 수정됨) ==========
+	
 	private void showOverduePaymentProcess(RentalHistoryDTO rental) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("연체료 납부");
-		// rental.getSerialNum()이 DTO에 없다면 rental.getRentalNum()으로 대체하세요.
-		alert.setHeaderText(rental.getEqName() + " (대여번호: " + rental.getRentalNum() + ")");
-		alert.setContentText("이 장비는 현재 연체되었습니다.\n" + "연체일: " + rental.getOverdueDays() + "일\n" + "납부할 연체료: "
-				+ String.format("%,d원", rental.getOverdueFee()) + "\n\n" + "지금 결제하시겠습니까?");
-
-		ButtonType payButton = new ButtonType("결제 진행");
-		ButtonType cancelButton = new ButtonType("취소", ButtonType.CANCEL.getButtonData());
-
-		alert.getButtonTypes().setAll(payButton, cancelButton);
-
-		Optional<ButtonType> result = alert.showAndWait();
-		if (result.isPresent() && result.get() == payButton) {
-			// 실제 결제창을 띄우는 로직 (현재는 시뮬레이션)
-			boolean paymentSuccess = simulatePayment(rental.getOverdueFee());
-
-			if (paymentSuccess) {
-				showAlert("결제 성공", null,
-						"연체료 " + String.format("%,d원", rental.getOverdueFee()) + " 결제가 완료되었습니다.\n이제 장비를 반납 처리합니다.");
-
-				// 결제 성공 후 연체료를 0으로 업데이트하는 DAO 호출
-				String updateResult = rentalDAO.updateOverdueFeeToZero(rental.getRentalNum());
-				if ("SUCCESS".equals(updateResult)) {
-					System.out.println("연체료 DB 업데이트 성공.");
-					// 연체료 업데이트 성공 후 최종 반납 처리 진행
-					processReturnOnly(rental);
-				} else {
-					showAlert("오류", null, "연체료 정산 중 오류가 발생했습니다: " + updateResult + ". 관리자에게 문의하세요.");
-				}
-			} else {
-				showAlert("결제 실패", null, "연체료 결제에 실패했습니다. 다시 시도해 주세요.");
-			}
-		} else {
-			System.out.println("연체료 결제 취소.");
-		}
-	}
-
-	// ========== 결제 시뮬레이션 메서드 (새로 추가됨) ==========
-	private boolean simulatePayment(long amount) {
-		Alert confirmPayment = new Alert(AlertType.CONFIRMATION);
-		confirmPayment.setTitle("결제 시뮬레이션");
-		confirmPayment.setHeaderText(String.format("연체료 %,d원 결제 진행", amount));
-		confirmPayment.setContentText("실제로 결제하시겠습니까? (성공/실패 선택)");
-
-		ButtonType successButton = new ButtonType("결제 성공");
-		ButtonType failButton = new ButtonType("결제 실패");
-		confirmPayment.getButtonTypes().setAll(successButton, failButton);
-
-		Optional<ButtonType> result = confirmPayment.showAndWait();
-		return result.isPresent() && result.get() == successButton;
+		showAlert(
+				"연체료 발생", 
+				rental.getEqName() + " (대여번호: " + rental.getRentalNum() + ")",
+				"이 장비는 현재 연체되었습니다.\n" + 
+				"연체일: " + rental.getOverdueDays() + "일\n" + 
+				"납부할 연체료: "+ String.format("%,d원", rental.getOverdueFee())
+		);
+		processReturnOnly(rental);
 	}
 
 	// ========== 순수 반납 처리 로직 메서드 (새로 추가되거나 수정됨) ==========
@@ -267,7 +220,7 @@ public class RentalHistoryController implements Initializable {
 	// ========== 내비게이션 메서드 (기존과 동일, 변경 없음) ==========
 	public void handleEqList(ActionEvent event) {
 		try {
-			Parent mainView = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
+			Parent mainView = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			stage.setScene(new Scene(mainView));
 			stage.setTitle("MainView");
@@ -276,16 +229,54 @@ public class RentalHistoryController implements Initializable {
 			e.printStackTrace();
 		}
 	}
+	
+//	@FXML
+//	public void handleAdminEqList(ActionEvent event) {
+//		try {
+//			Parent adminView = FXMLLoader.load(getClass().getResource("/view/AdminView.fxml"));
+//			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//			stage.setScene(new Scene(adminView));
+//			stage.setTitle("관리자 장비 조회");
+//			stage.show();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
-	public void handleMyInfo(ActionEvent event) {
+	@FXML
+	private void handleMyInfo(ActionEvent event) {
 		try {
-			Parent myInfoView = FXMLLoader.load(getClass().getResource("/view/my_info.fxml"));
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.setScene(new Scene(myInfoView));
-			stage.setTitle("내 정보");
-			stage.show();
+			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
+			Parent myInfoView = loader.load();
+
+			// 1. 새로운 Stage (팝업 창) 생성
+			Stage myInfoStage = new Stage();
+			myInfoStage.setTitle("내 정보 수정");
+			myInfoStage.setScene(new Scene(myInfoView));
+
+			// 2. 모달리티 설정: APPLICATION_MODAL 또는 WINDOW_MODAL
+			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단합니다.
+			// WINDOW_MODAL: 특정 부모 창만 차단합니다.
+			myInfoStage.initModality(Modality.APPLICATION_MODAL); // <-- 이 부분이 핵심!
+
+			// 3. 부모 창 설정 (선택 사항이지만 권장):
+			// 팝업 창이 어떤 창에 종속되는지 지정합니다.
+			// 이렇게 하면 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
+			Stage ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			myInfoStage.initOwner(ownerStage); // <-- 이 부분이 부모 창을 지정합니다.
+
+			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록됩니다.
+			myInfoStage.showAndWait(); // <-- show() 대신 showAndWait() 사용!
+
 		} catch (IOException e) {
 			e.printStackTrace();
+			// 오류 발생 시 사용자에게 알림
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("오류");
+			alert.setHeaderText("페이지 로드 실패");
+			alert.setContentText("내 정보 수정 화면을 불러오는 데 실패했습니다.");
+			alert.showAndWait();
 		}
 	}
 

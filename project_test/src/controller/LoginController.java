@@ -1,8 +1,10 @@
 // src/controller/RootController.java
 package controller;
 
+import static util.DBUtil.getConnection;
+import static util.Session.*;
+
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import dao.UserDAO;
 import javafx.event.ActionEvent;
@@ -16,8 +18,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import static util.DBUtil.getConnection;
-import static util.Session.userLoginId;
 
 // 로그인 페이지 컨트롤러
 public class LoginController {
@@ -28,38 +28,42 @@ public class LoginController {
 	private PasswordField passwordTextField;
 
 	Connection conn;
+
 	@FXML
-	public void initialize()
-	{
+	public void initialize() {
 		try {
 			conn = getConnection();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void Login(ActionEvent event) {
-		System.out.println("로그인 버튼 클릭");
-		System.out.println(idTextField.getText());
-		System.out.println(passwordTextField.getText());
-		
-		if(handleLogin(event))
-		{
+		if (handleLogin(event)) {
 			try {
 				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				currentStage.close();
-				userLoginId = idTextField.getText();
-				MainStage();
+				MainStage(userRole);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		else
-		{
+		} else {
 			return;
 		}
-		
+	}
+	
+	private void MainStage(String role) throws Exception {
+		Stage newStage = new Stage();
+		Parent parent = null;
+		if(role.equals("ADMIN")) {
+			parent = FXMLLoader.load(getClass().getResource("/view/AdminView.fxml"));
+		} else {
+			parent = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
+		}
+		Scene scene = new Scene(parent);
+		newStage.setTitle("Rental Program");
+		newStage.setScene(scene);
+		newStage.show();
 	}
 
 	public void signup(ActionEvent event) {
@@ -74,18 +78,6 @@ public class LoginController {
 		}
 
 	}
-
-	public void MainStage() throws Exception {
-
-		Stage newStage = new Stage();
-		Parent parent = FXMLLoader.load(getClass().getResource("/view/mainView.fxml"));
-		Scene dd = new Scene(parent);
-
-		newStage.setTitle("MainView");
-		newStage.setScene(dd);
-		newStage.show();
-
-	}// end
 
 	public void signUpPopup() throws Exception {
 
@@ -106,7 +98,7 @@ public class LoginController {
 		String password = passwordTextField.getText();
 
 		UserDAO userDao = new UserDAO();
-		if (userDao.isLoginValid(conn, userId, password)) {
+		if (userDao.isLoginValid(userId, password)) {
 			// 로그인 성공
 			System.out.println("로그인 성공");
 			return true;

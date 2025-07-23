@@ -2,18 +2,23 @@ package controller;
 
 import static util.Session.userLoginId;
 
+import java.io.File;
+import java.net.URI;
 import java.time.LocalDate;
 
-import dao.DeatialViewDAO;
+import dao.DeatilViewDAO;
 import dao.RentalDAO;
 import dao.UserDAO;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import model.DetailViewDTO;
 import model.RentalDTO;
 
@@ -44,7 +49,7 @@ public class DetailViewController {
 	@FXML
 	private DatePicker returnDatePicker; // 반납일
 
-	private final DeatialViewDAO dao = new DeatialViewDAO();
+	private final DeatilViewDAO dao = new DeatilViewDAO();
 	private final RentalDAO rentalDAO = new RentalDAO();
 	private final UserDAO userDAO = new UserDAO();
 
@@ -73,7 +78,7 @@ public class DetailViewController {
 			stateLabel.setStyle(
 					"-fx-background-color: #B5F3C1; -fx-text-fill: green; -fx-alignment: center; -fx-font-size: 18px; -fx-padding: 2 6; -fx-border-radius: 4; -fx-background-radius: 4;");
 			break;
-		case "대여":
+		case "대여중":
 			stateLabel.setStyle(
 					"-fx-background-color: #FFB6B6; -fx-text-fill: red; -fx-alignment: center; -fx-font-size: 18px; -fx-padding: 2 6; -fx-border-radius: 4; -fx-background-radius: 4;");
 			break;
@@ -103,8 +108,15 @@ public class DetailViewController {
 		// 이미지 처리
 		try {
 			if (dto.getImgPath() != null) {
-				toolImageView.setImage(new Image(dto.getImgPath()));
-				System.out.println(dto.getImgPath());
+				String dbPath = dto.getImgPath();
+				
+				File imgFile = new File(dbPath);
+				URI uri = imgFile.toURI();
+
+				System.out.println("파일 존재?: " + imgFile.exists());
+				System.out.println("URI: " + uri.toString());
+
+				toolImageView.setImage(new Image(uri.toASCIIString()));
 			} else {
 				toolImageView.setImage(null);
 			}
@@ -116,7 +128,7 @@ public class DetailViewController {
 
 	// 대여하기
 	@FXML
-	private void handleRent() {
+	private void handleRent(ActionEvent event) {
 		// 유효성 검사
 		if (rentDatePicker.getValue() == null || returnDatePicker.getValue() == null) {
 			showAlert(Alert.AlertType.WARNING, "날짜를 모두 선택해주세요.");
@@ -135,15 +147,21 @@ public class DetailViewController {
 		rental.setReturnStatus("대여중");
 		rental.setOverdueFee(0L);
 		rental.setActualReturnDate(null); // 초기에는 null
-
-		boolean success = rentalDAO.insertRental(rental);
+		
+		boolean success = false;
+		if(stateLabel.getText().equals("사용가능")) {
+			success = rentalDAO.insertRental(rental);
+		}
 
 		if (success) {
 			showAlert(Alert.AlertType.INFORMATION, "대여가 완료되었습니다.");
+			// 대여가 완료되면 대여하기 화면이 종료
+			Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			currentStage.close();
 		} else {
 			showAlert(Alert.AlertType.ERROR, "대여에 실패했습니다.");
 		}
-		mainController.loadTableData();
+		mainController.loadTableData("");
 	}
 
 	private void showAlert(Alert.AlertType type, String message) {

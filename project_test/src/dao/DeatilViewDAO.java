@@ -8,10 +8,10 @@ import java.sql.Types;
 import model.DetailViewDTO;
 import util.DBUtil;
 
-public class DeatialViewDAO {
+public class DeatilViewDAO {
 	public DetailViewDTO getEachEquipmentDetail(String serialNum) {
 		DetailViewDTO dto = new DetailViewDTO();
-	    String sql = "{ call get_each_equipment_info(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+	    String sql = "{ call SP_GET_EACH_EQUIPMENT_INFO(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
 
 	    try (Connection conn = DBUtil.getConnection();
 	         CallableStatement cs = conn.prepareCall(sql)) {

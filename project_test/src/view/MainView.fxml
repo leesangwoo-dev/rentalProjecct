@@ -52,26 +52,25 @@
 		</HBox>
 	</top>
 	<center>
-		<VBox spacing="10.0" BorderPane.alignment="CENTER">
+		<VBox prefHeight="485.0" prefWidth="982.0" spacing="10.0" BorderPane.alignment="CENTER">
 			<padding>
 				<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
 			</padding>
 			<children>
 				<HBox alignment="CENTER_LEFT" spacing="10.0">
 					<children>
-						<Label text="Order Date : 25-SEP-2024" />
-						<Label text="Exchange : All" />
+						<Label fx:id="todayLabel" text="Order Date : 25-SEP-2024" />
 						<HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
 							<children>
 								<ComboBox fx:id="guComboBox" prefHeight="29.0" prefWidth="104.0" promptText="자치구" />
 								<ComboBox fx:id="officeComboBox" prefHeight="29.0" prefWidth="196.0" promptText="동 대여소" />
-								<TextField fx:id="searchTextField" prefHeight="29.0" prefWidth="163.0" promptText="검색..." />
+								<TextField fx:id="searchTextField" prefHeight="29.0" prefWidth="163.0" promptText="장비명을 검색하세요." />
 								<Button fx:id="searchButton" onAction="#search" mnemonicParsing="false" text="검색" />
 							</children>
 						</HBox>
 					</children>
 				</HBox>
-				<TableView fx:id="equipmentTable" prefHeight="611.0" prefWidth="933.0" VBox.vgrow="ALWAYS">
+				<TableView fx:id="equipmentTable" prefHeight="611.0" prefWidth="763.0" VBox.vgrow="ALWAYS">
 					<columns>
 						<TableColumn fx:id="rentalOfficeCol" prefWidth="150.0" text="대여소" />
 						<TableColumn fx:id="nameCol" prefWidth="250.0" text="장비명" />
@@ -87,19 +86,26 @@
 		</VBox>
 	</center>
    <right>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="690.0" prefWidth="305.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="                 &lt;장비 이미지&gt;" />
-            <ImageView fx:id="equipmentImage" fitHeight="267.0" fitWidth="281.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@/resources/img/logo.PNG" />
-               </image>
-            </ImageView>
-            <TextArea fx:id="equipmentInfo" prefHeight="303.0" prefWidth="281.0" 
-            text="장비 설명" />
-            <Pane prefHeight="200.0" prefWidth="200.0">
+            <Pane prefHeight="375.0" prefWidth="305.0">
                <children>
-                  <Button onAction="#RentButton" layoutX="33.0" layoutY="32.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="201.0" text="대여하기" />
+                  <Label layoutX="101.0" layoutY="14.0" text="&lt;장비 이미지&gt;" />
+                  <ImageView fx:id="equipmentImage" fitHeight="442.0" fitWidth="244.0" layoutX="31.0" layoutY="58.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@/resources/img/logo.PNG" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+            <Pane prefHeight="210.0" prefWidth="305.0">
+               <children>
+                  <TextArea fx:id="equipmentInfo" layoutX="14.0" layoutY="14.0" prefHeight="179.0" prefWidth="270.0" text="장비 설명" />
+               </children>
+            </Pane>
+            <Pane prefHeight="115.0" prefWidth="305.0">
+               <children>
+                  <Button layoutX="52.0" layoutY="24.0" mnemonicParsing="false" onAction="#RentButton" prefHeight="64.0" prefWidth="201.0" text="대여하기" />
                </children>
             </Pane>
          </children>

@@ -5,7 +5,7 @@ import static util.Session.userGu;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import dao.EquipmentDAO;
@@ -19,8 +19,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -31,15 +31,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.EquipmentViewDTO; // 수정한 DTO를 임포트
 import model.RentalOfficeDTO;
 
 // 메인 페이지(장비 조회)_사용자 컨트롤러
-public class MainViewController {
-	@FXML
-	private Label todayLabel;
+public class AdminViewController {
 	@FXML
 	private ComboBox<String> guComboBox;
 	@FXML
@@ -65,22 +62,22 @@ public class MainViewController {
 	@FXML
 	private TextArea equipmentInfo;
 	@FXML
-	private Button myInfoButton;
+	private Button adminEqList;
 	@FXML
-	private Button rentalHistory;
+	private Button adminRentalList;
+	@FXML
+	private Button overdueHistory;
 
 	private EquipmentDAO equipmentDAO; // EquipmentDAO 인스턴스
 	private RentalOfficeDAO rentalOfficeDAO; // RentalOfficeDAO 인스턴스
 
-	public MainViewController() {
+	public AdminViewController() {
 		this.equipmentDAO = new EquipmentDAO();
 		this.rentalOfficeDAO = new RentalOfficeDAO();
 	}
 
 	@FXML
 	public void initialize() {
-		LocalDate now = LocalDate.now();
-		todayLabel.setText("Today : " + now.toString());
 		guComboBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
 		guComboBox.setValue(userGu);
 		loadOfficesByGu(userGu);
@@ -106,31 +103,7 @@ public class MainViewController {
 		imgClickEvent();
 	}
 
-	// `guComboBox` 변경 시 호출될 메서드
-	private void loadOfficesByGu(String selectedGu) {
-		officeComboBox.setValue(null); // 현재 선택된 값도 초기화
-
-		// RentalOfficeDAO를 사용하여 DB에서 대여소 목록 가져오기
-		List<RentalOfficeDTO> offices = rentalOfficeDAO.getOfficesByGu(selectedGu);
-
-		// '전체' 옵션 추가 (선택 사항: ID가 null인 RentalOfficeDTO 객체)
-		RentalOfficeDTO allOption = new RentalOfficeDTO(null, "전체", null, null, null); // ID는 null, 이름은 "전체"
-		officeComboBox.getItems().add(allOption);
-
-		// 콤보박스에 항목 추가
-		officeComboBox.getItems().addAll(offices);
-
-		// 기본값 설정: '전체'
-		officeComboBox.setValue(allOption);
-	}
-
-	// 검색 버튼 클릭 이벤트 핸들러
-	@FXML
-	private void search() {
-		String searchText = searchTextField.getText().trim(); // 검색 필드 텍스트
-		loadTableData(searchText);
-	}
-
+	//
 	private void setupTableColumns() {
 		// 각 열과 EquipmentViewDTO의 프로퍼티를 연결
 		// 열이 어떤 데이터를 보여줄지 결정
@@ -166,14 +139,24 @@ public class MainViewController {
 		});
 	}
 
-	public void loadTableData(String searchText) {
-		String selectedGu = guComboBox.getValue();
-		String selectedOffice = officeComboBox.getValue().getOfficeName();
-		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentList(selectedGu, selectedOffice, searchText);
-		// 가져온 데이터를 TableView에 설정합니다.
-		equipmentTable.getItems().setAll(equipmentData);
+	private void loadOfficesByGu(String selectedGu) {
+		officeComboBox.setValue(null); // 현재 선택된 값도 초기화
+
+		// RentalOfficeDAO를 사용하여 DB에서 대여소 목록 가져오기
+		List<RentalOfficeDTO> offices = rentalOfficeDAO.getOfficesByGu(selectedGu);
+
+		// '전체' 옵션 추가 (선택 사항: ID가 null인 RentalOfficeDTO 객체)
+		RentalOfficeDTO allOption = new RentalOfficeDTO(null, "전체", null, null, null); // ID는 null, 이름은 "전체"
+		officeComboBox.getItems().add(allOption);
+
+		// 콤보박스에 항목 추가
+		officeComboBox.getItems().addAll(offices);
+
+		// 기본값 설정: '전체'
+		officeComboBox.setValue(allOption);
 	}
 
+	// 4. 이벤트 핸들러의 타입도 JavaFX 것으로 변경
 	@FXML
 	public void doubleClickItem(MouseEvent event) {
 		if (event.getClickCount() == 2) { // 더블 클릭 확인
@@ -185,53 +168,30 @@ public class MainViewController {
 		}
 	}
 
+	// 대여정보 nav
 	@FXML
-	private void handleMyInfo(ActionEvent event) {
+	private void handleAdminRentalList(ActionEvent event) {
 		try {
-			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
-			Parent myInfoView = loader.load();
-
-			// 1. 새로운 Stage (팝업 창) 생성
-			Stage myInfoStage = new Stage();
-			myInfoStage.setTitle("내 정보 수정");
-			myInfoStage.setScene(new Scene(myInfoView));
-
-			// 2. 모달리티 설정: APPLICATION_MODAL 또는 WINDOW_MODAL
-			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단합니다.
-			// WINDOW_MODAL: 특정 부모 창만 차단합니다.
-			myInfoStage.initModality(Modality.APPLICATION_MODAL); // <-- 이 부분이 핵심!
-
-			// 3. 부모 창 설정 (선택 사항이지만 권장):
-			// 팝업 창이 어떤 창에 종속되는지 지정합니다.
-			// 이렇게 하면 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
-			Stage ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			myInfoStage.initOwner(ownerStage); // <-- 이 부분이 부모 창을 지정합니다.
-
-			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록됩니다.
-			myInfoStage.showAndWait(); // <-- show() 대신 showAndWait() 사용!
-
+			Parent adminRnetalView = FXMLLoader.load(getClass().getResource("/view/AdminRentalHistoryView.fxml"));
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.setScene(new Scene(adminRnetalView));
+			stage.setTitle("전체 대여내역 조회");
+			stage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
-			// 오류 발생 시 사용자에게 알림
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("오류");
-			alert.setHeaderText("페이지 로드 실패");
-			alert.setContentText("내 정보 수정 화면을 불러오는 데 실패했습니다.");
-			alert.showAndWait();
+//	            showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
 		}
 	}
 
-	public void handleRentalHistory(ActionEvent event) {
+	// 연체정보 nav
+	public void handleOverdueHistory(ActionEvent event) {
 		try {
-			// FXML 파일 로드 (패키지 경로 맞춰주세요!)
-			Parent handleRentalHistory = FXMLLoader.load(getClass().getResource("/view/RentalHistoryView.fxml"));
-
+			// FXML 파일 로드
+			Parent handleOverdueHistory = FXMLLoader.load(getClass().getResource("/view/OverdueHistoryView.fxml"));
 			// 현재 창(Stage)을 얻어서 씬 변경
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.setScene(new Scene(handleRentalHistory));
-			stage.setTitle("대여내역");
+			stage.setScene(new Scene(handleOverdueHistory));
+			stage.setTitle("연체정보");
 			stage.show();
 
 		} catch (IOException e) {
@@ -239,13 +199,52 @@ public class MainViewController {
 		}
 	}
 
-	// 대여하기 버튼
+	// 장비 추가
 	@FXML
-	private void RentButton() {
-		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
-		if (selected != null) {
-			openDetailView(selected);
+	private void AddEqButton() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AddEqView.fxml"));
+			Parent root = loader.load();
+
+			AddEqController controller = loader.getController();
+			controller.setMainController(this);
+
+			Stage stage = new Stage();
+			stage.setTitle("장비 추가 정보");
+			stage.setScene(new Scene(root));
+			stage.show();
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+	}
+
+	// 장비 상태 변경
+	@FXML
+	private void changeStatusButton() {
+		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
+		if (selected == null) {
+			showAlert(AlertType.WARNING, "경고", "장비를 선택하세요.");
+			return;
+		}
+
+		// 상태 옵션 제공
+		List<String> statusOptions = Arrays.asList("사용가능", "수리", "대여중");
+		ChoiceDialog<String> dialog = new ChoiceDialog<>(selected.getState(), statusOptions);
+		dialog.setTitle("장비 상태 변경");
+		dialog.setHeaderText("현재 상태: " + selected.getState());
+		dialog.setContentText("장비 상태 변경:");
+
+		dialog.showAndWait().ifPresent(newState -> {
+			EquipmentDAO dao = new EquipmentDAO();
+			boolean success = dao.updateState(selected.getSerialNum(), newState);
+			if (success) {
+				showAlert(AlertType.INFORMATION, "알림", "상태가 [" + newState + "](으)로 변경되었습니다.");
+				loadTableData(searchTextField.getText().trim()); // 테이블 갱신
+			} else {
+				showAlert(AlertType.ERROR, "오류", "상태 변경 실패");
+			}
+		});
 	}
 
 	// 클릭 이벤트 설정
@@ -255,9 +254,9 @@ public class MainViewController {
 			if (selected != null) {
 				// 단일 클릭: 오른쪽 이미지와 설명 표시
 				equipmentInfo.setText(selected.getEqInfo());
-				
+				System.out.println(selected.getImg());
 				String dbPath = selected.getImg();
-				
+
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
 
@@ -265,12 +264,11 @@ public class MainViewController {
 				System.out.println("URI: " + uri.toString());
 
 				equipmentImage.setImage(new Image(uri.toASCIIString()));
-
 			}
 
 			// 더블 클릭: 상세 보기 띄우기
 			if (event.getClickCount() == 2 && selected != null) {
-				openDetailView(selected);
+				// openDetailView(selected);
 			}
 		});
 	}
@@ -298,15 +296,15 @@ public class MainViewController {
 		stage.show();
 	}
 
-	// 더블 클릭시 상세페이지 띄우기
-	private void openDetailView(EquipmentViewDTO equipment) {
+	// 더블 클릭시 장비 추가창 띄우기
+	private void openEqAddView(EquipmentViewDTO equipment) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/DetailView.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EqAddView.fxml"));
 			Parent root = loader.load();
 
 			DetailViewController controller = loader.getController();
 			controller.setSerialNumber(equipment.getSerialNum());
-			controller.setMainController(this);
+			// controller.setMainController(this);
 
 			Stage stage = new Stage();
 			stage.setTitle("장비 상세정보");
@@ -317,4 +315,27 @@ public class MainViewController {
 			e.printStackTrace();
 		}
 	}
+
+	@FXML
+	private void search() {
+		String searchText = searchTextField.getText().trim(); // 검색 필드 텍스트
+		loadTableData(searchText);
+	}
+
+	public void loadTableData(String searchText) {
+		String selectedGu = guComboBox.getValue();
+		String selectedOffice = officeComboBox.getValue().getOfficeName();
+		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentList(selectedGu, selectedOffice, searchText);
+		// 가져온 데이터를 TableView에 설정합니다.
+		equipmentTable.getItems().setAll(equipmentData);
+	}
+
+	private void showAlert(AlertType type, String title, String message) {
+		Alert alert = new Alert(type);
+		alert.setTitle(title);
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.showAndWait();
+	}
+
 }

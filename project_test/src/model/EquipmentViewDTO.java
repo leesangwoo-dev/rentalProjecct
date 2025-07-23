@@ -18,5 +18,4 @@ public class EquipmentViewDTO {
 	private String img;
 	private String eqInfo;
 	private String officeGu;
-
 }
