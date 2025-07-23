@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-//import model.OverdueHistoryDTO;
+import model.OverdueHistoryDTO;
 import model.RentalDTO;
 import model.RentalHistoryDTO;
 import oracle.jdbc.OracleTypes;
@@ -128,48 +128,89 @@ public class RentalDAO {
      * SP_GET_OVERDUE_RENTALS_ADMIN 프로시저를 호출합니다.
      * @return 연체된 장비 목록 (OverdueHistoryAdminDTO 리스트)
      */
-//    public List<OverdueHistoryDTO> findOverdueRentalsForAdmin() {
-//        List<OverdueHistoryDTO> list = new ArrayList<>();
-//        // SP_GET_OVERDUE_RENTALS_ADMIN은 인자가 없고 OUT 커서만 반환합니다.
-//        String sql = "{call SP_GET_OVERDUE_RENTALS_ADMIN(?)}";
-//
-//        try (Connection conn = DBUtil.getConnection();
-//             CallableStatement cstmt = conn.prepareCall(sql)) {
-//
-//            cstmt.registerOutParameter(1, OracleTypes.CURSOR); // 첫 번째 파라미터가 OUT 커서입니다.
-//            cstmt.execute();
-//
-//            try (ResultSet rs = (ResultSet) cstmt.getObject(1)) { // 커서 인덱스도 1로 변경
-//                while (rs.next()) {
-//                	OverdueHistoryDTO dto = new OverdueHistoryDTO();
-//                    dto.setRentalNum(rs.getLong("RENTAL_NUM"));
-//                    dto.setLoginId(rs.getString("LOGIN_ID")); 
-//                    dto.setPhoneNumber(rs.getString("PHONE_NUMBER")); 
-//                    dto.setOfficeName(rs.getString("OFFICE_NAME"));
-//                    dto.setEqName(rs.getString("EQ_NAME"));
-//                    dto.setSerialNum(rs.getString("SERIAL_NUM"));
-//                    dto.setRentalDate(rs.getTimestamp("RENTAL_DATE").toLocalDateTime());
-//                    
-//                    Timestamp returnTS = rs.getTimestamp("RETURN_DATE"); // 반납 예정일
-//                    if (returnTS != null) {
-//                        dto.setReturnDate(returnTS.toLocalDateTime());
-//                    }
-//
-//                    Timestamp actualReturnTS = rs.getTimestamp("ACTUAL_RETURN_DATE");
-//                    if (actualReturnTS != null) {
-//                        dto.setActualReturnDate(actualReturnTS.toLocalDateTime());
-//                    }
-//                    dto.setReturnStatus(rs.getString("RETURN_STATUS"));
-//                    dto.setOverdueDays(rs.getLong("OVERDUE_DAYS"));
-//                    dto.setOverdueFee(rs.getLong("OVERDUE_FEE"));
-//                    list.add(dto);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            // 실제 애플리케이션에서는 사용자에게 친숙한 메시지로 변환하여 알리는 것이 좋습니다.
-//        }
-//        return list;
-//    }
+    public List<OverdueHistoryDTO> findOverdueRentalsForAdmin() {
+        List<OverdueHistoryDTO> list = new ArrayList<>();
+        // SP_GET_OVERDUE_RENTALS_ADMIN은 인자가 없고 OUT 커서만 반환합니다.
+        String sql = "{call SP_GET_OVERDUE_RENTALS_ADMIN(?)}";
 
+        try (Connection conn = DBUtil.getConnection();
+             CallableStatement cstmt = conn.prepareCall(sql)) {
+
+            cstmt.registerOutParameter(1, OracleTypes.CURSOR); // 첫 번째 파라미터가 OUT 커서입니다.
+            cstmt.execute();
+
+            try (ResultSet rs = (ResultSet) cstmt.getObject(1)) { // 커서 인덱스도 1로 변경
+                while (rs.next()) {
+                	OverdueHistoryDTO dto = new OverdueHistoryDTO();
+                    dto.setRentalNum(rs.getLong("RENTAL_NUM"));
+                    dto.setLoginId(rs.getString("LOGIN_ID")); 
+                    dto.setUserName(rs.getString("USER_NAME"));
+                    dto.setPhoneNumber(rs.getString("PHONE_NUMBER")); 
+                    dto.setOfficeName(rs.getString("OFFICE_NAME"));
+                    dto.setEqName(rs.getString("EQ_NAME"));
+                    dto.setSerialNum(rs.getString("SERIAL_NUM"));
+                    dto.setRentalDate(rs.getTimestamp("RENTAL_DATE").toLocalDateTime());
+                    
+                    Timestamp returnTS = rs.getTimestamp("RETURN_DATE"); // 반납 예정일
+                    if (returnTS != null) {
+                        dto.setReturnDate(returnTS.toLocalDateTime());
+                    }
+
+                    Timestamp actualReturnTS = rs.getTimestamp("ACTUAL_RETURN_DATE");
+                    if (actualReturnTS != null) {
+                        dto.setActualReturnDate(actualReturnTS.toLocalDateTime());
+                    }
+                    dto.setReturnStatus(rs.getString("RETURN_STATUS"));
+                    dto.setOverdueDays(rs.getLong("OVERDUE_DAYS"));
+                    dto.setOverdueFee(rs.getLong("OVERDUE_FEE"));
+                    list.add(dto);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 실제 애플리케이션에서는 사용자에게 친숙한 메시지로 변환하여 알리는 것이 좋습니다.
+        }
+        return list;
+    }
+    
+    public List<OverdueHistoryDTO> findAllRentalsForAdmin() { // DTO는 상황에 따라 AllRentalHistoryDTO 등으로 변경 가능
+        List<OverdueHistoryDTO> rentals = new ArrayList<>();
+        // 모든 대여 기록을 가져오는 프로시저 호출
+        String sql = "{call SP_GET_ALL_RENTALS_ADMIN(?)}"; // SP_GET_ALL_RENTALS_ADMIN 프로시저 호출
+
+        try (Connection con = DBUtil.getConnection();
+             CallableStatement cstmt = con.prepareCall(sql)) {
+
+            cstmt.registerOutParameter(1, OracleTypes.CURSOR);
+            cstmt.execute();
+
+            try (ResultSet rs = (ResultSet) cstmt.getObject(1)) {
+                while (rs.next()) {
+                    // OverdueHistoryDTO는 연체 관련 필드를 포함하고 있으므로, 모든 대여 기록에도 사용 가능
+                    // 단, 실제 반납이 된 건은 overdueDays와 overdueFee가 0으로 나올 것입니다.
+                    OverdueHistoryDTO dto = new OverdueHistoryDTO();
+                    dto.setRentalNum(rs.getLong("RENTAL_NUM"));
+                    dto.setLoginId(rs.getString("LOGIN_ID"));
+                    dto.setUserName(rs.getString("USER_NAME"));
+                    dto.setPhoneNumber(rs.getString("PHONE_NUMBER"));
+                    dto.setOfficeName(rs.getString("OFFICE_NAME"));
+                    dto.setEqName(rs.getString("EQ_NAME"));
+                    dto.setSerialNum(rs.getString("SERIAL_NUM"));
+                    dto.setRentalDate(rs.getTimestamp("RENTAL_DATE").toLocalDateTime());
+                    dto.setReturnDate(rs.getTimestamp("RETURN_DATE").toLocalDateTime());
+                    
+                    Timestamp actualReturnTs = rs.getTimestamp("ACTUAL_RETURN_DATE");
+                    dto.setActualReturnDate(actualReturnTs != null ? actualReturnTs.toLocalDateTime() : null);
+                    
+                    dto.setReturnStatus(rs.getString("RETURN_STATUS"));
+                    dto.setOverdueDays(rs.getLong("OVERDUE_DAYS"));
+                    dto.setOverdueFee(rs.getLong("OVERDUE_FEE"));
+                    rentals.add(dto);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rentals;
+    }
 }
