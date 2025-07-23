@@ -65,7 +65,7 @@
 							<children>
 								<ComboBox fx:id="guComboBox" prefHeight="29.0" prefWidth="104.0" promptText="자치구" />
 								<ComboBox fx:id="officeComboBox" prefHeight="29.0" prefWidth="196.0" promptText="동 대여소" />
-								<TextField fx:id="searchTextField" prefHeight="29.0" prefWidth="163.0" promptText="검색..." />
+								<TextField fx:id="searchTextField" prefHeight="29.0" prefWidth="163.0" promptText="장비명을 검색하세요." />
 								<Button fx:id="searchButton" onAction="#search" mnemonicParsing="false" text="검색" />
 							</children>
 						</HBox>
