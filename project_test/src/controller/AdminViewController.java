@@ -31,7 +31,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.EquipmentViewDTO; // 수정한 DTO를 임포트
 import model.RentalOfficeDTO;
@@ -63,9 +62,11 @@ public class AdminViewController {
 	@FXML
 	private TextArea equipmentInfo;
 	@FXML
-	private Button myInfo;
+	private Button adminEqList;
 	@FXML
-	private Button rentalHistory;
+	private Button adminRentalList;
+//	@FXML
+//	private Button rentalHistory;
 
 	private EquipmentDAO equipmentDAO; // EquipmentDAO 인스턴스
 	private RentalOfficeDAO rentalOfficeDAO; // RentalOfficeDAO 인스턴스
@@ -79,31 +80,25 @@ public class AdminViewController {
 	public void initialize() {
 		guComboBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
 		guComboBox.setValue(userGu);
+		loadOfficesByGu(userGu);
+		// 구 콤보박스 변경시 테이블 최신화
 		guComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal != null && !newVal.equals(oldVal)) {
 				System.out.println("구 콤보박스 변경: " + oldVal + " -> " + newVal);
 				loadOfficesByGu(newVal);
 				search();
-			} else if (newVal == null) {
-				officeComboBox.getItems().clear();
-				officeComboBox.setValue(null);
+			}
+		});
+		// 대여소 콤보박스 변경시 테이블 최신화
+		officeComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+			if (newVal != null && !newVal.equals(oldVal)) {
+				System.out.println("대여소 콤보박스 변경: " + oldVal + " -> " + newVal);
 				search();
 			}
 		});
 
-		String initialGu;
-		if (userGu != null && !userGu.trim().isEmpty() && guComboBox.getItems().contains(userGu)) {
-			initialGu = userGu;
-			System.out.println("사용자 기본 '구': " + userGu + "로 설정됨.");
-		} else {
-			initialGu = "유성구"; // 사용자 기본 설정이 없거나 유효하지 않으면 "유성구"로 초기 설정
-			System.out.println("사용자 기본 '구' 정보가 없거나 유효하지 않아 '유성구'로 설정됨.");
-		}
-
-		guComboBox.setValue(initialGu); // guComboBox의 초기값 설정 (리스너가 여기서 트리거될 수 있음)
-		loadOfficesByGu(initialGu); // 초기 '구'에 해당하는 대여소 목록 로드
-
 		setupTableColumns();
+		loadTableData(searchTextField.getText().trim());
 		tableClickEvent();
 		imgClickEvent();
 	}
@@ -157,13 +152,8 @@ public class AdminViewController {
 		// 콤보박스에 항목 추가
 		officeComboBox.getItems().addAll(offices);
 
-		// 기본값 설정: '전체' 또는 첫 번째 실제 대여소를 기본으로
-		if (!offices.isEmpty()) {
-			officeComboBox.setValue(allOption); // '전체'를 기본으로 선택
-		} else {
-			officeComboBox.setValue(null); // 대여소가 없는 경우 선택 해제
-		}
-		loadTableData(searchTextField.getText().trim());
+		// 기본값 설정: '전체'
+		officeComboBox.setValue(allOption);
 	}
 
 	// 4. 이벤트 핸들러의 타입도 JavaFX 것으로 변경
@@ -178,59 +168,76 @@ public class AdminViewController {
 		}
 	}
 
-	@FXML
-	private void handleMyInfo(ActionEvent event) {
+//	@FXML
+//	private void handleMyInfo(ActionEvent event) {
+//		try {
+//			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
+//			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
+//			Parent myInfoView = loader.load();
+//
+//			// 1. 새로운 Stage (팝업 창) 생성
+//			Stage myInfoStage = new Stage();
+//			myInfoStage.setTitle("내 정보 수정");
+//			myInfoStage.setScene(new Scene(myInfoView));
+//
+//			// 2. 모달리티 설정: APPLICATION_MODAL 또는 WINDOW_MODAL
+//			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단합니다.
+//			// WINDOW_MODAL: 특정 부모 창만 차단합니다.
+//			myInfoStage.initModality(Modality.APPLICATION_MODAL); // <-- 이 부분이 핵심!
+//
+//			// 3. 부모 창 설정 (선택 사항이지만 권장):
+//			// 팝업 창이 어떤 창에 종속되는지 지정합니다.
+//			// 이렇게 하면 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
+//			Stage ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//			myInfoStage.initOwner(ownerStage); // <-- 이 부분이 부모 창을 지정합니다.
+//
+//			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록됩니다.
+//			myInfoStage.showAndWait(); // <-- show() 대신 showAndWait() 사용!
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			// 오류 발생 시 사용자에게 알림
+//			Alert alert = new Alert(AlertType.ERROR);
+//			alert.setTitle("오류");
+//			alert.setHeaderText("페이지 로드 실패");
+//			alert.setContentText("내 정보 수정 화면을 불러오는 데 실패했습니다.");
+//			alert.showAndWait();
+//		}
+//	}
+
+	// 대여정보 nav
+		@FXML
+		private void handleAdminRentalList(ActionEvent event) {
+			try {
+	            Parent adminRnetalView = FXMLLoader.load(getClass().getResource("/view/AdminRentalHistoryView.fxml"));
+	            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+	            stage.setScene(new Scene(adminRnetalView));
+	            stage.setTitle("전체 대여내역 조회");
+	            stage.show();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+//	            showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
+	        }
+	    }
+
+
+	public void handleOverdueHistory(ActionEvent event) {
 		try {
-			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
-			Parent myInfoView = loader.load();
-
-			// 1. 새로운 Stage (팝업 창) 생성
-			Stage myInfoStage = new Stage();
-			myInfoStage.setTitle("내 정보 수정");
-			myInfoStage.setScene(new Scene(myInfoView));
-
-			// 2. 모달리티 설정: APPLICATION_MODAL 또는 WINDOW_MODAL
-			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단합니다.
-			// WINDOW_MODAL: 특정 부모 창만 차단합니다.
-			myInfoStage.initModality(Modality.APPLICATION_MODAL); // <-- 이 부분이 핵심!
-
-			// 3. 부모 창 설정 (선택 사항이지만 권장):
-			// 팝업 창이 어떤 창에 종속되는지 지정합니다.
-			// 이렇게 하면 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
-			Stage ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			myInfoStage.initOwner(ownerStage); // <-- 이 부분이 부모 창을 지정합니다.
-
-			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록됩니다.
-			myInfoStage.showAndWait(); // <-- show() 대신 showAndWait() 사용!
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			// 오류 발생 시 사용자에게 알림
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("오류");
-			alert.setHeaderText("페이지 로드 실패");
-			alert.setContentText("내 정보 수정 화면을 불러오는 데 실패했습니다.");
-			alert.showAndWait();
-		}
-	}
-
-	public void handleRentalHistory(ActionEvent event) {
-		try {
-			// FXML 파일 로드 (패키지 경로 맞춰주세요!)
-			Parent handleRentalHistory = FXMLLoader.load(getClass().getResource("/view/RentalHistoryView.fxml"));
-
+			System.out.println("화면코드 전");
+			// FXML 파일 로드
+			Parent handleOverdueHistory = FXMLLoader.load(getClass().getResource("/view/OverdueHistoryView.fxml"));
 			// 현재 창(Stage)을 얻어서 씬 변경
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.setScene(new Scene(handleRentalHistory));
-			stage.setTitle("대여내역");
+			stage.setScene(new Scene(handleOverdueHistory));
+			stage.setTitle("연체정보");
 			stage.show();
+			System.out.println("화면코드 후");
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	// 장비 추가
 	@FXML
 	private void AddEqButton() {
@@ -350,50 +357,16 @@ public class AdminViewController {
 
 	@FXML
 	private void search() {
-		System.out.println("검색 실행!");
 		String searchText = searchTextField.getText().trim(); // 검색 필드 텍스트
-		String selectedGu = guComboBox.getValue(); // 선택된 '구'
-		RentalOfficeDTO selectedOfficeDTO = officeComboBox.getValue(); // 선택된 '동 대여소' DTO
-
-		// 입력값 유효성 검사
-		if (selectedGu == null || selectedGu.isEmpty()) {
-			showAlert(AlertType.WARNING, "검색 오류", "'구'를 선택해주세요.");
-			equipmentTable.getItems().clear();
-			return;
-		}
-
-		Integer officeId = null;
-		// '동 대여소'가 선택되었고, '전체' 옵션이 아니라면 officeId 설정
-		if (selectedOfficeDTO != null && selectedOfficeDTO.getOfficeId() != null) {
-			officeId = selectedOfficeDTO.getOfficeId();
-		}
-		// 만약 '전체'를 선택했을 때 officeId가 null이 되게 하려면 위의 조건문만으로 충분합니다.
 		loadTableData(searchText);
 	}
 
 	public void loadTableData(String searchText) {
 		String selectedGu = guComboBox.getValue();
 		String selectedOffice = officeComboBox.getValue().getOfficeName();
-
 		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentList(selectedGu, selectedOffice, searchText);
-		// 4. 가져온 데이터를 TableView에 설정합니다.
+		// 가져온 데이터를 TableView에 설정합니다.
 		equipmentTable.getItems().setAll(equipmentData);
-
-		// 5. 로그 출력 및 결과 알림 (선택 사항)
-		System.out.println("조회된 장비 수: " + equipmentData.size() + " (구: " + selectedGu + ")");
-	}
-
-	public void loadTableData() {
-		String selectedGu = guComboBox.getValue();
-		String selectedOffice = officeComboBox.getValue().getOfficeName();
-
-		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentList(selectedGu, selectedOffice,
-				searchTextField.getText().trim());
-		// 4. 가져온 데이터를 TableView에 설정합니다.
-		equipmentTable.getItems().setAll(equipmentData);
-
-		// 5. 로그 출력 및 결과 알림 (선택 사항)
-		System.out.println("조회된 장비 수: " + equipmentData.size() + " (구: " + selectedGu + ")");
 	}
 
 	private void showAlert(AlertType type, String title, String message) {

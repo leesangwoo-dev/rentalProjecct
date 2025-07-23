@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.OverdueHistoryDTO;
 import model.RentalDTO;
 import model.RentalHistoryDTO;
 import oracle.jdbc.OracleTypes;
@@ -60,7 +61,7 @@ public class RentalDAO {
     public String processReturn(Long rentalNum) { 
         String status = "ERROR"; 
         String sql = "{call SP_PROCESS_RETURN(?, ?)}"; // 파라미터 2개: p_rental_num, o_status
-
+        
         try (Connection conn = DBUtil.getConnection();
              CallableStatement cstmt = conn.prepareCall(sql)) {
 
@@ -121,4 +122,54 @@ public class RentalDAO {
             return false;
         }
     }
+    
+    /**
+     * 관리자용 연체 장비 목록을 가져옵니다.
+     * SP_GET_OVERDUE_RENTALS_ADMIN 프로시저를 호출합니다.
+     * @return 연체된 장비 목록 (OverdueHistoryAdminDTO 리스트)
+     */
+    public List<OverdueHistoryDTO> findOverdueRentalsForAdmin() {
+        List<OverdueHistoryDTO> list = new ArrayList<>();
+        // SP_GET_OVERDUE_RENTALS_ADMIN은 인자가 없고 OUT 커서만 반환합니다.
+        String sql = "{call SP_GET_OVERDUE_RENTALS_ADMIN(?)}";
+
+        try (Connection conn = DBUtil.getConnection();
+             CallableStatement cstmt = conn.prepareCall(sql)) {
+
+            cstmt.registerOutParameter(1, OracleTypes.CURSOR); // 첫 번째 파라미터가 OUT 커서입니다.
+            cstmt.execute();
+
+            try (ResultSet rs = (ResultSet) cstmt.getObject(1)) { // 커서 인덱스도 1로 변경
+                while (rs.next()) {
+                	OverdueHistoryDTO dto = new OverdueHistoryDTO();
+                    dto.setRentalNum(rs.getLong("RENTAL_NUM"));
+                    dto.setLoginId(rs.getString("LOGIN_ID")); 
+                    dto.setPhoneNumber(rs.getString("PHONE_NUMBER")); 
+                    dto.setOfficeName(rs.getString("OFFICE_NAME"));
+                    dto.setEqName(rs.getString("EQ_NAME"));
+                    dto.setSerialNum(rs.getString("SERIAL_NUM"));
+                    dto.setRentalDate(rs.getTimestamp("RENTAL_DATE").toLocalDateTime());
+                    
+                    Timestamp returnTS = rs.getTimestamp("RETURN_DATE"); // 반납 예정일
+                    if (returnTS != null) {
+                        dto.setReturnDate(returnTS.toLocalDateTime());
+                    }
+
+                    Timestamp actualReturnTS = rs.getTimestamp("ACTUAL_RETURN_DATE");
+                    if (actualReturnTS != null) {
+                        dto.setActualReturnDate(actualReturnTS.toLocalDateTime());
+                    }
+                    dto.setReturnStatus(rs.getString("RETURN_STATUS"));
+                    dto.setOverdueDays(rs.getLong("OVERDUE_DAYS"));
+                    dto.setOverdueFee(rs.getLong("OVERDUE_FEE"));
+                    list.add(dto);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // 실제 애플리케이션에서는 사용자에게 친숙한 메시지로 변환하여 알리는 것이 좋습니다.
+        }
+        return list;
+    }
+
 }

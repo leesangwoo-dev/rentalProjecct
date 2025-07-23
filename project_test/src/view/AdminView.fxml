@@ -62,11 +62,11 @@
 				<!-- 각 버튼에 CSS 클래스 부여 -->
 				<Button mnemonicParsing="false" styleClass="nav-button"
 					text="장비조회" />
-				<Button fx:id="rentalHistory" mnemonicParsing="false"
-					onAction="#handleRentalHistory" styleClass="nav-button-inactive"
+				<Button fx:id="adminRentalList" mnemonicParsing="false"
+					onAction="#handleAdminRentalList" styleClass="nav-button-inactive"
 					text="대여정보" />
-				<Button fx:id="myInfo" mnemonicParsing="false"
-					onAction="#handleMyInfo" styleClass="nav-button-inactive"
+				<Button mnemonicParsing="false"
+					onAction="#handleOverdueHistory" styleClass="nav-button-inactive"
 					text="연체정보" />
 			</children>
 		</HBox>

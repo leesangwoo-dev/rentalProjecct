@@ -153,7 +153,7 @@ public class AddEqController {
 
 		if (success) {
 			System.out.println("장비 등록 성공");
-			adminController.loadTableData(); // 필요 시
+			adminController.loadTableData(""); // 필요 시
 		} else {
 			System.out.println("장비 등록 실패");
 		}
