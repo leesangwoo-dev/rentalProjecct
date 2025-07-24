@@ -109,6 +109,7 @@ public class MainViewController {
 	// `guComboBox` 변경 시 호출될 메서드
 	private void loadOfficesByGu(String selectedGu) {
 		officeComboBox.setValue(null); // 현재 선택된 값도 초기화
+		officeComboBox.getItems().clear();
 
 		// RentalOfficeDAO를 사용하여 DB에서 대여소 목록 가져오기
 		List<RentalOfficeDTO> offices = rentalOfficeDAO.getOfficesByGu(selectedGu);
@@ -119,7 +120,7 @@ public class MainViewController {
 
 		// 콤보박스에 항목 추가
 		officeComboBox.getItems().addAll(offices);
-
+		
 		// 기본값 설정: '전체'
 		officeComboBox.setValue(allOption);
 	}

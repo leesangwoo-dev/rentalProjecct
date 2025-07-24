@@ -39,7 +39,7 @@
 .table-cell {
     -fx-padding: 0.5em; /* 10px 정도의 패딩 */
     -fx-font-size: 18px;
-    -fx-alignment: CENTER_LEFT;
+    -fx-alignment: CENTER;
 }
 
 /* 아래는 컨트롤러에서 동적으로 적용할 클래스들입니다. */
