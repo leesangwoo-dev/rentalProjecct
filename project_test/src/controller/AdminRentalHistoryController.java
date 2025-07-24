@@ -58,10 +58,7 @@ public class AdminRentalHistoryController implements Initializable {
 	private Button adminEqList; // 장비 조회 버튼
 	@FXML
 	private Button adminRentalList;
-<<<<<<< HEAD
 
-=======
->>>>>>> stash
 	@FXML
 	private CheckBox showOverdueOnlyCheckBox; // 연체자만 필터링하는 체크박스 추가
 	@FXML
@@ -74,11 +71,8 @@ public class AdminRentalHistoryController implements Initializable {
 	private Separator overdueDaysHeaderSeparator;
 
 	private RentalDAO rentalDAO = new RentalDAO(); // DAO 인스턴스
-<<<<<<< HEAD
 
 	// datetime 포맷용도
-=======
->>>>>>> stash
 	private final DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("yy-MM-dd");
 	private ObservableList<OverdueHistoryDTO> allRentals; // 전체 대여 기록을 저장할 리스트 (필터링을 위해 필요)
 	private String currentUserGu; // # 추가된 부분: 현재 로그인한 관리자의 담당 지역을 저장할 필드
