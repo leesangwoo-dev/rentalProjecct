@@ -14,6 +14,7 @@ import dao.RentalOfficeDAO;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -27,6 +28,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import util.Session;
 
 public class AddEqController {
@@ -167,6 +169,9 @@ public class AddEqController {
 		if (success) {
 			System.out.println("장비 등록 성공");
 			adminController.loadTableData(""); // 필요 시
+			// 현재 창 닫기
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.close(); // 현재 창을 닫습니다.
 		} else {
 			System.out.println("장비 등록 실패");
 		}
