@@ -31,7 +31,7 @@ public class RentalDAO {
 					RentalHistoryDTO dto = new RentalHistoryDTO();
 					dto.setRentalNum(rs.getLong("RENTAL_NUM"));
 					// SerialNum도 DTO에 추가하여 사용하면 유용합니다. (alert 메시지 등에)
-					dto.setSerialNum(rs.getString("SERIAL_NUM"));
+					//dto.setSerialNum(rs.getString("SERIAL_NUM"));
 					dto.setOfficeName(rs.getString("OFFICE_NAME"));
 					dto.setEqName(rs.getString("EQ_NAME"));
 					dto.setRentalDate(rs.getTimestamp("RENTAL_DATE").toLocalDateTime());
