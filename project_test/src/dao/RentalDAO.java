@@ -31,7 +31,7 @@ public class RentalDAO {
 					RentalHistoryDTO dto = new RentalHistoryDTO();
 					dto.setRentalNum(rs.getLong("RENTAL_NUM"));
 					// SerialNum도 DTO에 추가하여 사용하면 유용합니다. (alert 메시지 등에)
-					// dto.setSerialNum(rs.getString("SERIAL_NUM"));
+					dto.setSerialNum(rs.getString("SERIAL_NUM"));
 					dto.setOfficeName(rs.getString("OFFICE_NAME"));
 					dto.setEqName(rs.getString("EQ_NAME"));
 					dto.setRentalDate(rs.getTimestamp("RENTAL_DATE").toLocalDateTime());
@@ -53,8 +53,7 @@ public class RentalDAO {
 	}
 
 	/**
-	 * 장비를 반납 처리만 하는 프로시저 호출 (질문자님이 주신 SP_PROCESS_RETURN 사용).
-	 * 
+	 * 장비를 반납 처리만 하는 프로시저 호출
 	 * @param rentalNum 반납할 대여 번호
 	 * @return 프로시저에서 반환하는 결과 상태 문자열 (SUCCESS, NOT_FOUND, ALREADY_RETURNED, ERROR)
 	 */
@@ -85,7 +84,7 @@ public class RentalDAO {
 	 */
 	public String updateOverdueFeeToZero(Long rentalNum) {
 		String status = "FAIL_UNKNOWN";
-		String sql = "{call SP_UPDATE_OVERDUE_FEE_TO_ZERO(?, ?)}"; // 제가 제시한 프로시저 사용
+		String sql = "{call SP_UPDATE_OVERDUE_FEE_TO_ZERO(?, ?)}";
 
 		try (Connection conn = DBUtil.getConnection(); CallableStatement cstmt = conn.prepareCall(sql)) {
 

@@ -65,9 +65,9 @@
 				<Button fx:id="adminRentalList" mnemonicParsing="false"
 					onAction="#handleAdminRentalList" styleClass="nav-button-inactive"
 					text="대여정보" />
-				<Button mnemonicParsing="false"
+				<!-- <Button mnemonicParsing="false"
 					onAction="#handleOverdueHistory" styleClass="nav-button-inactive"
-					text="연체정보" />
+					text="연체정보" /> -->
 			</children>
 		</HBox>
 	</top>
