@@ -8,6 +8,8 @@ import lombok.Data;
 public class RentalHistoryDTO {
 	// 대여 번호 (PK)
 	private Long rentalNum;
+	//fffffff
+	private String loginId;
 	// 대여소명
 	private String officeName;
 	// 장비 시리얼 번호 (FK)
