@@ -31,7 +31,7 @@ public class RentalDAO {
 					RentalHistoryDTO dto = new RentalHistoryDTO();
 					dto.setRentalNum(rs.getLong("RENTAL_NUM"));
 					// SerialNum도 DTO에 추가하여 사용하면 유용합니다. (alert 메시지 등에)
-					dto.setSerialNum(rs.getString("SERIAL_NUM"));
+					//dto.setSerialNum(rs.getString("SERIAL_NUM"));
 					dto.setOfficeName(rs.getString("OFFICE_NAME"));
 					dto.setEqName(rs.getString("EQ_NAME"));
 					dto.setRentalDate(rs.getTimestamp("RENTAL_DATE").toLocalDateTime());
@@ -100,7 +100,7 @@ public class RentalDAO {
 		}
 		return status;
 	}
-
+	
 	public boolean insertRental(RentalDTO rental) {
 		String sql = "{ call SP_INSERT_RENTAL(?, ?, ?, ?) }";
 
@@ -168,7 +168,7 @@ public class RentalDAO {
 		}
 		return list;
 	}
-
+	
 	public List<OverdueHistoryDTO> findAllRentalsForAdmin() { // DTO는 상황에 따라 AllRentalHistoryDTO 등으로 변경 가능
 		List<OverdueHistoryDTO> rentals = new ArrayList<>();
 		// 모든 대여 기록을 가져오는 프로시저 호출

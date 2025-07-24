@@ -218,34 +218,19 @@ public class AdminViewController {
 			e.printStackTrace();
 		}
 	}
-
-	// 장비 상태 변경
+	
+	//장비 수정
 	@FXML
-	private void changeStatusButton() {
-		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
-		if (selected == null) {
-			showAlert(AlertType.WARNING, "경고", "장비를 선택하세요.");
-			return;
-		}
+	private void EditEqButton(ActionEvent event) {
+	    EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
+	    if (selected == null) {
+	        showAlert(AlertType.WARNING, "경고", "수정할 장비를 선택하세요.");
+	        return;
+	    }
 
-		// 상태 옵션 제공
-		List<String> statusOptions = Arrays.asList("사용가능", "수리", "대여중");
-		ChoiceDialog<String> dialog = new ChoiceDialog<>(selected.getState(), statusOptions);
-		dialog.setTitle("장비 상태 변경");
-		dialog.setHeaderText("현재 상태: " + selected.getState());
-		dialog.setContentText("장비 상태 변경:");
-
-		dialog.showAndWait().ifPresent(newState -> {
-			EquipmentDAO dao = new EquipmentDAO();
-			boolean success = dao.updateState(selected.getSerialNum(), newState);
-			if (success) {
-				showAlert(AlertType.INFORMATION, "알림", "상태가 [" + newState + "](으)로 변경되었습니다.");
-				loadTableData(searchTextField.getText().trim()); // 테이블 갱신
-			} else {
-				showAlert(AlertType.ERROR, "오류", "상태 변경 실패");
-			}
-		});
+	    openEditEqView(selected); // 이미 구현한 창 열기 메서드 재사용
 	}
+
 
 	// 클릭 이벤트 설정
 	public void tableClickEvent() {
@@ -254,21 +239,17 @@ public class AdminViewController {
 			if (selected != null) {
 				// 단일 클릭: 오른쪽 이미지와 설명 표시
 				equipmentInfo.setText(selected.getEqInfo());
-				System.out.println(selected.getImg());
 				String dbPath = selected.getImg();
 
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
-
-				System.out.println("파일 존재?: " + imgFile.exists());
-				System.out.println("URI: " + uri.toString());
 
 				equipmentImage.setImage(new Image(uri.toASCIIString()));
 			}
 
 			// 더블 클릭: 상세 보기 띄우기
 			if (event.getClickCount() == 2 && selected != null) {
-				// openDetailView(selected);
+				openEditEqView(selected);
 			}
 		});
 	}
@@ -296,18 +277,20 @@ public class AdminViewController {
 		stage.show();
 	}
 
-	// 더블 클릭시 장비 추가창 띄우기
-	private void openEqAddView(EquipmentViewDTO equipment) {
+	// 더블 클릭시 장비 수정창 띄우기
+	@FXML
+	private void openEditEqView(EquipmentViewDTO equipment) {
+		System.out.println("더블클릭");
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EqAddView.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EditEqView.fxml"));
 			Parent root = loader.load();
 
-			DetailViewController controller = loader.getController();
-			controller.setSerialNumber(equipment.getSerialNum());
-			// controller.setMainController(this);
+			EditEqController controller = loader.getController();
+			controller.setEquipmentDTO(equipment);
+			controller.setmainController(this);
 
 			Stage stage = new Stage();
-			stage.setTitle("장비 상세정보");
+			stage.setTitle("장비 수정");
 			stage.setScene(new Scene(root));
 			stage.show();
 

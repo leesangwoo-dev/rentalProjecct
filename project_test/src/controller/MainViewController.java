@@ -261,9 +261,6 @@ public class MainViewController {
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
 
-				System.out.println("파일 존재?: " + imgFile.exists());
-				System.out.println("URI: " + uri.toString());
-
 				equipmentImage.setImage(new Image(uri.toASCIIString()));
 
 			}

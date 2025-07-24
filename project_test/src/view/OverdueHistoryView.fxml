@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0"
+	prefWidth="1200.0" style="-fx-background-color: #fbfbfb;"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="controller.OverdueHistoryController">
+
+	<!-- 스타일시트 연결 부분 -->
+	<stylesheets>
+		<URL value="@../resources/css/style.css" />
+	</stylesheets>
+
+	<top>
+		<HBox alignment="CENTER_LEFT" prefHeight="80.0" spacing="15.0"
+			style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
+			<padding>
+				<Insets left="20.0" right="20.0" />
+			</padding>
+			<children>
+				<ImageView fitHeight="109.0" fitWidth="197.0"
+					pickOnBounds="true" preserveRatio="true">
+					<image>
+						<!-- 로고 이미지가 view 패키지 안에 있다고 가정 -->
+						<Image url="@/resources/img/logo._2PNG.PNG" />
+					</image>
+				</ImageView>
+				<HBox HBox.hgrow="ALWAYS" />
+				<!-- 각 버튼에 CSS 클래스 부여 -->
+				<Button fx:id="adminEqList" mnemonicParsing="false"
+					onAction="#handleAdminEqList" styleClass="nav-button-inactive"
+					text="장비조회" />
+				<Button fx:id= "adminRentalList" mnemonicParsing="false"
+					onAction="#handleAdminRentalList" styleClass="nav-button-inactive" 
+					text="대여정보" />
+				<Button mnemonicParsing="false" styleClass="nav-button"
+					text="연체정보" />
+			</children>
+		</HBox>
+	</top>
+	<center>
+		<VBox spacing="10">
+			<padding>
+				<Insets bottom="20" left="20" right="20" top="20" />
+			</padding>
+			<children>
+				<TableView fx:id="overdueTable" prefHeight="600.0"
+					VBox.vgrow="ALWAYS">
+					<columns>
+						<TableColumn fx:id="indexCol" prefWidth="50.0"
+							text="번호" />
+						<TableColumn fx:id="idCol" prefWidth="90.0"
+							text="ID" />
+						<TableColumn fx:id="phoneNumberCol" prefWidth="170.0"
+							text="  이름&#10;연락처" /> 
+						<TableColumn fx:id="officeNameCol" prefWidth="200.0"
+							text="대여소" />
+						<TableColumn fx:id="eqNameCol" prefWidth="200.0"
+							text="장비명" />
+						<TableColumn fx:id="rentalDateCol" prefWidth="171"
+							text="대여일&#10;반납일" />
+						<!-- <TableColumn fx:id="returnStatusCol" prefWidth="141.0" text="상태" 
+							/> -->
+						<TableColumn fx:id="overdueDaysCol" prefWidth="110.0"
+							text="연체일&#10;연체료" />
+						<TableColumn fx:id="returnActionCol" prefWidth="130.0"
+							text="반납" />
+
+					</columns>
+				</TableView>
+			</children>
+		</VBox>
+	</center>
+</BorderPane>

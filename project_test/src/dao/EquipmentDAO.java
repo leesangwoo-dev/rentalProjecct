@@ -8,6 +8,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,18 +101,54 @@ public class EquipmentDAO {
 		}
 	}
 
-	// 장비 상태변경
-	public boolean updateState(String serialNum, String newState) {
-		String sql = "UPDATE each_eq SET state = ? WHERE serial_num = ?";
+	/** 
+	 * 저장 프로시저 SP_UPDATE_EQUIPMENT_BY_SERIAL 호출로 장비 수정
+	 * @return true  : SUCCESS
+	 *         false : NOT_FOUND 또는 ERROR
+	 */
+	public boolean updateEquipment(String serialNum,
+	                               String state,
+	                               String imgPath,
+	                               String info,
+	                               Integer fee,
+	                               Integer unitPrice) {
+	    String sql = "{call SP_UPDATE_EQUIPMENT_BY_SERIAL(?,?,?,?,?,?,?)}"; // 7번째는 OUT 파라미터
+	    try (Connection conn = DBUtil.getConnection();
+	         CallableStatement cstmt = conn.prepareCall(sql)) {
 
-		try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        // 1. 필수(시리얼)
+	        cstmt.setString(1, serialNum);
 
-			pstmt.setString(1, newState);
-			pstmt.setString(2, serialNum);
-			return pstmt.executeUpdate() > 0;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+	        // 2. 선택 파라미터들은 NULL 허용
+	        if (info != null)        cstmt.setString(2, info);
+	        else                     cstmt.setNull(2, Types.CLOB);
+
+	        if (fee != null)         cstmt.setInt(3, fee);
+	        else                     cstmt.setNull(3, Types.NUMERIC);
+
+	        if (unitPrice != null)   cstmt.setInt(4, unitPrice);
+	        else                     cstmt.setNull(4, Types.NUMERIC);
+
+	        if (state != null)       cstmt.setString(5, state);
+	        else                     cstmt.setNull(5, Types.VARCHAR);
+
+	        if (imgPath != null)     cstmt.setString(6, imgPath);
+	        else                     cstmt.setNull(6, Types.VARCHAR);
+
+	        // 3. OUT 파라미터
+	        cstmt.registerOutParameter(7, Types.VARCHAR);
+
+	        cstmt.execute();
+	        String status = cstmt.getString(7);   // SUCCESS / NOT_FOUND / ERROR:...
+
+	        System.out.println("PROC STATUS = " + status);
+	        return "SUCCESS".equals(status);
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
+
+
 }

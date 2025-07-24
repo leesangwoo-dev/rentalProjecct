@@ -109,12 +109,9 @@ public class DetailViewController {
 		try {
 			if (dto.getImgPath() != null) {
 				String dbPath = dto.getImgPath();
-				
+
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
-
-				System.out.println("파일 존재?: " + imgFile.exists());
-				System.out.println("URI: " + uri.toString());
 
 				toolImageView.setImage(new Image(uri.toASCIIString()));
 			} else {
