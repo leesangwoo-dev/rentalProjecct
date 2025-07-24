@@ -1,5 +1,7 @@
 package controller;
 
+import static utils.ShowAlert.showAlert;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,7 +27,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.EquipmentViewDTO;
-import util.Session;
+import utils.Session;
 
 public class EditEqController {
 
@@ -171,20 +173,14 @@ public class EditEqController {
 	    );
 
 	    if (success) {
-	        showAlert(Alert.AlertType.INFORMATION, "장비가 수정되었습니다.");
+	        showAlert(Alert.AlertType.INFORMATION, "수정 완료",  "장비가 수정되었습니다.");
 	        if (adminController != null) adminController.loadTableData("");
 	        ((Stage)EditButton.getScene().getWindow()).close();
 	    } else {
-	        showAlert(Alert.AlertType.ERROR, "장비 수정 실패");
+	        showAlert(Alert.AlertType.ERROR, "수정 실패", "장비 수정 실패");
 	    }
 	}
 
-
-	private void showAlert(Alert.AlertType type, String message) {
-		Alert alert = new Alert(type);
-		alert.setContentText(message);
-		alert.showAndWait();
-	}
 	
 	public String saveImageToUploads(File originalFile) {
 		if (originalFile == null)

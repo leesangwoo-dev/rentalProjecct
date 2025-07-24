@@ -23,7 +23,8 @@
 	</stylesheets>
 
 	<top>
-		<VBox> <HBox alignment="CENTER_LEFT" prefHeight="80.0" spacing="15.0"
+		<VBox>
+			<HBox alignment="CENTER_LEFT" prefHeight="80.0" spacing="15.0"
 				style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;">
 				<padding>
 					<Insets left="20.0" right="20.0" />
@@ -44,9 +45,11 @@
 						text="대여정보" />
 				</children>
 			</HBox>
-			<HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #fbfbfb;">
+			<HBox alignment="CENTER_RIGHT" prefHeight="40.0"
+				prefWidth="200.0" style="-fx-background-color: #fbfbfb;">
 				<children>
-					<CheckBox fx:id="showOverdueOnlyCheckBox" mnemonicParsing="false" text="연체자만 보기">
+					<CheckBox fx:id="showOverdueOnlyCheckBox"
+						mnemonicParsing="false" text="연체자만 보기">
 						<font>
 							<Font name="Malgun Gothic" size="14.0" />
 						</font>
@@ -69,8 +72,7 @@
 					<columns>
 						<TableColumn fx:id="indexCol" prefWidth="50.0"
 							text="번호" />
-						<TableColumn fx:id="idCol" prefWidth="90.0"
-							text="ID" />
+						<TableColumn fx:id="idCol" prefWidth="90.0" text="ID" />
 						<TableColumn fx:id="phoneNumberCol" prefWidth="170.0"
 							text="  이름&#10;연락처" />
 						<TableColumn fx:id="officeNameCol" prefWidth="200.0"

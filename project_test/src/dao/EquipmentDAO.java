@@ -1,6 +1,6 @@
 package dao;
 
-import static util.DBUtil.getConnection;
+import static utils.DBUtil.getConnection;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import model.EquipmentViewDTO;
 import oracle.jdbc.OracleTypes;
-import util.DBUtil; // Oracle JDBC 드라이버에 포함된 클래스;
+import utils.DBUtil;
 
 public class EquipmentDAO {
 
@@ -45,6 +45,7 @@ public class EquipmentDAO {
 					dto.setEqName(rs.getString("EQ_NAME"));
 					dto.setSerialNum(rs.getString("SERIAL_NUM"));
 					dto.setRentalFee(rs.getInt("RENTAL_FEE"));
+					dto.setUnitPrice(rs.getInt("UNIT_PRICE"));
 					dto.setState(rs.getString("STATE"));
 					dto.setImg(rs.getString("IMG"));
 					dto.setEqInfo(rs.getString("EQ_INFO"));
@@ -149,6 +150,62 @@ public class EquipmentDAO {
 	        return false;
 	    }
 	}
+	
+	public List<String> getAllEqNames() {
+	    List<String> eqNames = new ArrayList<>();
+	    String sql = "SELECT eq_name FROM equipment ORDER BY eq_name";
 
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        while (rs.next()) {
+	            eqNames.add(rs.getString("eq_name"));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return eqNames;
+	}
+	
+	public EquipmentViewDTO findByName(String name) {
+	    String sql = "SELECT eq_name, eq_info, unit_price, rental_fee FROM equipment WHERE eq_name = ?";
+	    EquipmentViewDTO dto = new EquipmentViewDTO();
 
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, name);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                dto.setEqName(rs.getString("eq_name"));
+	                dto.setEqInfo(rs.getString("eq_info"));
+	                dto.setUnitPrice(rs.getInt("unit_price"));
+	                dto.setRentalFee(rs.getInt("rental_fee"));
+	            } else {
+	                return null;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	    return dto;
+	}
+
+	public Integer getEqNumByName(String name) {
+	    String sql = "SELECT eq_num FROM equipment WHERE eq_name = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, name);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt("eq_num");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;  // 해당 이름이 없을 경우
+	}
+
+	
 }

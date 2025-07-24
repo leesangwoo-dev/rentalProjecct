@@ -1,6 +1,12 @@
 package controller;
 
-import static util.Session.*;
+import static utils.Session.userGu;
+import static utils.Session.userLoginId;
+import static utils.Session.userName;
+import static utils.Session.userPassword;
+import static utils.Session.userPhoneNumber;
+import static utils.Session.applyEnglishOnlyTextFormatter;
+import static utils.ShowAlert.showAlert;
 
 import java.io.IOException;
 
@@ -13,13 +19,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
 
 public class MyInfoController {
 
@@ -109,13 +115,5 @@ public class MyInfoController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	private void showAlert(AlertType type, String title, String message) {
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
 	}
 }

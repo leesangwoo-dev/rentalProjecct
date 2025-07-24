@@ -12,7 +12,7 @@ import model.OverdueHistoryDTO;
 import model.RentalDTO;
 import model.RentalHistoryDTO;
 import oracle.jdbc.OracleTypes;
-import util.DBUtil;
+import utils.DBUtil;
 
 public class RentalDAO {
 	// 대여내역 가져오기 (SP_GET_RENTAL_HISTORY가 RENTAL 테이블을 사용하고 OVERDUE_FEE 등을 정확히 가져와야 함)

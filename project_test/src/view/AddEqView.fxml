@@ -6,89 +6,106 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
 
 <AnchorPane prefHeight="565.0" prefWidth="817.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AddEqController">
+    
+    <children>
+        <!-- 제목 -->
+        <Label layoutX="198.0" layoutY="14.0" prefHeight="56" prefWidth="85.0" style="-fx-font-size:18px; -fx-font-weight:bold;" text="장비 추가" />
 
-	<children>
-		<!-- 제목 -->
-		<Label layoutX="198.0" layoutY="14.0" prefHeight="56" prefWidth="85.0" style="-fx-font-size:18px;-fx-font-weight:bold;" text="장비 추가" />
+        <!-- 이미지 등록 영역 -->
+        <StackPane fx:id="imageDropPane" layoutX="6" layoutY="82" onDragDropped="#handleDragDropped" onDragOver="#handleDragOver" prefHeight="454" prefWidth="468">
+            <children>
+                <ImageView fx:id="imagePreview" fitHeight="411.0" fitWidth="448.0" preserveRatio="true" smooth="true" />
+                <Pane prefHeight="300.0" prefWidth="468.0">
+                    <children>
+                        <Button fx:id="chooseImageButton" layoutX="179.0" layoutY="242.0" onAction="#handleImageSelect" prefHeight="35.0" prefWidth="111.0" text="파일 선택" />
+                        <Label fx:id="dragLabel" layoutX="151.0" layoutY="177.0" prefHeight="65.0" prefWidth="167.0" style="-fx-text-fill: derive(-fx-text-base-color, -40%);" text="DRAG/DROP">
+                            <font><Font size="27.0" /></font>
+                        </Label>
+                    </children>
+                </Pane>
+            </children>
+        </StackPane>
 
-		<!-- 이미지 등록 영역 -->
-		<StackPane fx:id="imageDropPane" layoutX="6" layoutY="82" onDragDropped="#handleDragDropped" onDragOver="#handleDragOver" prefHeight="454" prefWidth="468">
-			<children>
-				<ImageView fx:id="imagePreview" fitHeight="411.0" fitWidth="448.0" preserveRatio="true" smooth="true" />
-				<Pane prefHeight="300.0" prefWidth="468.0">
-					<children>
-						<Button fx:id="chooseImageButton" layoutX="179.0" layoutY="242.0" onAction="#handleImageSelect" prefHeight="35.0" prefWidth="111.0" text="파일 선택" />
-						<Label fx:id="dragLabel" layoutX="151.0" layoutY="177.0" prefHeight="65.0" prefWidth="167.0" style="-fx-text-fill: derive(-fx-text-base-color,-40%);" text="DRAG/DROP">
-							<font>
-								<Font size="27.0" />
-							</font>
-						</Label>
-					</children>
-				</Pane>
-			</children>
-		</StackPane>
+        <!-- 정보 입력 영역 -->
+        <VBox layoutX="483" layoutY="20" prefHeight="539.0" prefWidth="326" spacing="10">
+            <children>
+                <!-- 입력 폼 -->
+                <GridPane hgap="10" vgap="10">
+                    <!-- 3열: 라벨 / 입력(StackPane) / 버튼(새 장비) -->
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="90.0" />
+                        <ColumnConstraints maxWidth="158.0" minWidth="109.0" prefWidth="149.0" />
+                        <ColumnConstraints maxWidth="114.0" minWidth="65.0" prefWidth="74.0" />
+                    </columnConstraints>
 
-		<!-- 정보 입력 영역 -->
-		<VBox layoutX="483" layoutY="20" prefHeight="539.0" prefWidth="326" spacing="10">
-			<children>
-				<!-- 입력 폼 -->
-				<GridPane hgap="10" vgap="10">
-					<columnConstraints>
-						<ColumnConstraints prefWidth="90" />
-						<ColumnConstraints prefWidth="220" />
-					</columnConstraints>
-					<rowConstraints>
-						<RowConstraints />
-						<RowConstraints />
-						<RowConstraints />
-						<RowConstraints />
-						<RowConstraints />
-						<RowConstraints />
-						<RowConstraints />
-						<RowConstraints />
-						<RowConstraints />
-						<RowConstraints />
-					</rowConstraints>
-					<children>
-						<Label text="장비명:" GridPane.rowIndex="0" />
-						<TextField fx:id="eqNameField" promptText="예) DSLR 카메라" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <!-- Row 0 : 장비명 / 선택 or 입력 -->
+                    <children>
+                        <Label text="장비명:" GridPane.rowIndex="0" />
 
-						<Label text="일련번호:" GridPane.rowIndex="1" />
-						<TextField fx:id="serialNumField" promptText="Serial No." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <!-- StackPane에 ComboBox와 TextField를 겹쳐두고 필요 시 토글 -->
+                        <StackPane fx:id="eqNameStack" prefWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <children>
+                                <ComboBox fx:id="eqComboBox" prefHeight="29.0" prefWidth="158.0" promptText="장비 선택" />
+                                <TextField fx:id="eqNameField" managed="false" promptText="새 장비명 입력" visible="false" />
+                            </children>
+                        </StackPane>
 
-						<Label text="대여료:" GridPane.rowIndex="2" />
-						<TextField fx:id="costField" promptText="숫자만 입력" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Button fx:id="btnNewEq" onAction="#handleNewEq" prefHeight="29.0" prefWidth="152.0" text="새 장비" GridPane.columnIndex="2" GridPane.rowIndex="0" />
 
-						<Label text="장비 단가:" GridPane.rowIndex="3" />
-						<TextField fx:id="unitPriceField" promptText="숫자만 입력" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <!-- Row 1 : 일련번호 -->
+                        <Label text="일련번호:" GridPane.rowIndex="1" />
+                        <TextField fx:id="serialNumField" promptText="Serial No." GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
 
-						<Label text="구 선택:" GridPane.rowIndex="4" />
-						<ComboBox fx:id="guComboBox" promptText="구 선택" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <!-- Row 2 : 대여료 -->
+                        <Label text="대여료:" GridPane.rowIndex="2" />
+                        <TextField fx:id="costField" editable="false" promptText="숫자만 입력" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
 
-						<Label text="대여소:" GridPane.rowIndex="5" />
-						<ComboBox fx:id="officeComboBox" promptText="대여소 선택" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <!-- Row 3 : 장비 단가 -->
+                        <Label text="장비 단가:" GridPane.rowIndex="3" />
+                        <TextField fx:id="unitPriceField" editable="false" promptText="숫자만 입력" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
 
-						<Label text="전화번호:" GridPane.rowIndex="6" />
-						<Label fx:id="phoneLabel" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <!-- Row 4 : 구 선택 -->
+                        <Label text="구 선택:" GridPane.rowIndex="4" />
+                        <ComboBox fx:id="guComboBox" promptText="구 선택" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
 
-						<Label text="취득일:" GridPane.rowIndex="7" />
-						<TextField fx:id="acquisitionDateField" promptText="YYYY-MM-DD" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-					</children>
-				</GridPane>
+                        <!-- Row 5 : 대여소 -->
+                        <Label text="대여소:" GridPane.rowIndex="5" />
+                        <ComboBox fx:id="officeComboBox" promptText="대여소 선택" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" />
 
-				<!-- 설명 입력 -->
-				<Label text="장비 설명:" />	
-				<TextArea fx:id="eqInfoArea" prefHeight="132.0" prefWidth="326.0" promptText="장비 상세 설명을 입력하세요." wrapText="true" />
+                        <!-- Row 6 : 전화번호 -->
+                        <Label text="전화번호:" GridPane.rowIndex="6" />
+                        <Label fx:id="phoneLabel" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
 
-				<!-- 추가 버튼 -->
-				<Pane prefHeight="60.0" prefWidth="326.0">
-					<children>
-						<Button fx:id="AddButton" layoutX="80.0" layoutY="10.0" onAction="#handleSave" prefHeight="35" prefWidth="166.0" style="-fx-background-color:#8D5C59;-fx-text-fill:white;-fx-font-weight:bold;" text="장비 추가" />
-					</children>
-				</Pane>
-			</children>
-		</VBox>
-	</children>
+                        <!-- Row 7 : 취득일 -->
+                        <Label text="취득일:" GridPane.rowIndex="7" />
+                        <TextField fx:id="acquisitionDateField" promptText="YYYY-MM-DD" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="7" />
+                    </children>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+                </GridPane>
+
+                <!-- 설명 입력 -->
+                <Label text="장비 설명:" />
+                <TextArea fx:id="eqInfoArea" prefHeight="132.0" prefWidth="326.0" promptText="장비 상세 설명을 입력하세요." wrapText="true" />
+
+                <!-- 추가 버튼 -->
+                <Pane prefHeight="60.0" prefWidth="326.0">
+                    <children>
+                        <Button fx:id="AddButton" layoutX="80.0" layoutY="10.0" onAction="#handleSave" prefHeight="35" prefWidth="166.0" style="-fx-background-color:#8D5C59; -fx-text-fill:white; -fx-font-weight:bold;" text="장비 추가" />
+                    </children>
+                </Pane>
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>

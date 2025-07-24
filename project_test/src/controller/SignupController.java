@@ -18,7 +18,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.UserDTO;
-import static util.Session.applyEnglishOnlyTextFormatter;
+import static utils.Session.applyEnglishOnlyTextFormatter;
 
 public class SignupController {
 

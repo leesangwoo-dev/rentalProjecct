@@ -1,12 +1,10 @@
 // src/controller/RootController.java
 package controller;
 
-import static util.DBUtil.getConnection;
-import static util.Session.*;
+import static utils.DBUtil.getConnection;
+import static utils.Session.*;
 
 import java.sql.Connection;
-import java.util.function.UnaryOperator;
-import java.util.regex.Pattern;
 
 import dao.UserDAO;
 import javafx.event.ActionEvent;
@@ -19,7 +17,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
 
 // 로그인 페이지 컨트롤러

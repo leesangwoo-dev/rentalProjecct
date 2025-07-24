@@ -1,6 +1,7 @@
 package controller;
 
-import static util.Session.userGu;
+import static utils.Session.userGu;
+import static utils.ShowAlert.showAlert;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -316,13 +316,4 @@ public class AdminViewController {
 		// 가져온 데이터를 TableView에 설정합니다.
 		equipmentTable.getItems().setAll(equipmentData);
 	}
-
-	private void showAlert(AlertType type, String title, String message) {
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
-	}
-
 }

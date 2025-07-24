@@ -1,4 +1,4 @@
-package util;
+package utils;
 
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;

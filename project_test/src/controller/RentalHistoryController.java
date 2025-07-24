@@ -1,6 +1,7 @@
 package controller;
 
-import static util.Session.userLoginId;
+import static utils.Session.userLoginId;
+import static utils.ShowAlert.showAlert;
 
 import java.io.IOException;
 import java.net.URL;
@@ -59,7 +60,6 @@ public class RentalHistoryController implements Initializable {
 
 	private RentalDAO rentalDAO = new RentalDAO();
 
-	private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
 	private final DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("yy-MM-dd");
 
 	@Override
@@ -184,9 +184,9 @@ public class RentalHistoryController implements Initializable {
 	}
 
 	private void showOverduePaymentProcess(RentalHistoryDTO rental) {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		showAlert("연체료 발생", rental.getEqName() + " (대여번호: " + rental.getRentalNum() + ")",
-				"이 장비는 현재 연체되었습니다.\n" + "연체일: " + rental.getOverdueDays() + "일\n" + "납부할 연체료: "
+		showAlert(Alert.AlertType.INFORMATION, "연체료 발생",
+				rental.getEqName() + "이 장비(" + rental.getRentalNum() + ")는 현재 연체되었습니다.\n" + "연체일: "
+						+ rental.getOverdueDays() + "일\n" + "납부할 연체료: "
 						+ String.format("%,d원", rental.getOverdueFee()));
 		processReturnOnly(rental);
 	}
@@ -197,17 +197,17 @@ public class RentalHistoryController implements Initializable {
 
 		switch (resultStatus) {
 		case "SUCCESS":
-			showAlert("반납 완료", null, rental.getEqName() + " 장비 반납이 성공적으로 처리되었습니다.");
+			showAlert(Alert.AlertType.INFORMATION, "반납 완료", rental.getEqName() + " 장비 반납이 성공적으로 처리되었습니다.");
 			break;
 		case "ALREADY_RETURNED":
-			showAlert("반납 실패", null, "이미 반납이 완료된 장비입니다.");
+			showAlert(Alert.AlertType.ERROR, "반납 실패", "이미 반납이 완료된 장비입니다.");
 			break;
 		case "NOT_FOUND":
-			showAlert("오류", null, "해당 대여 기록을 찾을 수 없습니다.");
+			showAlert(Alert.AlertType.ERROR, "오류", "해당 대여 기록을 찾을 수 없습니다.");
 			break;
 		case "ERROR": // 기타 SQL 에러 등
 		default:
-			showAlert("오류", null, "알 수 없는 오류로 반납에 실패했습니다: " + resultStatus + ". 관리자에게 문의하세요.");
+			showAlert(Alert.AlertType.ERROR, "오류", "알 수 없는 오류로 반납에 실패했습니다: " + resultStatus + ". 관리자에게 문의하세요.");
 			break;
 		}
 		loadRentalHistory(); // 테이블 갱신
@@ -225,19 +225,6 @@ public class RentalHistoryController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-
-//	@FXML
-//	public void handleAdminEqList(ActionEvent event) {
-//		try {
-//			Parent adminView = FXMLLoader.load(getClass().getResource("/view/AdminView.fxml"));
-//			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//			stage.setScene(new Scene(adminView));
-//			stage.setTitle("관리자 장비 조회");
-//			stage.show();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 	@FXML
 	private void handleMyInfo(ActionEvent event) {
@@ -274,14 +261,5 @@ public class RentalHistoryController implements Initializable {
 			alert.setContentText("내 정보 수정 화면을 불러오는 데 실패했습니다.");
 			alert.showAndWait();
 		}
-	}
-
-	// ========== 일반적인 알림창 메서드 ==========
-	private void showAlert(String title, String header, String content) {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle(title);
-		alert.setHeaderText(header);
-		alert.setContentText(content);
-		alert.showAndWait();
 	}
 }
