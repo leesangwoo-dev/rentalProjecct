@@ -74,7 +74,6 @@ public class LoginController {
 	}
 
 	public void signup(ActionEvent event) {
-		System.out.println("회원 가입");
 		try {
 			Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 			currentStage.hide();
@@ -98,17 +97,15 @@ public class LoginController {
 		sc.setStage(newStage);
 		newStage.show();
 
-	}// end
+	}
 
 	public boolean handleLogin(ActionEvent event) {
 		String userId = idTextField.getText();
 		String password = passwordField.getText();
-		System.out.println(password);
 
 		UserDAO userDao = new UserDAO();
 		if (userDao.isLoginValid(userId, password)) {
 			// 로그인 성공
-			System.out.println("로그인 성공");
 			return true;
 			// 다음 화면으로 전환 등
 		} else {
