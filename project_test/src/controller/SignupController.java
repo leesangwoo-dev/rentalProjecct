@@ -48,8 +48,6 @@ public class SignupController {
 	UserDAO userDAO = null;
 
 	public void Singup(ActionEvent event) {
-		System.out.println("회원가입");
-
 		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty() || passwordTextField.getText() == null
 				|| passwordTextField.getText().trim().isEmpty() || nameTextField.getText() == null
 				|| nameTextField.getText().trim().isEmpty() || phoneNumberTextField.getText() == null
@@ -68,6 +66,11 @@ public class SignupController {
 					phoneNumberTextField.getText(), guChoiceBox.getValue());
 
 			userDAO.addUser(newUser);
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("성공");
+			alert.setHeaderText(null);
+			alert.setContentText("회원가입이 성공하셨습니다");
+			alert.showAndWait();
 
 			Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			currentStage.close();
