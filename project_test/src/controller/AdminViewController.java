@@ -183,21 +183,21 @@ public class AdminViewController {
 		}
 	}
 
-	// 연체정보 nav
-	public void handleOverdueHistory(ActionEvent event) {
-		try {
-			// FXML 파일 로드
-			Parent handleOverdueHistory = FXMLLoader.load(getClass().getResource("/view/OverdueHistoryView.fxml"));
-			// 현재 창(Stage)을 얻어서 씬 변경
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.setScene(new Scene(handleOverdueHistory));
-			stage.setTitle("연체정보");
-			stage.show();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	// 연체정보 nav
+//	public void handleOverdueHistory(ActionEvent event) {
+//		try {
+//			// FXML 파일 로드
+//			Parent handleOverdueHistory = FXMLLoader.load(getClass().getResource("/view/OverdueHistoryView.fxml"));
+//			// 현재 창(Stage)을 얻어서 씬 변경
+//			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//			stage.setScene(new Scene(handleOverdueHistory));
+//			stage.setTitle("연체정보");
+//			stage.show();
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	// 장비 추가
 	@FXML
