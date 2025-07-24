@@ -112,6 +112,11 @@ public class AddEqController {
 				// 새 장비모드 초기화
 				eqNameField.setVisible(false);
 				eqNameField.setManaged(false);
+				costField.setVisible(false);
+				costField.setManaged(false);
+				unitPriceField.setVisible(false);
+				unitPriceField.setManaged(false);
+
 			}
 		});
 	}
