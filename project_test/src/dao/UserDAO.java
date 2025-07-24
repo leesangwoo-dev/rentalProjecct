@@ -30,9 +30,7 @@ public class UserDAO {
 			cstmt.setString(5, user.getUserGu());
 
 			cstmt.execute();
-			System.out.println("사용자 등록 성공");
 		} catch (SQLException e) {
-			System.err.println("사용자 등록 실패: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -72,7 +70,6 @@ public class UserDAO {
 					userPhoneNumber = rs.getString("PHONE_NUMBER");
 					userGu = rs.getString("USER_GU");
 					userRole = rs.getString("ROLE");
-					System.out.println(userLoginId);
 				}
 			}
 		} catch (SQLException e) {
