@@ -77,8 +77,18 @@ public class MainViewController {
 		this.rentalOfficeDAO = new RentalOfficeDAO();
 	}
 
+	
 	@FXML
 	public void initialize() {
+		setLocationInfo();		// 위치 정보 세팅
+		setupTableColumns();	// 컬럼 세팅
+		loadTableData(searchTextField.getText().trim()); // 필터 세팅
+		tableClickEvent();	// 이벤트 핸들러 등록
+		imgClickEvent();	// 이미지 클릭 이벤트 핸들러 등록
+	}
+
+	// 위치 정보(구, 지역, 대여소) 세팅
+	private void setLocationInfo() {
 		LocalDate now = LocalDate.now();
 		todayLabel.setText("Today : " + now.toString());
 		guComboBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
@@ -100,10 +110,6 @@ public class MainViewController {
 			}
 		});
 
-		setupTableColumns();
-		loadTableData(searchTextField.getText().trim());
-		tableClickEvent();
-		imgClickEvent();
 	}
 
 	// `guComboBox` 변경 시 호출될 메서드
@@ -120,7 +126,7 @@ public class MainViewController {
 
 		// 콤보박스에 항목 추가
 		officeComboBox.getItems().addAll(offices);
-		
+
 		// 기본값 설정: '전체'
 		officeComboBox.setValue(allOption);
 	}
@@ -171,7 +177,6 @@ public class MainViewController {
 		String selectedGu = guComboBox.getValue();
 		String selectedOffice = officeComboBox.getValue().getOfficeName();
 		List<EquipmentViewDTO> equipmentData = equipmentDAO.getEquipmentList(selectedGu, selectedOffice, searchText);
-		// 가져온 데이터를 TableView에 설정합니다.
 		equipmentTable.getItems().setAll(equipmentData);
 	}
 
@@ -181,20 +186,17 @@ public class MainViewController {
 			EquipmentViewDTO selectedItem = equipmentTable.getSelectionModel().getSelectedItem();
 			if (selectedItem != null) {
 				System.out.println("선택된 아이템: " + selectedItem.getEqName());
-				// 여기서 상세 정보 창을 띄우거나 다른 작업을 수행할 수 있습니다.
 			}
 		}
 	}
 
+	// 내 정보 수정 창
 	@FXML
 	private void handleMyInfo(ActionEvent event) {
 		try {
-			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
-
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
 			Parent myInfoView = loader.load();
 
-			// 1. 새로운 Stage (팝업 창) 생성
 			Stage myInfoStage = new Stage();
 			myInfoStage.setTitle("내 정보 수정");
 			myInfoStage.setScene(new Scene(myInfoView));
@@ -224,9 +226,9 @@ public class MainViewController {
 		}
 	}
 
+	// 대여내역 창
 	public void handleRentalHistory(ActionEvent event) {
 		try {
-			// FXML 파일 로드 (패키지 경로 맞춰주세요!)
 			Parent handleRentalHistory = FXMLLoader.load(getClass().getResource("/view/RentalHistoryView.fxml"));
 
 			// 현재 창(Stage)을 얻어서 씬 변경

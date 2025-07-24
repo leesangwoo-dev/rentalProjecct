@@ -16,11 +16,8 @@ public class Session {
     public static String userGu;
     public static String userRole;
 
-    /**
-	 * 주어진 PasswordField에 영문, 숫자, 일부 특수문자만 허용하는 TextFormatter를 적용합니다.
-	 * 한글 및 그 외 문자는 입력되지 않습니다.
-	 * @param passwordField 적용할 PasswordField
-	 */
+
+    // 비밀번호 필드에서 영어와 일부 특수문자 외에 입력 제어
 	public static void applyEnglishOnlyTextFormatter(PasswordField passwordField) {
 	    // 허용할 문자 패턴 정의 (영문 대소문자, 숫자, 일부 특수문자)
 	    // 여기서는 !@#$%^&*()_+-=[]{};':"|,.<>/?`~ 와 공백을 허용했습니다.
@@ -30,9 +27,9 @@ public class Session {
 	    UnaryOperator<TextFormatter.Change> filter = change -> {
 	        // 변경될 텍스트가 허용된 패턴과 일치하는지 확인
 	        if (allowedChars.matcher(change.getControlNewText()).matches()) {
-	            return change; // 변경 허용
+	            return change;
 	        } else {
-	            return null; // 변경 거부 (입력되지 않음)
+	            return null;
 	        }
 	    };
 

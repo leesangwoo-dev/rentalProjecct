@@ -53,6 +53,7 @@ public class MyInfoController {
 		guChoiceBox.setValue(userGu);
 	}
 
+	// 장비 목록 조회 페이지(메인페이지)
 	public void handleEqList(ActionEvent event) {
 		try {
 			// FXML 파일 로드 (패키지 경로 맞춰주세요!)
@@ -68,6 +69,7 @@ public class MyInfoController {
 		}
 	}
 
+	// 정보 수정 버튼
 	@FXML
 	private void handleUpdateButton(ActionEvent event) {
 		String name = nameTextField.getText();

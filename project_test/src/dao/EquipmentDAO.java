@@ -18,12 +18,8 @@ import oracle.jdbc.OracleTypes;
 import utils.DBUtil;
 
 public class EquipmentDAO {
-
-	/**
-	 * 장비 목록을 DB에서 조회하는 메서드
-	 * 
-	 * @return EquipmentViewDto 객체 리스트
-	 */
+	
+	//장비 목록을 DB에서 조회하는 메서드
 	public List<EquipmentViewDTO> getEquipmentList(String gu, String office, String searchText) {
 		List<EquipmentViewDTO> equipmentList = new ArrayList<>();
 		String sql = "{call SP_GET_EQUIPMENT_VIEW(?, ?, ?, ?, ?)}";
@@ -59,6 +55,7 @@ public class EquipmentDAO {
 		return equipmentList;
 	}
 
+	// 장비 추가 및 개별 장비 추가를 위한 장비 아이디 가져오기
 	public int insertEquipmentAndGetId(String name, String info, int unitPrice, int rentalFee) {
 		String sql = "INSERT INTO equipment (eq_name, eq_info, unit_price, rental_fee) VALUES (?, ?, ?, ?)";
 		int generatedId = -1;

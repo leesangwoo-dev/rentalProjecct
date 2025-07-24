@@ -56,6 +56,7 @@ public class LoginController {
 		}
 	}
 	
+	// 로그인 시 권한별로 구분된 페이지 열기 
 	private void MainStage(String role) throws Exception {
 		Stage newStage = new Stage();
 		Parent parent = null;
@@ -70,11 +71,13 @@ public class LoginController {
 		newStage.show();
 	}
 
+	// 회원가입
 	public void signup(ActionEvent event) {
 		try {
 			Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 			currentStage.hide();
 
+			// 회원가입창 열기
 			signUpPopup();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -82,6 +85,7 @@ public class LoginController {
 
 	}
 
+	// 회원가입창 열기
 	public void signUpPopup() throws Exception {
 
 		Stage newStage = new Stage();
@@ -96,6 +100,7 @@ public class LoginController {
 
 	}
 
+	// 로그인 버튼 
 	public boolean handleLogin(ActionEvent event) {
 		String userId = idTextField.getText();
 		String password = passwordField.getText();

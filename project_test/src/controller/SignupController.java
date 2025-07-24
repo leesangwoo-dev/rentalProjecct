@@ -39,6 +39,7 @@ public class SignupController {
 	@FXML
 	private Button signupButton;
 
+	// 기본 세팅(지역 정보 및 기본값)
 	@FXML
 	public void initialize() {
 		guChoiceBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
@@ -50,7 +51,9 @@ public class SignupController {
 
 	UserDAO userDAO = null;
 
+	// 회원가입
 	public void Singup(ActionEvent event) {
+		// 유효성 체크
 		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty() || passwordField.getText() == null
 				|| passwordField.getText().trim().isEmpty() || nameTextField.getText() == null
 				|| nameTextField.getText().trim().isEmpty() || phoneNumberTextField.getText() == null
@@ -81,6 +84,7 @@ public class SignupController {
 		}
 	}
 
+	// 로그인 창 열기
 	public static void showLoginWindow() {
 		try {
 			Parent root = FXMLLoader.load(LoginController.class.getResource("/view/LoginView.fxml"));
@@ -93,6 +97,7 @@ public class SignupController {
 		}
 	}
 
+	// 아이디 중복 체크
 	public void idCheckButton() {
 		userDAO = new UserDAO();
 		boolean check = userDAO.isIdDuplicated(idTextField.getText());
@@ -105,9 +110,9 @@ public class SignupController {
 		}
 	}
 
+	// 회원가입 창 닫을 때 로그인 창 다시 열기
 	public void setStage(Stage newStage) {
 		newStage.setOnCloseRequest(event -> {
-			// 회원가입 창 닫을 때 로그인 창 다시 열기
 			showLoginWindow();
 		});
 	}

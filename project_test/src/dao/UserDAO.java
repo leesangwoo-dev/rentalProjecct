@@ -18,7 +18,6 @@ import java.sql.Types;
 import model.UserDTO;
 
 public class UserDAO {
-
 	// 사용자 추가
 	public void addUser(UserDTO user) {
 		try (Connection conn = getConnection();
