@@ -108,11 +108,6 @@ public class EditEqController {
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle("새 이미지 선택");
 		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("이미지 파일", "*.png", "*.jpg", "*.jpeg"));
-		File file = chooser.showOpenDialog(refreshImageButton.getScene().getWindow());
-		if (file != null) {
-			newImageFile = file;
-			imagePreview.setImage(new Image(file.toURI().toString()));
-		}
 	}
 
 	public void setEquipmentDTO(EquipmentViewDTO dto) {
