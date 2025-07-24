@@ -65,8 +65,8 @@ public class AdminViewController {
 	private Button adminEqList;
 	@FXML
 	private Button adminRentalList;
-//	@FXML
-//	private Button rentalHistory;
+	@FXML
+	private Button overdueHistory;
 
 	private EquipmentDAO equipmentDAO; // EquipmentDAO 인스턴스
 	private RentalOfficeDAO rentalOfficeDAO; // RentalOfficeDAO 인스턴스
@@ -168,62 +168,24 @@ public class AdminViewController {
 		}
 	}
 
-//	@FXML
-//	private void handleMyInfo(ActionEvent event) {
-//		try {
-//			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
-//			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
-//			Parent myInfoView = loader.load();
-//
-//			// 1. 새로운 Stage (팝업 창) 생성
-//			Stage myInfoStage = new Stage();
-//			myInfoStage.setTitle("내 정보 수정");
-//			myInfoStage.setScene(new Scene(myInfoView));
-//
-//			// 2. 모달리티 설정: APPLICATION_MODAL 또는 WINDOW_MODAL
-//			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단합니다.
-//			// WINDOW_MODAL: 특정 부모 창만 차단합니다.
-//			myInfoStage.initModality(Modality.APPLICATION_MODAL); // <-- 이 부분이 핵심!
-//
-//			// 3. 부모 창 설정 (선택 사항이지만 권장):
-//			// 팝업 창이 어떤 창에 종속되는지 지정합니다.
-//			// 이렇게 하면 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
-//			Stage ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//			myInfoStage.initOwner(ownerStage); // <-- 이 부분이 부모 창을 지정합니다.
-//
-//			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록됩니다.
-//			myInfoStage.showAndWait(); // <-- show() 대신 showAndWait() 사용!
-//
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			// 오류 발생 시 사용자에게 알림
-//			Alert alert = new Alert(AlertType.ERROR);
-//			alert.setTitle("오류");
-//			alert.setHeaderText("페이지 로드 실패");
-//			alert.setContentText("내 정보 수정 화면을 불러오는 데 실패했습니다.");
-//			alert.showAndWait();
-//		}
-//	}
-
 	// 대여정보 nav
-		@FXML
-		private void handleAdminRentalList(ActionEvent event) {
-			try {
-	            Parent adminRnetalView = FXMLLoader.load(getClass().getResource("/view/AdminRentalHistoryView.fxml"));
-	            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-	            stage.setScene(new Scene(adminRnetalView));
-	            stage.setTitle("전체 대여내역 조회");
-	            stage.show();
-	        } catch (IOException e) {
-	            e.printStackTrace();
+	@FXML
+	private void handleAdminRentalList(ActionEvent event) {
+		try {
+			Parent adminRnetalView = FXMLLoader.load(getClass().getResource("/view/AdminRentalHistoryView.fxml"));
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.setScene(new Scene(adminRnetalView));
+			stage.setTitle("전체 대여내역 조회");
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
 //	            showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
-	        }
-	    }
+		}
+	}
 
-
+	// 연체정보 nav
 	public void handleOverdueHistory(ActionEvent event) {
 		try {
-			System.out.println("화면코드 전");
 			// FXML 파일 로드
 			Parent handleOverdueHistory = FXMLLoader.load(getClass().getResource("/view/OverdueHistoryView.fxml"));
 			// 현재 창(Stage)을 얻어서 씬 변경
@@ -231,13 +193,12 @@ public class AdminViewController {
 			stage.setScene(new Scene(handleOverdueHistory));
 			stage.setTitle("연체정보");
 			stage.show();
-			System.out.println("화면코드 후");
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// 장비 추가
 	@FXML
 	private void AddEqButton() {
@@ -279,7 +240,7 @@ public class AdminViewController {
 				// 단일 클릭: 오른쪽 이미지와 설명 표시
 				equipmentInfo.setText(selected.getEqInfo());
 				String dbPath = selected.getImg();
-				
+
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
 

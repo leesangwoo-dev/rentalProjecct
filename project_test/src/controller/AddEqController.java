@@ -14,6 +14,7 @@ import dao.RentalOfficeDAO;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -26,6 +27,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import util.Session;
 
 public class AddEqController {
 
@@ -89,7 +91,6 @@ public class AddEqController {
 		}
 		event.consume();
 	}
-
 	@FXML
 	private void handleDragDropped(DragEvent event) {
 		Dragboard db = event.getDragboard();
@@ -130,6 +131,18 @@ public class AddEqController {
 
 	@FXML
 	private void handleSave(ActionEvent event) {
+		// ① 권한 체크
+	    if (!Session.userGu.equals(guComboBox.getValue())) {
+	        Alert alert = new Alert(Alert.AlertType.WARNING);
+	        alert.setTitle("권한 오류");
+	        alert.setHeaderText(null);
+	        alert.setContentText("본인이 소속된 지역(구)의 장비만 등록할 수 있습니다.");
+	        alert.showAndWait();          // 사용자가 확인을 눌러야 계속‑실행
+	        return;                       // 권한이 없으므로 저장 중단
+	    }
+			
+
+
 		String eqName = eqNameField.getText();
 		String serial = serialNumField.getText();
 		String eqInfo = eqInfoArea.getText();
@@ -145,7 +158,7 @@ public class AddEqController {
 
 		RentalOfficeDAO officeDAO = new RentalOfficeDAO();
 		EquipmentDAO eqDAO = new EquipmentDAO();
-		
+
 		int officeId = officeDAO.getOfficeIdByName(officeName); // office_name → office_id
 		int eqNum = eqDAO.insertEquipmentAndGetId(eqName, eqInfo, unitPrice, rentalFee);
 
@@ -158,21 +171,22 @@ public class AddEqController {
 			System.out.println("장비 등록 실패");
 		}
 	}
-	
+
 	public String saveImageToUploads(File originalFile) {
-	    if (originalFile == null) return null;
+		if (originalFile == null)
+			return null;
 
-	    String fileName = System.currentTimeMillis() + "_" + originalFile.getName();
-	    Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "img", "equipment");
-	    Path targetPath = uploadDir.resolve(fileName);
+		String fileName = System.currentTimeMillis() + "_" + originalFile.getName();
+		Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "img", "equipment");
+		Path targetPath = uploadDir.resolve(fileName);
 
-	    try {
-	        Files.createDirectories(uploadDir);
-	        Files.copy(originalFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-	        return "uploads/img/equipment/" + fileName; // DB에 저장
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return null;
-	    }
+		try {
+			Files.createDirectories(uploadDir);
+			Files.copy(originalFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+			return "uploads/img/equipment/" + fileName; // DB에 저장
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

@@ -1,6 +1,11 @@
 package controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import dao.EquipmentDAO;
 import javafx.event.ActionEvent;
@@ -20,6 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.EquipmentViewDTO;
+import util.Session;
 
 public class EditEqController {
 
@@ -38,7 +44,7 @@ public class EditEqController {
 	@FXML
 	private TextArea eqInfoArea;
 
-	private File selectedImageFile;
+	//private File newImageFile;
 
 	@FXML
 	private Button refreshImageButton;
@@ -49,6 +55,7 @@ public class EditEqController {
 	private AdminViewController adminController;
 	private File newImageFile;
 
+	
 	public void setmainController(AdminViewController adminController) {
 		this.adminController = adminController;
 	}
@@ -67,8 +74,8 @@ public class EditEqController {
 		boolean success = false;
 
 		if (db.hasFiles()) {
-			selectedImageFile = db.getFiles().get(0);
-			loadImagePreview(selectedImageFile);
+			newImageFile = db.getFiles().get(0);
+			loadImagePreview(newImageFile);
 			success = true;
 		}
 		event.setDropCompleted(success);
@@ -84,8 +91,8 @@ public class EditEqController {
 		File file = fileChooser.showOpenDialog(imageDropPane.getScene().getWindow());
 
 		if (file != null) {
-			selectedImageFile = file;
-			loadImagePreview(selectedImageFile);
+			newImageFile = file;
+			loadImagePreview(newImageFile);
 		}
 	}
 
@@ -113,7 +120,7 @@ public class EditEqController {
 	
 	public void setEquipmentDTO(EquipmentViewDTO dto) {
 		this.equipment = dto;
-
+		
 		eqNameField.setText(dto.getEqName());
 		serialNumField.setText(dto.getSerialNum());
 		costField.setText(String.valueOf(dto.getRentalFee()) + "원");
@@ -129,13 +136,19 @@ public class EditEqController {
 	// ───────────────── EditEqController.java ─────────────────
 	@FXML
 	private void handleUpdate(ActionEvent event) {
+		// ① 권한 체크
+	    if (!Session.userGu.equals(equipment.getOfficeGu())) { // equipment DTO에 getGu() 메서드가 있다고 가정
+	        Alert alert = new Alert(Alert.AlertType.WARNING);
+	        alert.setTitle("권한 오류");
+	        alert.setHeaderText(null);
+	        alert.setContentText("본인이 소속된 지역(구)의 장비만 수정할 수 있습니다.");
+	        alert.showAndWait();
+	        return;   // 더 진행하지 않음
+	    }
 
 	    String serial   = serialNumField.getText();
 	    String newState = stateCombo.getValue();
-
-	    // 새 이미지가 없으면 기존 경로 사용
-	    String newImgPath = (newImageFile != null) ? newImageFile.getAbsolutePath() : equipment.getImg();
-
+	    String newImgPath = (newImageFile != null) ?  saveImageToUploads(newImageFile) : equipment.getImg();
 	    // ★ 숫자 필드 : "12000원" → 12000
 	    Integer fee = null;
 	    String feeTxt = costField.getText().replaceAll("[^0-9]", "");
@@ -171,5 +184,23 @@ public class EditEqController {
 		Alert alert = new Alert(type);
 		alert.setContentText(message);
 		alert.showAndWait();
+	}
+	
+	public String saveImageToUploads(File originalFile) {
+		if (originalFile == null)
+			return null;
+			
+		String fileName = System.currentTimeMillis() + "_" + originalFile.getName();
+		Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "img", "equipment");
+		Path targetPath = uploadDir.resolve(fileName);
+
+		try {
+			Files.createDirectories(uploadDir);
+			Files.copy(originalFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+			return "uploads/img/equipment/" + fileName; // DB에 저장
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

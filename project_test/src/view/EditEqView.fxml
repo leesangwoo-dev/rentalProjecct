@@ -78,6 +78,5 @@
 				</Pane>
 			</children>
 		</VBox>
-		<Button layoutX="5.0" layoutY="50.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="22.0" text="🔁" />
 	</children>
 </AnchorPane>

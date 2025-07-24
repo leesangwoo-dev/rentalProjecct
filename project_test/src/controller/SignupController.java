@@ -22,7 +22,6 @@ import model.UserDTO;
 public class SignupController {
 
 	@FXML
-
 	private ChoiceBox<String> guChoiceBox;
 	@FXML
 	private TextField idTextField;

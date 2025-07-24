@@ -27,6 +27,7 @@ public class LoginController {
 	@FXML
 	private PasswordField passwordTextField;
 
+	// 로그인 속도 향상을 위한 DB 연결 
 	Connection conn;
 
 	@FXML
@@ -44,6 +45,7 @@ public class LoginController {
 				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				currentStage.close();
 				MainStage(userRole);
+				conn.close(); // 로그인이 성공하면 LoginController에서 연결한 DB Connection 종료
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
