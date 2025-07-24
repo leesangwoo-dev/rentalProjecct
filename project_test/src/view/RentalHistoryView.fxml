@@ -58,20 +58,30 @@
 				<TableView fx:id="rentalTable" prefHeight="600.0"
 					VBox.vgrow="ALWAYS">
 					<columns>
-						<TableColumn fx:id="indexCol" prefWidth="50.0"
-							text="번호" />
-						<TableColumn fx:id="officeNameCol" prefWidth="230.0"
-							text="대여소" />
-						<TableColumn fx:id="eqNameCol" prefWidth="180.0"
-							text="장비명" />
-						<TableColumn fx:id="rentalDateCol" prefWidth="171.0"
-							text="대여일&#10;반납일" />
-						<TableColumn fx:id="returnActionCol"  prefWidth="171.0"
-							text="반납" />
-						<!-- <TableColumn fx:id="returnStatusCol" prefWidth="141.0"
-							text="상태" /> -->
-						<TableColumn fx:id="overdueDaysCol" prefWidth="250.0"
-							text="연체일&#10;연체료" />
+						<TableColumn fx:id="indexCol" text="번호" />
+						<TableColumn fx:id="officeNameCol" text="대여소" />
+						<TableColumn fx:id="eqNameCol" text="장비명" />
+						<TableColumn fx:id="rentalDateCol">
+							<graphic>
+								<VBox alignment="CENTER" spacing="2">
+									<Text text="대여일" />
+									<Separator fx:id="rentalDateHeaderSeparator" prefWidth="150"
+										style="-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;" />
+									<Text text="반납일" />
+								</VBox>
+							</graphic>
+						</TableColumn>
+						<TableColumn fx:id="returnActionCol" text="반납" />
+						<TableColumn fx:id="overdueDaysCol">
+							<graphic>
+								<VBox alignment="CENTER" spacing="2">
+									<Text text="연체일" />
+									<Separator fx:id="overdueDaysHeaderSeparator" prefWidth="150"
+										style="-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;" />
+									<Text text="연체료" />
+								</VBox>
+							</graphic>
+						</TableColumn>
 
 					</columns>
 				</TableView>

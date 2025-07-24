@@ -53,14 +53,14 @@
 						<!-- 기존 비밀번호 입력 -->
 						<Label text="기존 비밀번호" style="-fx-text-fill: white;"
 							GridPane.rowIndex="1" />
-						<PasswordField fx:id="passwordTextField"
+						<PasswordField fx:id="passwordField"
 							promptText="기존 비밀번호" GridPane.columnIndex="1"
 							GridPane.rowIndex="1" />
 
 						<!-- 새 비밀번호 입력 -->
 						<Label text="새 비밀번호" style="-fx-text-fill: white;"
 							GridPane.rowIndex="2" />
-						<PasswordField fx:id="newPasswordTextField"
+						<PasswordField fx:id="newPasswordField"
 							promptText="새 비밀번호 (선택 사항)" GridPane.columnIndex="1"
 							GridPane.rowIndex="2" />
 

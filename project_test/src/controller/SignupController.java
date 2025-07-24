@@ -18,16 +18,16 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.UserDTO;
+import static utils.Session.applyEnglishOnlyTextFormatter;
 
 public class SignupController {
 
 	@FXML
-
 	private ChoiceBox<String> guChoiceBox;
 	@FXML
 	private TextField idTextField;
 	@FXML
-	private PasswordField passwordTextField;
+	private PasswordField passwordField;
 	@FXML
 	private TextField nameTextField;
 	@FXML
@@ -43,16 +43,16 @@ public class SignupController {
 	public void initialize() {
 		guChoiceBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
 		guChoiceBox.setValue("유성구"); // 기본 값
+		// 비밀번호 필드에 TextFormatter 적용
+	    applyEnglishOnlyTextFormatter(passwordField);
 		Platform.runLater(() -> signupButton.requestFocus());
 	}
 
 	UserDAO userDAO = null;
 
 	public void Singup(ActionEvent event) {
-		System.out.println("회원가입");
-
-		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty() || passwordTextField.getText() == null
-				|| passwordTextField.getText().trim().isEmpty() || nameTextField.getText() == null
+		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty() || passwordField.getText() == null
+				|| passwordField.getText().trim().isEmpty() || nameTextField.getText() == null
 				|| nameTextField.getText().trim().isEmpty() || phoneNumberTextField.getText() == null
 				|| phoneNumberTextField.getText().trim().isEmpty() || guChoiceBox.getValue() == null
 				|| guChoiceBox.getValue().trim().isEmpty() || infoLabel.getText().equals("이미 존재하는 아이디입니다.")) {
@@ -65,10 +65,15 @@ public class SignupController {
 			userDAO = new UserDAO();
 
 			// DTO 생성
-			UserDTO newUser = new UserDTO(idTextField.getText(), passwordTextField.getText(), nameTextField.getText(),
+			UserDTO newUser = new UserDTO(idTextField.getText(), passwordField.getText(), nameTextField.getText(),
 					phoneNumberTextField.getText(), guChoiceBox.getValue());
 
 			userDAO.addUser(newUser);
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("성공");
+			alert.setHeaderText(null);
+			alert.setContentText("회원가입이 성공하셨습니다");
+			alert.showAndWait();
 
 			Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			currentStage.close();

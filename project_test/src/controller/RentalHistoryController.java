@@ -1,6 +1,7 @@
 package controller;
 
-import static util.Session.userLoginId;
+import static utils.Session.userLoginId;
+import static utils.ShowAlert.showAlert;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -57,9 +59,13 @@ public class RentalHistoryController implements Initializable {
 	@FXML
 	private Button myInfoButton;
 
+	@FXML
+	private Separator rentalDateHeaderSeparator;
+	@FXML
+	private Separator overdueDaysHeaderSeparator;
+
 	private RentalDAO rentalDAO = new RentalDAO();
 
-	private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
 	private final DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("yy-MM-dd");
 
 	@Override
@@ -98,7 +104,18 @@ public class RentalHistoryController implements Initializable {
 					} else {
 						actualReturnDateText.setText("");
 					}
-					vbox.getChildren().addAll(rentalDateText, actualReturnDateText);
+
+					// # 변경된 부분: 구분선 추가
+					Separator separator = new Separator();
+					separator.prefWidthProperty().bind(rentalDateCol.widthProperty().subtract(5));
+					separator.setStyle("-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;");
+
+					// 만약 이 셀에도 구분선을 넣고 싶다면, 아래 라인을 추가해야 합니다.
+					Separator cellSeparator = new Separator();
+					cellSeparator.prefWidthProperty().bind(rentalDateCol.widthProperty().subtract(5));
+					cellSeparator.setStyle("-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;");
+					vbox.getChildren().addAll(rentalDateText, cellSeparator, actualReturnDateText); // 구분선 추가
+
 					setGraphic(vbox);
 					setText(null);
 					setAlignment(Pos.CENTER);
@@ -119,6 +136,12 @@ public class RentalHistoryController implements Initializable {
 					vbox.setAlignment(Pos.CENTER);
 					Text overdueDaysText = new Text(rental.getOverdueDays() + "일");
 					Text overdueFeeText = new Text(String.format("%,d원", rental.getOverdueFee()));
+
+					// # 변경된 부분: 구분선 추가
+					Separator separator = new Separator();
+					separator.prefWidthProperty().bind(overdueDaysCol.widthProperty().subtract(5));
+					separator.setStyle("-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;");
+
 					vbox.getChildren().addAll(overdueDaysText, overdueFeeText);
 					setGraphic(vbox);
 					setText(null);
@@ -173,6 +196,34 @@ public class RentalHistoryController implements Initializable {
 				}
 			}
 		});
+		// # 핵심 변경 부분: 테이블 너비 변경 리스너 추가 (반응형 레이아웃)
+		rentalTable.widthProperty().addListener((obs, oldVal, newVal) -> {
+			double totalWidth = newVal.doubleValue();
+			// 스크롤바 너비를 대략적으로 고려 (Windows 기준 약 17px)
+			double scrollBarCompensation = 18;
+			double usableWidth = totalWidth - scrollBarCompensation;
+
+			// 각 컬럼에 비율 할당 (총합 1.0 = 100%가 되도록 조정)
+			// 이 비율은 임의로 설정한 값이므로, 실제 UI에서 데이터가 잘 보이도록 미세 조정해야 합니다.
+			indexCol.setPrefWidth(usableWidth * 0.05); // 5%
+			eqNameCol.setPrefWidth(usableWidth * 0.23); // 20%
+			officeNameCol.setPrefWidth(usableWidth * 0.22); // 20%
+			rentalDateCol.setPrefWidth(usableWidth * 0.20); // 20%
+			returnActionCol.setPrefWidth(usableWidth * 0.12); // 10%
+//			returnStatusCol.setPrefWidth(usableWidth * 0.15); // 10%
+			overdueDaysCol.setPrefWidth(usableWidth * 0.20); // 15%
+			// 합계: 0.05 + 0.20 + 0.20 + 0.20 + 0.10 + 0.15 + 0.10 = 1.00 (100%)
+
+			// # FXML에서 fx:id를 부여한 헤더 Separator들의 너비를 바인딩합니다.
+			// null 체크를 통해 객체가 로드되었는지 확인합니다.
+			// 컬럼 너비에서 약간의 여백을 주는 것이 시각적으로 좋습니다 (예: -5px)
+			if (rentalDateHeaderSeparator != null) {
+				rentalDateHeaderSeparator.prefWidthProperty().bind(rentalDateCol.widthProperty().subtract(5));
+			}
+			if (overdueDaysHeaderSeparator != null) {
+				overdueDaysHeaderSeparator.prefWidthProperty().bind(overdueDaysCol.widthProperty().subtract(5));
+			}
+		});
 
 		loadRentalHistory();
 	}
@@ -182,16 +233,12 @@ public class RentalHistoryController implements Initializable {
 		ObservableList<RentalHistoryDTO> observableList = FXCollections.observableArrayList(list);
 		rentalTable.setItems(observableList);
 	}
-	
+
 	private void showOverduePaymentProcess(RentalHistoryDTO rental) {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		showAlert(
-				"연체료 발생", 
-				rental.getEqName() + " (대여번호: " + rental.getRentalNum() + ")",
-				"이 장비는 현재 연체되었습니다.\n" + 
-				"연체일: " + rental.getOverdueDays() + "일\n" + 
-				"납부할 연체료: "+ String.format("%,d원", rental.getOverdueFee())
-		);
+		showAlert(Alert.AlertType.INFORMATION, "연체료 발생",
+				rental.getEqName() + "이 장비(" + rental.getRentalNum() + ")는 현재 연체되었습니다.\n" + "연체일: "
+						+ rental.getOverdueDays() + "일\n" + "납부할 연체료: "
+						+ String.format("%,d원", rental.getOverdueFee()));
 		processReturnOnly(rental);
 	}
 
@@ -201,17 +248,17 @@ public class RentalHistoryController implements Initializable {
 
 		switch (resultStatus) {
 		case "SUCCESS":
-			showAlert("반납 완료", null, rental.getEqName() + " 장비 반납이 성공적으로 처리되었습니다.");
+			showAlert(Alert.AlertType.INFORMATION, "반납 완료", rental.getEqName() + " 장비 반납이 성공적으로 처리되었습니다.");
 			break;
 		case "ALREADY_RETURNED":
-			showAlert("반납 실패", null, "이미 반납이 완료된 장비입니다.");
+			showAlert(Alert.AlertType.ERROR, "반납 실패", "이미 반납이 완료된 장비입니다.");
 			break;
 		case "NOT_FOUND":
-			showAlert("오류", null, "해당 대여 기록을 찾을 수 없습니다.");
+			showAlert(Alert.AlertType.ERROR, "오류", "해당 대여 기록을 찾을 수 없습니다.");
 			break;
 		case "ERROR": // 기타 SQL 에러 등
 		default:
-			showAlert("오류", null, "알 수 없는 오류로 반납에 실패했습니다: " + resultStatus + ". 관리자에게 문의하세요.");
+			showAlert(Alert.AlertType.ERROR, "오류", "알 수 없는 오류로 반납에 실패했습니다: " + resultStatus + ". 관리자에게 문의하세요.");
 			break;
 		}
 		loadRentalHistory(); // 테이블 갱신
@@ -229,19 +276,6 @@ public class RentalHistoryController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	
-//	@FXML
-//	public void handleAdminEqList(ActionEvent event) {
-//		try {
-//			Parent adminView = FXMLLoader.load(getClass().getResource("/view/AdminView.fxml"));
-//			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//			stage.setScene(new Scene(adminView));
-//			stage.setTitle("관리자 장비 조회");
-//			stage.show();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 	@FXML
 	private void handleMyInfo(ActionEvent event) {
@@ -278,14 +312,5 @@ public class RentalHistoryController implements Initializable {
 			alert.setContentText("내 정보 수정 화면을 불러오는 데 실패했습니다.");
 			alert.showAndWait();
 		}
-	}
-
-	// ========== 일반적인 알림창 메서드 ==========
-	private void showAlert(String title, String header, String content) {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle(title);
-		alert.setHeaderText(header);
-		alert.setContentText(content);
-		alert.showAndWait();
 	}
 }

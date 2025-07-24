@@ -1,6 +1,6 @@
 package controller;
 
-import static util.Session.userGu;
+import static utils.Session.userGu;
 
 import java.io.File;
 import java.io.IOException;
@@ -109,6 +109,7 @@ public class MainViewController {
 	// `guComboBox` 변경 시 호출될 메서드
 	private void loadOfficesByGu(String selectedGu) {
 		officeComboBox.setValue(null); // 현재 선택된 값도 초기화
+		officeComboBox.getItems().clear();
 
 		// RentalOfficeDAO를 사용하여 DB에서 대여소 목록 가져오기
 		List<RentalOfficeDTO> offices = rentalOfficeDAO.getOfficesByGu(selectedGu);
@@ -119,7 +120,7 @@ public class MainViewController {
 
 		// 콤보박스에 항목 추가
 		officeComboBox.getItems().addAll(offices);
-
+		
 		// 기본값 설정: '전체'
 		officeComboBox.setValue(allOption);
 	}
@@ -255,14 +256,11 @@ public class MainViewController {
 			if (selected != null) {
 				// 단일 클릭: 오른쪽 이미지와 설명 표시
 				equipmentInfo.setText(selected.getEqInfo());
-				
+
 				String dbPath = selected.getImg();
-				
+
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
-
-				System.out.println("파일 존재?: " + imgFile.exists());
-				System.out.println("URI: " + uri.toString());
 
 				equipmentImage.setImage(new Image(uri.toASCIIString()));
 

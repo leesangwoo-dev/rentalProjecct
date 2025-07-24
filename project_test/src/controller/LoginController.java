@@ -1,8 +1,8 @@
 // src/controller/RootController.java
 package controller;
 
-import static util.DBUtil.getConnection;
-import static util.Session.*;
+import static utils.DBUtil.getConnection;
+import static utils.Session.*;
 
 import java.sql.Connection;
 
@@ -25,8 +25,9 @@ public class LoginController {
 	@FXML
 	private TextField idTextField;
 	@FXML
-	private PasswordField passwordTextField;
+	private PasswordField passwordField;
 
+	// 로그인 속도 향상을 위한 DB 연결 
 	Connection conn;
 
 	@FXML
@@ -36,6 +37,8 @@ public class LoginController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		// 비밀번호 필드에 TextFormatter 적용
+	    applyEnglishOnlyTextFormatter(passwordField);
 	}
 
 	public void Login(ActionEvent event) {
@@ -44,6 +47,7 @@ public class LoginController {
 				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				currentStage.close();
 				MainStage(userRole);
+				conn.close(); // 로그인이 성공하면 LoginController에서 연결한 DB Connection 종료
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -67,7 +71,6 @@ public class LoginController {
 	}
 
 	public void signup(ActionEvent event) {
-		System.out.println("회원 가입");
 		try {
 			Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
 			currentStage.hide();
@@ -91,16 +94,15 @@ public class LoginController {
 		sc.setStage(newStage);
 		newStage.show();
 
-	}// end
+	}
 
 	public boolean handleLogin(ActionEvent event) {
 		String userId = idTextField.getText();
-		String password = passwordTextField.getText();
+		String password = passwordField.getText();
 
 		UserDAO userDao = new UserDAO();
 		if (userDao.isLoginValid(userId, password)) {
 			// 로그인 성공
-			System.out.println("로그인 성공");
 			return true;
 			// 다음 화면으로 전환 등
 		} else {

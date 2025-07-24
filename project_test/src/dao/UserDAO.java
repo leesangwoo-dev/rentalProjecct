@@ -1,5 +1,13 @@
 package dao;
 
+import static utils.DBUtil.getConnection;
+import static utils.Session.userGu;
+import static utils.Session.userLoginId;
+import static utils.Session.userName;
+import static utils.Session.userPassword;
+import static utils.Session.userPhoneNumber;
+import static utils.Session.userRole;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,8 +16,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import model.UserDTO;
-import static util.DBUtil.getConnection;
-import static util.Session.*;
 
 public class UserDAO {
 
@@ -24,9 +30,7 @@ public class UserDAO {
 			cstmt.setString(5, user.getUserGu());
 
 			cstmt.execute();
-			System.out.println("사용자 등록 성공");
 		} catch (SQLException e) {
-			System.err.println("사용자 등록 실패: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -56,7 +60,7 @@ public class UserDAO {
 		try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, loginId);
 			pstmt.setString(2, password);
-			
+
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
 					isValid = true;
@@ -66,7 +70,6 @@ public class UserDAO {
 					userPhoneNumber = rs.getString("PHONE_NUMBER");
 					userGu = rs.getString("USER_GU");
 					userRole = rs.getString("ROLE");
-					System.out.println(userLoginId);
 				}
 			}
 		} catch (SQLException e) {
@@ -108,11 +111,9 @@ public class UserDAO {
 	public Long getUserIdByLoginID(String loginId) {
 		String sql = "{ call SP_GET_USER_ID_BY_LOGIN_ID(?, ?) }";
 		try (Connection conn = getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
-
 			cs.setString(1, loginId);
 			cs.registerOutParameter(2, Types.NUMERIC);
 			cs.execute();
-
 			return cs.getLong(2);
 		} catch (Exception e) {
 			e.printStackTrace();

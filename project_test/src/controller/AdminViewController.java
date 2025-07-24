@@ -1,11 +1,12 @@
 package controller;
 
-import static util.Session.userGu;
+import static utils.Session.userGu;
+import static utils.ShowAlert.showAlert;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
+import java.time.LocalDate;
 import java.util.List;
 
 import dao.EquipmentDAO;
@@ -19,8 +20,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -29,14 +30,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import model.EquipmentViewDTO; // 수정한 DTO를 임포트
+import model.EquipmentViewDTO;
 import model.RentalOfficeDTO;
 
 // 메인 페이지(장비 조회)_사용자 컨트롤러
 public class AdminViewController {
+	@FXML
+	private Label todayLabel;
 	@FXML
 	private ComboBox<String> guComboBox;
 	@FXML
@@ -68,8 +70,8 @@ public class AdminViewController {
 	@FXML
 	private Button overdueHistory;
 
-	private EquipmentDAO equipmentDAO; // EquipmentDAO 인스턴스
-	private RentalOfficeDAO rentalOfficeDAO; // RentalOfficeDAO 인스턴스
+	private EquipmentDAO equipmentDAO; 
+	private RentalOfficeDAO rentalOfficeDAO; 
 
 	public AdminViewController() {
 		this.equipmentDAO = new EquipmentDAO();
@@ -78,6 +80,18 @@ public class AdminViewController {
 
 	@FXML
 	public void initialize() {
+		setLocationInfo();		// 지역 정보 세팅
+		setupTableColumns();	// 테이블뷰 컬럼 세팅
+		loadTableData(searchTextField.getText().trim()); //필터링
+		tableClickEvent();	// 더블클릭 및 클릭 이벤트 등록
+		imgClickEvent();	// 이미지 클릭 이벤트 등록
+	}
+	
+	// 지역 정보 세팅
+	private void setLocationInfo()
+	{
+		LocalDate now = LocalDate.now();
+		todayLabel.setText("Today : " + now.toString());
 		guComboBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
 		guComboBox.setValue(userGu);
 		loadOfficesByGu(userGu);
@@ -97,13 +111,9 @@ public class AdminViewController {
 			}
 		});
 
-		setupTableColumns();
-		loadTableData(searchTextField.getText().trim());
-		tableClickEvent();
-		imgClickEvent();
 	}
 
-	//
+	// 컬럼 데이터 세팅
 	private void setupTableColumns() {
 		// 각 열과 EquipmentViewDTO의 프로퍼티를 연결
 		// 열이 어떤 데이터를 보여줄지 결정
@@ -139,8 +149,10 @@ public class AdminViewController {
 		});
 	}
 
+	//필터링
 	private void loadOfficesByGu(String selectedGu) {
 		officeComboBox.setValue(null); // 현재 선택된 값도 초기화
+		officeComboBox.getItems().clear();
 
 		// RentalOfficeDAO를 사용하여 DB에서 대여소 목록 가져오기
 		List<RentalOfficeDTO> offices = rentalOfficeDAO.getOfficesByGu(selectedGu);
@@ -156,19 +168,7 @@ public class AdminViewController {
 		officeComboBox.setValue(allOption);
 	}
 
-	// 4. 이벤트 핸들러의 타입도 JavaFX 것으로 변경
-	@FXML
-	public void doubleClickItem(MouseEvent event) {
-		if (event.getClickCount() == 2) { // 더블 클릭 확인
-			EquipmentViewDTO selectedItem = equipmentTable.getSelectionModel().getSelectedItem();
-			if (selectedItem != null) {
-				System.out.println("선택된 아이템: " + selectedItem.getEqName());
-				// 여기서 상세 정보 창을 띄우거나 다른 작업을 수행할 수 있습니다.
-			}
-		}
-	}
-
-	// 대여정보 nav
+	// 대여정보 네비게이션 바
 	@FXML
 	private void handleAdminRentalList(ActionEvent event) {
 		try {
@@ -179,26 +179,9 @@ public class AdminViewController {
 			stage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
-//	            showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
+	            showAlert(Alert.AlertType.ERROR, "페이지 로드 오류", "장비조회 페이지를 로드할 수 없습니다.");
 		}
 	}
-
-	// 연체정보 nav
-	public void handleOverdueHistory(ActionEvent event) {
-		try {
-			// FXML 파일 로드
-			Parent handleOverdueHistory = FXMLLoader.load(getClass().getResource("/view/OverdueHistoryView.fxml"));
-			// 현재 창(Stage)을 얻어서 씬 변경
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.setScene(new Scene(handleOverdueHistory));
-			stage.setTitle("연체정보");
-			stage.show();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	// 장비 추가
 	@FXML
 	private void AddEqButton() {
@@ -219,32 +202,16 @@ public class AdminViewController {
 		}
 	}
 
-	// 장비 상태 변경
+	// 장비 수정
 	@FXML
-	private void changeStatusButton() {
+	private void EditEqButton(ActionEvent event) {
 		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
 		if (selected == null) {
-			showAlert(AlertType.WARNING, "경고", "장비를 선택하세요.");
+			showAlert(AlertType.WARNING, "경고", "수정할 장비를 선택하세요.");
 			return;
 		}
 
-		// 상태 옵션 제공
-		List<String> statusOptions = Arrays.asList("사용가능", "수리", "대여중");
-		ChoiceDialog<String> dialog = new ChoiceDialog<>(selected.getState(), statusOptions);
-		dialog.setTitle("장비 상태 변경");
-		dialog.setHeaderText("현재 상태: " + selected.getState());
-		dialog.setContentText("장비 상태 변경:");
-
-		dialog.showAndWait().ifPresent(newState -> {
-			EquipmentDAO dao = new EquipmentDAO();
-			boolean success = dao.updateState(selected.getSerialNum(), newState);
-			if (success) {
-				showAlert(AlertType.INFORMATION, "알림", "상태가 [" + newState + "](으)로 변경되었습니다.");
-				loadTableData(searchTextField.getText().trim()); // 테이블 갱신
-			} else {
-				showAlert(AlertType.ERROR, "오류", "상태 변경 실패");
-			}
-		});
+		openEditEqView(selected); // 선택한 장비 정보로 장비 수정 창 열기
 	}
 
 	// 클릭 이벤트 설정
@@ -254,26 +221,22 @@ public class AdminViewController {
 			if (selected != null) {
 				// 단일 클릭: 오른쪽 이미지와 설명 표시
 				equipmentInfo.setText(selected.getEqInfo());
-				System.out.println(selected.getImg());
 				String dbPath = selected.getImg();
 
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
-
-				System.out.println("파일 존재?: " + imgFile.exists());
-				System.out.println("URI: " + uri.toString());
 
 				equipmentImage.setImage(new Image(uri.toASCIIString()));
 			}
 
 			// 더블 클릭: 상세 보기 띄우기
 			if (event.getClickCount() == 2 && selected != null) {
-				// openDetailView(selected);
+				openEditEqView(selected);
 			}
 		});
 	}
 
-	// 이미지 클릭 시 사진 띄우기
+	// 클릭 이벤트
 	public void imgClickEvent() {
 		equipmentImage.setOnMouseClicked(event -> {
 			if (event.getClickCount() == 2) {
@@ -296,18 +259,20 @@ public class AdminViewController {
 		stage.show();
 	}
 
-	// 더블 클릭시 장비 추가창 띄우기
-	private void openEqAddView(EquipmentViewDTO equipment) {
+	// 더블 클릭시 장비 수정창 띄우기
+	@FXML
+	private void openEditEqView(EquipmentViewDTO equipment) {
+		System.out.println("더블클릭");
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EqAddView.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EditEqView.fxml"));
 			Parent root = loader.load();
 
-			DetailViewController controller = loader.getController();
-			controller.setSerialNumber(equipment.getSerialNum());
-			// controller.setMainController(this);
+			EditEqController controller = loader.getController();
+			controller.setEquipmentDTO(equipment);
+			controller.setmainController(this);
 
 			Stage stage = new Stage();
-			stage.setTitle("장비 상세정보");
+			stage.setTitle("장비 수정");
 			stage.setScene(new Scene(root));
 			stage.show();
 
@@ -322,6 +287,7 @@ public class AdminViewController {
 		loadTableData(searchText);
 	}
 
+	// searchText 필터링
 	public void loadTableData(String searchText) {
 		String selectedGu = guComboBox.getValue();
 		String selectedOffice = officeComboBox.getValue().getOfficeName();
@@ -329,13 +295,4 @@ public class AdminViewController {
 		// 가져온 데이터를 TableView에 설정합니다.
 		equipmentTable.getItems().setAll(equipmentData);
 	}
-
-	private void showAlert(AlertType type, String title, String message) {
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
-	}
-
 }

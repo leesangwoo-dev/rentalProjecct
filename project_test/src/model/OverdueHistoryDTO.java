@@ -19,4 +19,5 @@ public class OverdueHistoryDTO {
     private String returnStatus; // 반납 상태 (e.g., '대여중', '반납완료')
     private Long overdueDays; // 연체일
     private Long overdueFee; // 연체료
+    private String userGu;
 }

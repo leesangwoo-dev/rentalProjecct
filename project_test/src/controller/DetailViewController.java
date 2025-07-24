@@ -1,7 +1,7 @@
 package controller;
 
-import static util.Session.userLoginId;
-
+import static utils.Session.userLoginId;
+import static utils.ShowAlert.showAlert;
 import java.io.File;
 import java.net.URI;
 import java.time.LocalDate;
@@ -49,13 +49,13 @@ public class DetailViewController {
 	@FXML
 	private DatePicker returnDatePicker; // 반납일
 
+	// DAO 인스턴스 생성
 	private final DeatilViewDAO dao = new DeatilViewDAO();
 	private final RentalDAO rentalDAO = new RentalDAO();
 	private final UserDAO userDAO = new UserDAO();
 
-	private MainViewController mainController;
-
 	// 수정 시 mainView 리프래쉬 용도
+	private MainViewController mainController;
 	public void setMainController(MainViewController mainController) {
 		this.mainController = mainController;
 	}
@@ -70,11 +70,10 @@ public class DetailViewController {
 		eqNameLabel.setText(dto.getEqName());
 		stateLabel.setText(dto.getState());
 
-		// 상태별 스타일
-		// 추후 case 명 변경 필요 "대여중"? "대여 가능" "수리?"
+		// 상태별 스타일 설정
 		String state = dto.getState();
 		switch (state) {
-		case "사용가능":
+		case "대여가능":
 			stateLabel.setStyle(
 					"-fx-background-color: #B5F3C1; -fx-text-fill: green; -fx-alignment: center; -fx-font-size: 18px; -fx-padding: 2 6; -fx-border-radius: 4; -fx-background-radius: 4;");
 			break;
@@ -109,12 +108,9 @@ public class DetailViewController {
 		try {
 			if (dto.getImgPath() != null) {
 				String dbPath = dto.getImgPath();
-				
+
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
-
-				System.out.println("파일 존재?: " + imgFile.exists());
-				System.out.println("URI: " + uri.toString());
 
 				toolImageView.setImage(new Image(uri.toASCIIString()));
 			} else {
@@ -126,19 +122,20 @@ public class DetailViewController {
 		}
 	}
 
-	// 대여하기
+	// 대여하기 버튼
 	@FXML
 	private void handleRent(ActionEvent event) {
 		// 유효성 검사
 		if (rentDatePicker.getValue() == null || returnDatePicker.getValue() == null) {
-			showAlert(Alert.AlertType.WARNING, "날짜를 모두 선택해주세요.");
+			showAlert(Alert.AlertType.WARNING, "error", "날짜를 모두 선택해주세요.");
 			return;
 		}
 		if (returnDatePicker.getValue().isBefore(rentDatePicker.getValue())) {
-			showAlert(Alert.AlertType.WARNING, "반납일은 대여일보다 이후여야 합니다.");
+			showAlert(Alert.AlertType.WARNING, "error", "반납일은 대여일보다 이후여야 합니다.");
 			return;
 		}
 
+		// DTO 생성 후 데이터 주입
 		RentalDTO rental = new RentalDTO();
 		rental.setUserId(userDAO.getUserIdByLoginID(userLoginId)); // 로그인한 사용자 ID 가져오기
 		rental.setSerialNum(SerialNumLabel.getText());
@@ -150,23 +147,17 @@ public class DetailViewController {
 		
 		boolean success = false;
 		if(stateLabel.getText().equals("사용가능")) {
-			success = rentalDAO.insertRental(rental);
+			success = rentalDAO.insertRental(rental); //Insert
 		}
 
 		if (success) {
-			showAlert(Alert.AlertType.INFORMATION, "대여가 완료되었습니다.");
+			showAlert(Alert.AlertType.INFORMATION,"대여 완료", "대여가 완료되었습니다.");
 			// 대여가 완료되면 대여하기 화면이 종료
 			Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			currentStage.close();
 		} else {
-			showAlert(Alert.AlertType.ERROR, "대여에 실패했습니다.");
+			showAlert(Alert.AlertType.ERROR, "대여 실패", "대여에 실패했습니다.");
 		}
 		mainController.loadTableData("");
-	}
-
-	private void showAlert(Alert.AlertType type, String message) {
-		Alert alert = new Alert(type);
-		alert.setContentText(message);
-		alert.showAndWait();
 	}
 }
