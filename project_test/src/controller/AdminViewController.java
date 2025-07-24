@@ -17,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -29,10 +30,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import model.EquipmentViewDTO; // 수정한 DTO를 임포트
+import model.EquipmentViewDTO;
 import model.RentalOfficeDTO;
 
 // 메인 페이지(장비 조회)_사용자 컨트롤러
@@ -70,8 +70,8 @@ public class AdminViewController {
 	@FXML
 	private Button overdueHistory;
 
-	private EquipmentDAO equipmentDAO; // EquipmentDAO 인스턴스
-	private RentalOfficeDAO rentalOfficeDAO; // RentalOfficeDAO 인스턴스
+	private EquipmentDAO equipmentDAO; 
+	private RentalOfficeDAO rentalOfficeDAO; 
 
 	public AdminViewController() {
 		this.equipmentDAO = new EquipmentDAO();
@@ -80,6 +80,16 @@ public class AdminViewController {
 
 	@FXML
 	public void initialize() {
+		setLocationInfo();		// 지역 정보 세팅
+		setupTableColumns();	// 테이블뷰 컬럼 세팅
+		loadTableData(searchTextField.getText().trim()); //필터링
+		tableClickEvent();	// 더블클릭 및 클릭 이벤트 등록
+		imgClickEvent();	// 이미지 클릭 이벤트 등록
+	}
+	
+	// 지역 정보 세팅
+	private void setLocationInfo()
+	{
 		LocalDate now = LocalDate.now();
 		todayLabel.setText("Today : " + now.toString());
 		guComboBox.getItems().addAll("유성구", "중구", "서구", "동구", "대덕구");
@@ -101,13 +111,9 @@ public class AdminViewController {
 			}
 		});
 
-		setupTableColumns();
-		loadTableData(searchTextField.getText().trim());
-		tableClickEvent();
-		imgClickEvent();
 	}
 
-	//
+	// 컬럼 데이터 세팅
 	private void setupTableColumns() {
 		// 각 열과 EquipmentViewDTO의 프로퍼티를 연결
 		// 열이 어떤 데이터를 보여줄지 결정
@@ -143,6 +149,7 @@ public class AdminViewController {
 		});
 	}
 
+	//필터링
 	private void loadOfficesByGu(String selectedGu) {
 		officeComboBox.setValue(null); // 현재 선택된 값도 초기화
 		officeComboBox.getItems().clear();
@@ -161,19 +168,7 @@ public class AdminViewController {
 		officeComboBox.setValue(allOption);
 	}
 
-	// 4. 이벤트 핸들러의 타입도 JavaFX 것으로 변경
-	@FXML
-	public void doubleClickItem(MouseEvent event) {
-		if (event.getClickCount() == 2) { // 더블 클릭 확인
-			EquipmentViewDTO selectedItem = equipmentTable.getSelectionModel().getSelectedItem();
-			if (selectedItem != null) {
-				System.out.println("선택된 아이템: " + selectedItem.getEqName());
-				// 여기서 상세 정보 창을 띄우거나 다른 작업을 수행할 수 있습니다.
-			}
-		}
-	}
-
-	// 대여정보 nav
+	// 대여정보 네비게이션 바
 	@FXML
 	private void handleAdminRentalList(ActionEvent event) {
 		try {
@@ -184,26 +179,9 @@ public class AdminViewController {
 			stage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
-//	            showAlert("페이지 로드 오류", null, "장비조회 페이지를 로드할 수 없습니다.");
+	            showAlert(Alert.AlertType.ERROR, "페이지 로드 오류", "장비조회 페이지를 로드할 수 없습니다.");
 		}
 	}
-
-//	// 연체정보 nav
-//	public void handleOverdueHistory(ActionEvent event) {
-//		try {
-//			// FXML 파일 로드
-//			Parent handleOverdueHistory = FXMLLoader.load(getClass().getResource("/view/OverdueHistoryView.fxml"));
-//			// 현재 창(Stage)을 얻어서 씬 변경
-//			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//			stage.setScene(new Scene(handleOverdueHistory));
-//			stage.setTitle("연체정보");
-//			stage.show();
-//
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 	// 장비 추가
 	@FXML
 	private void AddEqButton() {
@@ -233,7 +211,7 @@ public class AdminViewController {
 			return;
 		}
 
-		openEditEqView(selected); // 이미 구현한 창 열기 메서드 재사용
+		openEditEqView(selected); // 선택한 장비 정보로 장비 수정 창 열기
 	}
 
 	// 클릭 이벤트 설정
@@ -258,7 +236,7 @@ public class AdminViewController {
 		});
 	}
 
-	// 이미지 클릭 시 사진 띄우기
+	// 클릭 이벤트
 	public void imgClickEvent() {
 		equipmentImage.setOnMouseClicked(event -> {
 			if (event.getClickCount() == 2) {
@@ -309,6 +287,7 @@ public class AdminViewController {
 		loadTableData(searchText);
 	}
 
+	// searchText 필터링
 	public void loadTableData(String searchText) {
 		String selectedGu = guComboBox.getValue();
 		String selectedOffice = officeComboBox.getValue().getOfficeName();

@@ -53,21 +53,22 @@ public class AdminRentalHistoryController implements Initializable {
 	private TableColumn<OverdueHistoryDTO, Long> overdueDaysCol; // 연체일/연체료
 
 	@FXML
-	private Button adminEqList;
+	private Button adminEqList; // 장비 조회 버튼
 	@FXML
 	private Button adminRentalList;
-	// @FXML private Button overdueHistory; // 연체정보 nav 제거
 
 	@FXML
 	private CheckBox showOverdueOnlyCheckBox; // 연체자만 필터링하는 체크박스 추가
 
 	private RentalDAO rentalDAO = new RentalDAO(); // DAO 인스턴스
 
+	// datetime 포맷용도
 	private final DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("yy-MM-dd");
 
 	// 전체 대여 기록을 저장할 리스트 (필터링을 위해 필요)
 	private ObservableList<OverdueHistoryDTO> allRentals;
 
+	// init 컬럼 매핑
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// 일련번호 컬럼 설정
@@ -109,7 +110,7 @@ public class AdminRentalHistoryController implements Initializable {
 			}
 		});
 
-        officeNameCol.setCellValueFactory(new PropertyValueFactory<>("officeName"));
+		officeNameCol.setCellValueFactory(new PropertyValueFactory<>("officeName"));
 
 		// (장비명 / 시리얼 번호를 함께 표시하도록 CellFactory 설정 )
 		eqNameCol.setCellFactory(param -> new TableCell<OverdueHistoryDTO, String>() {

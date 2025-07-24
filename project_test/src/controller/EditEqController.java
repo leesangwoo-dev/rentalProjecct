@@ -40,28 +40,22 @@ public class EditEqController {
 	@FXML
 	private ImageView imagePreview;
 	@FXML
-	private Button chooseImageButton;
+	private Button chooseImageButton, EditButton;
 	@FXML
 	private TextField eqNameField, serialNumField, costField, unitPriceField, acquisitionDateField;
 	@FXML
 	private TextArea eqInfoArea;
 
-	//private File newImageFile;
+	private EquipmentViewDTO equipment;				// 수정할 장비 정보DTO
+	private AdminViewController adminController;	// 부모 컨트롤러(관리자 뷰 갱신용)
+	private File newImageFile;						// 새로 수정할 이미지 파일
 
-	@FXML
-	private Button refreshImageButton;
-	@FXML
-	private Button EditButton;
-
-	private EquipmentViewDTO equipment;
-	private AdminViewController adminController;
-	private File newImageFile;
-
-	
+	// 관리자 뷰 갱신용 부모 컨트롤러 받아오기
 	public void setmainController(AdminViewController adminController) {
 		this.adminController = adminController;
 	}
 
+	// 영역에 파일 올라왔을 때 복사 허용
 	@FXML
 	private void handleDragOver(DragEvent event) {
 		if (event.getGestureSource() != imageDropPane && event.getDragboard().hasFiles()) {
@@ -69,7 +63,8 @@ public class EditEqController {
 		}
 		event.consume();
 	}
-
+	
+	
 	@FXML
 	private void handleDragDropped(DragEvent event) {
 		Dragboard db = event.getDragboard();
@@ -107,22 +102,22 @@ public class EditEqController {
 			chooseImageButton.setVisible(false);
 		}
 	}
+
 	@FXML
 	private void handleRefreshImage(ActionEvent event) {
-	    FileChooser chooser = new FileChooser();
-	    chooser.setTitle("새 이미지 선택");
-	    chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("이미지 파일", "*.png", "*.jpg", "*.jpeg"));
-	    File file = chooser.showOpenDialog(refreshImageButton.getScene().getWindow());
-	    if (file != null) {
-	        newImageFile = file;
-	        imagePreview.setImage(new Image(file.toURI().toString()));
-	    }
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("새 이미지 선택");
+		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("이미지 파일", "*.png", "*.jpg", "*.jpeg"));
+		File file = chooser.showOpenDialog(refreshImageButton.getScene().getWindow());
+		if (file != null) {
+			newImageFile = file;
+			imagePreview.setImage(new Image(file.toURI().toString()));
+		}
 	}
 
-	
 	public void setEquipmentDTO(EquipmentViewDTO dto) {
 		this.equipment = dto;
-		
+
 		eqNameField.setText(dto.getEqName());
 		serialNumField.setText(dto.getSerialNum());
 		costField.setText(String.valueOf(dto.getRentalFee()) + "원");
@@ -134,58 +129,58 @@ public class EditEqController {
 			imagePreview.setImage(new Image(imgFile.toURI().toString()));
 		}
 	}
-	
+
 	// ───────────────── EditEqController.java ─────────────────
 	@FXML
 	private void handleUpdate(ActionEvent event) {
 		// ① 권한 체크
-	    if (!Session.userGu.equals(equipment.getOfficeGu())) { // equipment DTO에 getGu() 메서드가 있다고 가정
-	        Alert alert = new Alert(Alert.AlertType.WARNING);
-	        alert.setTitle("권한 오류");
-	        alert.setHeaderText(null);
-	        alert.setContentText("본인이 소속된 지역(구)의 장비만 수정할 수 있습니다.");
-	        alert.showAndWait();
-	        return;   // 더 진행하지 않음
-	    }
+		if (!Session.userGu.equals(equipment.getOfficeGu())) { // equipment DTO에 getGu() 메서드가 있다고 가정
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("권한 오류");
+			alert.setHeaderText(null);
+			alert.setContentText("본인이 소속된 지역(구)의 장비만 수정할 수 있습니다.");
+			alert.showAndWait();
+			return; // 더 진행하지 않음
+		}
 
-	    String serial   = serialNumField.getText();
-	    String newState = stateCombo.getValue();
-	    String newImgPath = (newImageFile != null) ?  saveImageToUploads(newImageFile) : equipment.getImg();
-	    // ★ 숫자 필드 : "12000원" → 12000
-	    Integer fee = null;
-	    String feeTxt = costField.getText().replaceAll("[^0-9]", "");
-	    if (!feeTxt.isEmpty()) fee = Integer.parseInt(feeTxt);
+		String serial = serialNumField.getText();
+		String newState = stateCombo.getValue();
+		String newImgPath = (newImageFile != null) ? saveImageToUploads(newImageFile) : equipment.getImg();
+		// ★ 숫자 필드 : "12000원" → 12000
+		Integer fee = null;
+		String feeTxt = costField.getText().replaceAll("[^0-9]", "");
+		if (!feeTxt.isEmpty())
+			fee = Integer.parseInt(feeTxt);
 
-	    Integer unitPrice = null;
-	    String unitTxt = unitPriceField.getText().replaceAll("[^0-9]", "");
-	    if (!unitTxt.isEmpty()) unitPrice = Integer.parseInt(unitTxt);
+		Integer unitPrice = null;
+		String unitTxt = unitPriceField.getText().replaceAll("[^0-9]", "");
+		if (!unitTxt.isEmpty())
+			unitPrice = Integer.parseInt(unitTxt);
 
-	    String newInfo = eqInfoArea.getText();
+		String newInfo = eqInfoArea.getText();
 
-	    EquipmentDAO dao = new EquipmentDAO();
-	    boolean success = dao.updateEquipment(
-	            serial,
-	            newState,         // 상태
-	            newImgPath,       // 이미지 경로
-	            newInfo,          // 설명
-	            fee,              // 대여료
-	            unitPrice         // 단가
-	    );
+		EquipmentDAO dao = new EquipmentDAO();
+		boolean success = dao.updateEquipment(serial, newState, // 상태
+				newImgPath, // 이미지 경로
+				newInfo, // 설명
+				fee, // 대여료
+				unitPrice // 단가
+		);
 
-	    if (success) {
-	        showAlert(Alert.AlertType.INFORMATION, "수정 완료",  "장비가 수정되었습니다.");
-	        if (adminController != null) adminController.loadTableData("");
-	        ((Stage)EditButton.getScene().getWindow()).close();
-	    } else {
-	        showAlert(Alert.AlertType.ERROR, "수정 실패", "장비 수정 실패");
-	    }
+		if (success) {
+			showAlert(Alert.AlertType.INFORMATION, "수정 완료", "장비가 수정되었습니다.");
+			if (adminController != null)
+				adminController.loadTableData("");
+			((Stage) EditButton.getScene().getWindow()).close();
+		} else {
+			showAlert(Alert.AlertType.ERROR, "수정 실패", "장비 수정 실패");
+		}
 	}
 
-	
 	public String saveImageToUploads(File originalFile) {
 		if (originalFile == null)
 			return null;
-			
+
 		String fileName = System.currentTimeMillis() + "_" + originalFile.getName();
 		Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "img", "equipment");
 		Path targetPath = uploadDir.resolve(fileName);

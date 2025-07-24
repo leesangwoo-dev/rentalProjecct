@@ -50,21 +50,22 @@ public class AddEqController {
 	private TextArea eqInfoArea; // 장비 설명 영역
 
 	@FXML
-	private ComboBox<String> eqComboBox;
+	private ComboBox<String> eqComboBox; // 기존 장비 불러오는 콤보박스
 	@FXML
-	private HBox newEqPane;
+	private HBox newEqPane;	// 새로운 장비 추가
 
 	private File selectedImageFile; // 선택된 이미지 파일
 	private RentalOfficeDAO rentalOfficeDAO = new RentalOfficeDAO(); // 대여소DAO
-	private final EquipmentDAO eqDAO = new EquipmentDAO();
+	private final EquipmentDAO eqDAO = new EquipmentDAO(); // 기존 장비 정보 불러오기
 
-	// init 콤보박스 대여소, 구, 전화번호 세팅
+	// init
 	@FXML
 	public void initialize() {
 		setLocationInfo();
 		setEqListUp();
 	}
 
+	// 구, 대여소, 대여소 전화번호 세팅
 	private void setLocationInfo() {
 		// 구 목록
 		List<String> guList = rentalOfficeDAO.getDistinctGuList();
@@ -93,6 +94,7 @@ public class AddEqController {
 		});
 	}
 
+	// 장비 추가시 기존 장비 목록 불러오기
 	private void setEqListUp() {
 		eqComboBox.setItems(FXCollections.observableArrayList(eqDAO.getAllEqNames()));
 
@@ -112,7 +114,7 @@ public class AddEqController {
 		});
 	}
 
-	/** ‘새 장비’ 버튼 */
+	//새 장비 버튼 -> 기존 장비 목록에서 새로운 장비 명 입력란 및 단가랑 대여료 수정 입력 가능
 	@FXML
 	private void handleNewEq(ActionEvent e) {
 		// 콤보박스 숨기고 TextField 노출
@@ -131,14 +133,13 @@ public class AddEqController {
 		unitPriceField.setEditable(true);
 	}
 
-	// 장비 목록 리프래시용 부모?(장비목록) 컨트롤러 받아오기
+	// 장비 목록 리프래시용 부모?(장비목록) 컨트롤러 받아오기 용도
 	private AdminViewController adminController;
-
 	public void setMainController(AdminViewController adminController) {
 		this.adminController = adminController;
 	}
 
-	// 드래그 오버 이벤트 핸들러
+	// 드래그 오버 이벤트 핸들러(이미지 이동)
 	@FXML
 	private void handleDragOver(DragEvent event) {
 		if (event.getGestureSource() != imageDropPane && event.getDragboard().hasFiles()) {
@@ -147,6 +148,7 @@ public class AddEqController {
 		event.consume();
 	}
 
+	// 드래그드랍 핸들러(이미지 첨부)
 	@FXML
 	private void handleDragDropped(DragEvent event) {
 		Dragboard db = event.getDragboard();
@@ -161,6 +163,7 @@ public class AddEqController {
 		event.consume();
 	}
 
+	//이미지 첨부 버튼 핸들러
 	@FXML
 	private void handleImageSelect(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
@@ -175,6 +178,7 @@ public class AddEqController {
 		}
 	}
 
+	// 첨부한 이미지 이미지뷰에 뿌려주기
 	private void loadImagePreview(File file) {
 		if (file != null && file.exists()) {
 			imagePreview.setImage(new Image(file.toURI().toString()));
@@ -185,7 +189,8 @@ public class AddEqController {
 		}
 	}
 
-	/** 저장 */
+
+	// 장비 추가 버튼
 	@FXML
 	private void handleSave(ActionEvent event) {
 		// 권한 체크
@@ -198,6 +203,7 @@ public class AddEqController {
 			return;
 		}
 
+		//장비명 공백 여부 체크
 		boolean isNew = eqNameField.isVisible();
 		String eqName = isNew ? eqNameField.getText().trim() : eqComboBox.getValue();
 
@@ -234,6 +240,7 @@ public class AddEqController {
 
 		boolean success = eqDAO.insertEachEq(serial, eqNum, officeId, "사용가능", getDate, imagePath);
 
+		// 성공시 장비 목록 업데이트 및 폼 리셋
 		if (success) {
 			System.out.println("장비 등록 성공");
 			adminController.loadTableData("");
@@ -243,6 +250,7 @@ public class AddEqController {
 		}
 	}
 
+	// 리셋 용도
 	private void resetForm() {
 		eqComboBox.setVisible(true);
 		eqComboBox.setManaged(true);
@@ -262,6 +270,7 @@ public class AddEqController {
 		selectedImageFile = null;
 	}
 
+	// uploads파일에 이미지 파일 복사 및 DB저장용 문자열 반환
 	public String saveImageToUploads(File originalFile) {
 		if (originalFile == null)
 			return null;

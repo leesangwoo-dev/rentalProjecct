@@ -49,13 +49,13 @@ public class DetailViewController {
 	@FXML
 	private DatePicker returnDatePicker; // 반납일
 
+	// DAO 인스턴스 생성
 	private final DeatilViewDAO dao = new DeatilViewDAO();
 	private final RentalDAO rentalDAO = new RentalDAO();
 	private final UserDAO userDAO = new UserDAO();
 
-	private MainViewController mainController;
-
 	// 수정 시 mainView 리프래쉬 용도
+	private MainViewController mainController;
 	public void setMainController(MainViewController mainController) {
 		this.mainController = mainController;
 	}
@@ -70,11 +70,10 @@ public class DetailViewController {
 		eqNameLabel.setText(dto.getEqName());
 		stateLabel.setText(dto.getState());
 
-		// 상태별 스타일
-		// 추후 case 명 변경 필요 "대여중"? "대여 가능" "수리?"
+		// 상태별 스타일 설정
 		String state = dto.getState();
 		switch (state) {
-		case "사용가능":
+		case "대여가능":
 			stateLabel.setStyle(
 					"-fx-background-color: #B5F3C1; -fx-text-fill: green; -fx-alignment: center; -fx-font-size: 18px; -fx-padding: 2 6; -fx-border-radius: 4; -fx-background-radius: 4;");
 			break;
@@ -123,7 +122,7 @@ public class DetailViewController {
 		}
 	}
 
-	// 대여하기
+	// 대여하기 버튼
 	@FXML
 	private void handleRent(ActionEvent event) {
 		// 유효성 검사
@@ -136,6 +135,7 @@ public class DetailViewController {
 			return;
 		}
 
+		// DTO 생성 후 데이터 주입
 		RentalDTO rental = new RentalDTO();
 		rental.setUserId(userDAO.getUserIdByLoginID(userLoginId)); // 로그인한 사용자 ID 가져오기
 		rental.setSerialNum(SerialNumLabel.getText());
@@ -147,7 +147,7 @@ public class DetailViewController {
 		
 		boolean success = false;
 		if(stateLabel.getText().equals("사용가능")) {
-			success = rentalDAO.insertRental(rental);
+			success = rentalDAO.insertRental(rental); //Insert
 		}
 
 		if (success) {
