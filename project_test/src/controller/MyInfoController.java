@@ -1,10 +1,6 @@
 package controller;
 
-import static util.Session.userGu;
-import static util.Session.userLoginId;
-import static util.Session.userName;
-import static util.Session.userPassword;
-import static util.Session.userPhoneNumber;
+import static util.Session.*;
 
 import java.io.IOException;
 
@@ -21,6 +17,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -29,9 +26,9 @@ public class MyInfoController {
 	@FXML
 	private TextField nameTextField;
 	@FXML
-	private TextField passwordTextField;
+	private PasswordField passwordField;
 	@FXML
-	private TextField newPasswordTextField;
+	private PasswordField newPasswordField;
 	@FXML
 	private TextField phoneNumberTextField;
 	@FXML
@@ -43,6 +40,8 @@ public class MyInfoController {
 	public void initialize() {
 		nameTextField.setText(userName);
 		phoneNumberTextField.setText(userPhoneNumber);
+		applyEnglishOnlyTextFormatter(passwordField);
+		applyEnglishOnlyTextFormatter(newPasswordField);
 		ObservableList<String> guOptions = FXCollections.observableArrayList("중구", "유성구", "서구", "동구", "대덕구");
 		guChoiceBox.setItems(guOptions);
 		guChoiceBox.setValue(userGu);
@@ -66,8 +65,8 @@ public class MyInfoController {
 	@FXML
 	private void handleUpdateButton(ActionEvent event) {
 		String name = nameTextField.getText();
-		String oldPassword = passwordTextField.getText();
-		String newPassword = newPasswordTextField.getText();
+		String oldPassword = passwordField.getText();
+		String newPassword = newPasswordField.getText();
 		String phoneNumber = phoneNumberTextField.getText();
 		String gu = guChoiceBox.getValue();
 		UserDAO userDAO = new UserDAO();
@@ -92,15 +91,15 @@ public class MyInfoController {
 				userName = name;
 				userPhoneNumber = phoneNumber;
 				userGu = gu;
-				passwordTextField.clear();
-				newPasswordTextField.clear();
+				passwordField.clear();
+				newPasswordField.clear();
 				// 현재 창 닫기
 				Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 				stage.close(); // 현재 창을 닫습니다.
 				break;
 			case "WRONG_PASSWORD":
 				showAlert(AlertType.ERROR, "정보 수정 실패", "기존 비밀번호가 올바르지 않습니다.");
-				passwordTextField.clear();
+				passwordField.clear();
 				break;
 			default:
 				showAlert(AlertType.ERROR, "오류 발생", "사용자 정보 수정 중 오류가 발생했습니다:\n" + updateStatus); // 메시지 변경

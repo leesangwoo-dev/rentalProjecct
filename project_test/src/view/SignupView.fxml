@@ -45,7 +45,7 @@
 		<!-- 비밀번호 입력 -->
 		<HBox layoutX="40" layoutY="230" spacing="10" />
 
-		<PasswordField fx:id="passwordTextField" layoutX="96.0"
+		<PasswordField fx:id="passwordField" layoutX="96.0"
 			layoutY="314.0" prefHeight="29.0" prefWidth="183.0"
 			promptText="비밀번호를 입력해주세요..." />
 

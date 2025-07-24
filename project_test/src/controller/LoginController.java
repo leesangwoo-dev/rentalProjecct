@@ -5,6 +5,8 @@ import static util.DBUtil.getConnection;
 import static util.Session.*;
 
 import java.sql.Connection;
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 
 import dao.UserDAO;
 import javafx.event.ActionEvent;
@@ -17,6 +19,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
 
 // 로그인 페이지 컨트롤러
@@ -25,7 +28,7 @@ public class LoginController {
 	@FXML
 	private TextField idTextField;
 	@FXML
-	private PasswordField passwordTextField;
+	private PasswordField passwordField;
 
 	// 로그인 속도 향상을 위한 DB 연결 
 	Connection conn;
@@ -37,6 +40,8 @@ public class LoginController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		// 비밀번호 필드에 TextFormatter 적용
+	    applyEnglishOnlyTextFormatter(passwordField);
 	}
 
 	public void Login(ActionEvent event) {
@@ -97,7 +102,8 @@ public class LoginController {
 
 	public boolean handleLogin(ActionEvent event) {
 		String userId = idTextField.getText();
-		String password = passwordTextField.getText();
+		String password = passwordField.getText();
+		System.out.println(password);
 
 		UserDAO userDao = new UserDAO();
 		if (userDao.isLoginValid(userId, password)) {
