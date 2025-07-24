@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -57,6 +58,11 @@ public class RentalHistoryController implements Initializable {
 	private Button eqList;
 	@FXML
 	private Button myInfoButton;
+
+	@FXML
+	private Separator rentalDateHeaderSeparator;
+	@FXML
+	private Separator overdueDaysHeaderSeparator;
 
 	private RentalDAO rentalDAO = new RentalDAO();
 
@@ -98,7 +104,18 @@ public class RentalHistoryController implements Initializable {
 					} else {
 						actualReturnDateText.setText("");
 					}
-					vbox.getChildren().addAll(rentalDateText, actualReturnDateText);
+
+					// # 변경된 부분: 구분선 추가
+					Separator separator = new Separator();
+					separator.prefWidthProperty().bind(rentalDateCol.widthProperty().subtract(5));
+					separator.setStyle("-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;");
+
+					// 만약 이 셀에도 구분선을 넣고 싶다면, 아래 라인을 추가해야 합니다.
+					Separator cellSeparator = new Separator();
+					cellSeparator.prefWidthProperty().bind(rentalDateCol.widthProperty().subtract(5));
+					cellSeparator.setStyle("-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;");
+					vbox.getChildren().addAll(rentalDateText, cellSeparator, actualReturnDateText); // 구분선 추가
+
 					setGraphic(vbox);
 					setText(null);
 					setAlignment(Pos.CENTER);
@@ -119,6 +136,12 @@ public class RentalHistoryController implements Initializable {
 					vbox.setAlignment(Pos.CENTER);
 					Text overdueDaysText = new Text(rental.getOverdueDays() + "일");
 					Text overdueFeeText = new Text(String.format("%,d원", rental.getOverdueFee()));
+
+					// # 변경된 부분: 구분선 추가
+					Separator separator = new Separator();
+					separator.prefWidthProperty().bind(overdueDaysCol.widthProperty().subtract(5));
+					separator.setStyle("-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;");
+
 					vbox.getChildren().addAll(overdueDaysText, overdueFeeText);
 					setGraphic(vbox);
 					setText(null);
@@ -171,6 +194,34 @@ public class RentalHistoryController implements Initializable {
 					setAlignment(Pos.CENTER);
 					setGraphic(returnButton);
 				}
+			}
+		});
+		// # 핵심 변경 부분: 테이블 너비 변경 리스너 추가 (반응형 레이아웃)
+		rentalTable.widthProperty().addListener((obs, oldVal, newVal) -> {
+			double totalWidth = newVal.doubleValue();
+			// 스크롤바 너비를 대략적으로 고려 (Windows 기준 약 17px)
+			double scrollBarCompensation = 18;
+			double usableWidth = totalWidth - scrollBarCompensation;
+
+			// 각 컬럼에 비율 할당 (총합 1.0 = 100%가 되도록 조정)
+			// 이 비율은 임의로 설정한 값이므로, 실제 UI에서 데이터가 잘 보이도록 미세 조정해야 합니다.
+			indexCol.setPrefWidth(usableWidth * 0.05); // 5%
+			eqNameCol.setPrefWidth(usableWidth * 0.23); // 20%
+			officeNameCol.setPrefWidth(usableWidth * 0.22); // 20%
+			rentalDateCol.setPrefWidth(usableWidth * 0.20); // 20%
+			returnActionCol.setPrefWidth(usableWidth * 0.12); // 10%
+//			returnStatusCol.setPrefWidth(usableWidth * 0.15); // 10%
+			overdueDaysCol.setPrefWidth(usableWidth * 0.20); // 15%
+			// 합계: 0.05 + 0.20 + 0.20 + 0.20 + 0.10 + 0.15 + 0.10 = 1.00 (100%)
+
+			// # FXML에서 fx:id를 부여한 헤더 Separator들의 너비를 바인딩합니다.
+			// null 체크를 통해 객체가 로드되었는지 확인합니다.
+			// 컬럼 너비에서 약간의 여백을 주는 것이 시각적으로 좋습니다 (예: -5px)
+			if (rentalDateHeaderSeparator != null) {
+				rentalDateHeaderSeparator.prefWidthProperty().bind(rentalDateCol.widthProperty().subtract(5));
+			}
+			if (overdueDaysHeaderSeparator != null) {
+				overdueDaysHeaderSeparator.prefWidthProperty().bind(overdueDaysCol.widthProperty().subtract(5));
 			}
 		});
 
