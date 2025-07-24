@@ -1,6 +1,6 @@
 package dao;
 
-import static util.DBUtil.getConnection;
+import static utils.DBUtil.getConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

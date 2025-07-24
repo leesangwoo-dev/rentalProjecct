@@ -1,10 +1,11 @@
 package controller;
 
-import static util.Session.userGu;
-import static util.Session.userLoginId;
-import static util.Session.userName;
-import static util.Session.userPassword;
-import static util.Session.userPhoneNumber;
+import static utils.Session.userGu;
+import static utils.Session.userLoginId;
+import static utils.Session.userName;
+import static utils.Session.userPassword;
+import static utils.Session.userPhoneNumber;
+import static utils.ShowAlert.showAlert;
 
 import java.io.IOException;
 
@@ -110,13 +111,5 @@ public class MyInfoController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	private void showAlert(AlertType type, String title, String message) {
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
 	}
 }

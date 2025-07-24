@@ -14,6 +14,7 @@ public class EquipmentViewDTO {
 	private String eqName;
 	private String serialNum;
 	private int rentalFee;
+	private int unitPrice;
 	private String state;
 	private String img;
 	private String eqInfo;

@@ -1,6 +1,6 @@
 package controller;
 
-import static util.Session.userGu;
+import static utils.Session.userGu;
 
 import java.io.File;
 import java.io.IOException;

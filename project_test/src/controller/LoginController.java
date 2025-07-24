@@ -1,8 +1,8 @@
 // src/controller/RootController.java
 package controller;
 
-import static util.DBUtil.getConnection;
-import static util.Session.*;
+import static utils.DBUtil.getConnection;
+import static utils.Session.*;
 
 import java.sql.Connection;
 

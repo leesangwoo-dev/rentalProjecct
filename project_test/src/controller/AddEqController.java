@@ -25,32 +25,47 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
-import util.Session;
+import model.EquipmentViewDTO;
+import utils.Session;
 
 public class AddEqController {
 
 	@FXML
-	private ComboBox<String> guComboBox, officeComboBox;
+	private ComboBox<String> guComboBox, officeComboBox; // 콤보박스 지역(구), 대여소(동)
 	@FXML
-	private Label dragLabel, phoneLabel;
+	private Label dragLabel, phoneLabel; // 라벨(drag/drop), 대여소전화번호
 	@FXML
-	private StackPane imageDropPane;
+	private StackPane imageDropPane; // 이미지 drag/drop 영역
 	@FXML
-	private ImageView imagePreview;
+	private ImageView imagePreview; // 이미지뷰
 	@FXML
-	private Button chooseImageButton;
+	private Button chooseImageButton, btnNewEq, AddButton; // 이미지 파일 선택 버튼, 새 장비, 장비 추가
+	// 장비명, 일련번호, 대여료(1일기준), 장비가격, 장비취득일
 	@FXML
 	private TextField eqNameField, serialNumField, costField, unitPriceField, acquisitionDateField;
 	@FXML
-	private TextArea eqInfoArea;
-
-	private File selectedImageFile;
-	private RentalOfficeDAO rentalOfficeDAO = new RentalOfficeDAO();
+	private TextArea eqInfoArea; // 장비 설명 영역
 
 	@FXML
+	private ComboBox<String> eqComboBox;
+	@FXML
+	private HBox newEqPane;
+
+	private File selectedImageFile; // 선택된 이미지 파일
+	private RentalOfficeDAO rentalOfficeDAO = new RentalOfficeDAO(); // 대여소DAO
+	private final EquipmentDAO eqDAO = new EquipmentDAO();
+
+	// init 콤보박스 대여소, 구, 전화번호 세팅
+	@FXML
 	public void initialize() {
+		setLocationInfo();
+		setEqListUp();
+	}
+
+	private void setLocationInfo() {
 		// 구 목록
 		List<String> guList = rentalOfficeDAO.getDistinctGuList();
 		guComboBox.setItems(FXCollections.observableArrayList(guList));
@@ -78,12 +93,52 @@ public class AddEqController {
 		});
 	}
 
+	private void setEqListUp() {
+		eqComboBox.setItems(FXCollections.observableArrayList(eqDAO.getAllEqNames()));
+
+		// 콤보 선택 ⇒ 상세 채움, 가격 필드 잠금
+		eqComboBox.getSelectionModel().selectedItemProperty().addListener((obs, o, name) -> {
+			if (name != null) {
+				EquipmentViewDTO dto = eqDAO.findByName(name);
+				costField.setText(String.valueOf(dto.getRentalFee()));
+				unitPriceField.setText(String.valueOf(dto.getUnitPrice()));
+				costField.setEditable(false);
+				unitPriceField.setEditable(false);
+
+				// 새 장비모드 초기화
+				eqNameField.setVisible(false);
+				eqNameField.setManaged(false);
+			}
+		});
+	}
+
+	/** ‘새 장비’ 버튼 */
+	@FXML
+	private void handleNewEq(ActionEvent e) {
+		// 콤보박스 숨기고 TextField 노출
+		eqComboBox.getSelectionModel().clearSelection();
+		eqComboBox.setVisible(false);
+		eqComboBox.setManaged(false);
+
+		eqNameField.clear();
+		eqNameField.setVisible(true);
+		eqNameField.setManaged(true);
+
+		// 가격 필드 편집 가능 + 초기화
+		costField.clear();
+		costField.setEditable(true);
+		unitPriceField.clear();
+		unitPriceField.setEditable(true);
+	}
+
+	// 장비 목록 리프래시용 부모?(장비목록) 컨트롤러 받아오기
 	private AdminViewController adminController;
 
 	public void setMainController(AdminViewController adminController) {
 		this.adminController = adminController;
 	}
 
+	// 드래그 오버 이벤트 핸들러
 	@FXML
 	private void handleDragOver(DragEvent event) {
 		if (event.getGestureSource() != imageDropPane && event.getDragboard().hasFiles()) {
@@ -91,6 +146,7 @@ public class AddEqController {
 		}
 		event.consume();
 	}
+
 	@FXML
 	private void handleDragDropped(DragEvent event) {
 		Dragboard db = event.getDragboard();
@@ -129,21 +185,31 @@ public class AddEqController {
 		}
 	}
 
+	/** 저장 */
 	@FXML
 	private void handleSave(ActionEvent event) {
-		// ① 권한 체크
-	    if (!Session.userGu.equals(guComboBox.getValue())) {
-	        Alert alert = new Alert(Alert.AlertType.WARNING);
-	        alert.setTitle("권한 오류");
-	        alert.setHeaderText(null);
-	        alert.setContentText("본인이 소속된 지역(구)의 장비만 등록할 수 있습니다.");
-	        alert.showAndWait();          // 사용자가 확인을 눌러야 계속‑실행
-	        return;                       // 권한이 없으므로 저장 중단
-	    }
-			
+		// 권한 체크
+		if (!Session.userGu.equals(guComboBox.getValue())) {
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("권한 오류");
+			alert.setHeaderText(null);
+			alert.setContentText("본인이 소속된 지역(구)의 장비만 등록할 수 있습니다.");
+			alert.showAndWait();
+			return;
+		}
 
+		boolean isNew = eqNameField.isVisible();
+		String eqName = isNew ? eqNameField.getText().trim() : eqComboBox.getValue();
 
-		String eqName = eqNameField.getText();
+		if (eqName == null || eqName.isEmpty()) {
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("입력 오류");
+			alert.setHeaderText(null);
+			alert.setContentText("장비명을 입력 또는 선택해 주세요.");
+			alert.showAndWait();
+			return;
+		}
+
 		String serial = serialNumField.getText();
 		String eqInfo = eqInfoArea.getText();
 		int rentalFee = Integer.parseInt(costField.getText());
@@ -157,19 +223,43 @@ public class AddEqController {
 		String imagePath = saveImageToUploads(selectedImageFile);
 
 		RentalOfficeDAO officeDAO = new RentalOfficeDAO();
-		EquipmentDAO eqDAO = new EquipmentDAO();
+		int officeId = officeDAO.getOfficeIdByName(officeName);
 
-		int officeId = officeDAO.getOfficeIdByName(officeName); // office_name → office_id
-		int eqNum = eqDAO.insertEquipmentAndGetId(eqName, eqInfo, unitPrice, rentalFee);
+		Integer eqNum;
+		if (isNew) {
+			eqNum = eqDAO.insertEquipmentAndGetId(eqName, eqInfo, unitPrice, rentalFee);
+		} else {
+			eqNum = eqDAO.getEqNumByName(eqName);
+		}
 
 		boolean success = eqDAO.insertEachEq(serial, eqNum, officeId, "사용가능", getDate, imagePath);
 
 		if (success) {
 			System.out.println("장비 등록 성공");
-			adminController.loadTableData(""); // 필요 시
+			adminController.loadTableData("");
+			resetForm();
 		} else {
 			System.out.println("장비 등록 실패");
 		}
+	}
+
+	private void resetForm() {
+		eqComboBox.setVisible(true);
+		eqComboBox.setManaged(true);
+		eqNameField.setVisible(false);
+		eqNameField.setManaged(false);
+		eqNameField.clear();
+		costField.clear();
+		costField.setEditable(false);
+		unitPriceField.clear();
+		unitPriceField.setEditable(false);
+		serialNumField.clear();
+		acquisitionDateField.clear();
+		eqInfoArea.clear();
+		imagePreview.setImage(null);
+		dragLabel.setVisible(true);
+		chooseImageButton.setVisible(true);
+		selectedImageFile = null;
 	}
 
 	public String saveImageToUploads(File originalFile) {

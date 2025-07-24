@@ -1,7 +1,7 @@
 package controller;
 
-import static util.Session.userLoginId;
-
+import static utils.Session.userLoginId;
+import static utils.ShowAlert.showAlert;
 import java.io.File;
 import java.net.URI;
 import java.time.LocalDate;
@@ -128,11 +128,11 @@ public class DetailViewController {
 	private void handleRent(ActionEvent event) {
 		// 유효성 검사
 		if (rentDatePicker.getValue() == null || returnDatePicker.getValue() == null) {
-			showAlert(Alert.AlertType.WARNING, "날짜를 모두 선택해주세요.");
+			showAlert(Alert.AlertType.WARNING, "error", "날짜를 모두 선택해주세요.");
 			return;
 		}
 		if (returnDatePicker.getValue().isBefore(rentDatePicker.getValue())) {
-			showAlert(Alert.AlertType.WARNING, "반납일은 대여일보다 이후여야 합니다.");
+			showAlert(Alert.AlertType.WARNING, "error", "반납일은 대여일보다 이후여야 합니다.");
 			return;
 		}
 
@@ -151,19 +151,13 @@ public class DetailViewController {
 		}
 
 		if (success) {
-			showAlert(Alert.AlertType.INFORMATION, "대여가 완료되었습니다.");
+			showAlert(Alert.AlertType.INFORMATION,"대여 완료", "대여가 완료되었습니다.");
 			// 대여가 완료되면 대여하기 화면이 종료
 			Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			currentStage.close();
 		} else {
-			showAlert(Alert.AlertType.ERROR, "대여에 실패했습니다.");
+			showAlert(Alert.AlertType.ERROR, "대여 실패", "대여에 실패했습니다.");
 		}
 		mainController.loadTableData("");
-	}
-
-	private void showAlert(Alert.AlertType type, String message) {
-		Alert alert = new Alert(type);
-		alert.setContentText(message);
-		alert.showAndWait();
 	}
 }

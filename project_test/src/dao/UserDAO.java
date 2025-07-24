@@ -1,12 +1,12 @@
 package dao;
 
-import static util.DBUtil.getConnection;
-import static util.Session.userGu;
-import static util.Session.userLoginId;
-import static util.Session.userName;
-import static util.Session.userPassword;
-import static util.Session.userPhoneNumber;
-import static util.Session.userRole;
+import static utils.DBUtil.getConnection;
+import static utils.Session.userGu;
+import static utils.Session.userLoginId;
+import static utils.Session.userName;
+import static utils.Session.userPassword;
+import static utils.Session.userPhoneNumber;
+import static utils.Session.userRole;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;

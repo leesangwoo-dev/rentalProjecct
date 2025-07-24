@@ -1,4 +1,4 @@
-package util;
+package utils;
 
 public class Session {
 	// 로그인된 사용자의 정보
@@ -9,5 +9,4 @@ public class Session {
     public static String userPhoneNumber;
     public static String userGu;
     public static String userRole;
-
 }

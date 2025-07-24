@@ -1,11 +1,11 @@
 package controller;
 
-import static util.Session.userGu;
+import static utils.Session.userGu;
+import static utils.ShowAlert.showAlert;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 
 import dao.EquipmentDAO;
@@ -16,10 +16,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -218,19 +216,18 @@ public class AdminViewController {
 			e.printStackTrace();
 		}
 	}
-	
-	//장비 수정
+
+	// 장비 수정
 	@FXML
 	private void EditEqButton(ActionEvent event) {
-	    EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
-	    if (selected == null) {
-	        showAlert(AlertType.WARNING, "경고", "수정할 장비를 선택하세요.");
-	        return;
-	    }
+		EquipmentViewDTO selected = equipmentTable.getSelectionModel().getSelectedItem();
+		if (selected == null) {
+			showAlert(AlertType.WARNING, "경고", "수정할 장비를 선택하세요.");
+			return;
+		}
 
-	    openEditEqView(selected); // 이미 구현한 창 열기 메서드 재사용
+		openEditEqView(selected); // 이미 구현한 창 열기 메서드 재사용
 	}
-
 
 	// 클릭 이벤트 설정
 	public void tableClickEvent() {
@@ -312,13 +309,4 @@ public class AdminViewController {
 		// 가져온 데이터를 TableView에 설정합니다.
 		equipmentTable.getItems().setAll(equipmentData);
 	}
-
-	private void showAlert(AlertType type, String title, String message) {
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(message);
-		alert.showAndWait();
-	}
-
 }

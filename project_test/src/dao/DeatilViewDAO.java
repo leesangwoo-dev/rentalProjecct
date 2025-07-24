@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.Types;
 
 import model.DetailViewDTO;
-import util.DBUtil;
+import utils.DBUtil;
 
 public class DeatilViewDAO {
 	public DetailViewDTO getEachEquipmentDetail(String serialNum) {
