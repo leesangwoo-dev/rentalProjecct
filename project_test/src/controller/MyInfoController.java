@@ -1,11 +1,11 @@
 package controller;
 
+import static utils.Session.applyEnglishOnlyTextFormatter;
 import static utils.Session.userGu;
 import static utils.Session.userLoginId;
 import static utils.Session.userName;
 import static utils.Session.userPassword;
 import static utils.Session.userPhoneNumber;
-import static utils.Session.applyEnglishOnlyTextFormatter;
 import static utils.ShowAlert.showAlert;
 
 import java.io.IOException;
@@ -20,7 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -39,8 +38,6 @@ public class MyInfoController {
 	private TextField phoneNumberTextField;
 	@FXML
 	private ChoiceBox<String> guChoiceBox;
-	@FXML
-	private Button updateButton;
 
 	@FXML
 	public void initialize() {
@@ -56,10 +53,7 @@ public class MyInfoController {
 	// 장비 목록 조회 페이지(메인페이지)
 	public void handleEqList(ActionEvent event) {
 		try {
-			// FXML 파일 로드 (패키지 경로 맞춰주세요!)
 			Parent mainView = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
-
-			// 현재 창(Stage)을 얻어서 씬 변경
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			stage.setScene(new Scene(mainView));
 			stage.setTitle("MainView");
@@ -84,17 +78,15 @@ public class MyInfoController {
 			return;
 		}
 
-		// 새 비밀번호 필드가 비어있으면 null을 전달하여 기존 비밀번호를 유지하도록 처리
-		String finalNewPassword = (newPassword != null && !newPassword.isEmpty()) ? newPassword : null;
-
-		// UserDAO를 통해 DB 업데이트 프로시저 호출 (평문 버전)
-		String updateStatus;
 		try {
-			updateStatus = userDAO.updateUserInfo(userLoginId, oldPassword, name, phoneNumber, gu, finalNewPassword);
+			// 새 비밀번호 필드가 비어있으면 null을 전달하여 기존 비밀번호를 유지하도록 처리
+			String finalNewPassword = (newPassword != null && !newPassword.isEmpty()) ? newPassword : null;
+			// UserDAO를 통해 DB 업데이트 프로시저 호출
+			String updateStatus = userDAO.updateUserInfo(userLoginId, oldPassword, name, phoneNumber, gu, finalNewPassword);
 			// 결과에 따른 사용자 피드백
 			switch (updateStatus) {
 			case "SUCCESS":
-				showAlert(AlertType.INFORMATION, "정보 수정", "사용자 정보가 성공적으로 수정되었습니다."); // 메시지 변경
+				showAlert(AlertType.INFORMATION, "정보 수정", "사용자 정보가 성공적으로 수정되었습니다.");
 				userPassword = finalNewPassword;
 				userName = name;
 				userPhoneNumber = phoneNumber;
@@ -103,7 +95,7 @@ public class MyInfoController {
 				newPasswordField.clear();
 				// 현재 창 닫기
 				Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				stage.close(); // 현재 창을 닫습니다.
+				stage.close();
 				break;
 			case "WRONG_PASSWORD":
 				showAlert(AlertType.ERROR, "정보 수정 실패", "기존 비밀번호가 올바르지 않습니다.");
@@ -114,7 +106,6 @@ public class MyInfoController {
 				break;
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

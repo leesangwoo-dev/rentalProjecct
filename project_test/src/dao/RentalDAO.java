@@ -130,7 +130,7 @@ public class RentalDAO {
 					dto.setUserName(rs.getString("USER_NAME"));
 					dto.setPhoneNumber(rs.getString("PHONE_NUMBER"));
 					dto.setOfficeName(rs.getString("OFFICE_NAME"));
-					dto.setUserGu(rs.getString("OFFICE_GU")); // # 필수 추가: OFFICE_GU 필드 설정
+					dto.setUserGu(rs.getString("OFFICE_GU"));
 					dto.setEqName(rs.getString("EQ_NAME"));
 					dto.setSerialNum(rs.getString("SERIAL_NUM"));
 					dto.setRentalDate(rs.getTimestamp("RENTAL_DATE").toLocalDateTime());

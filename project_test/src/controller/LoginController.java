@@ -41,6 +41,7 @@ public class LoginController {
 	    applyEnglishOnlyTextFormatter(passwordField);
 	}
 
+	// 로그인 후 성공하면 메인화면으로 가는 메서드 호출
 	public void Login(ActionEvent event) {
 		if (handleLogin(event)) {
 			try {

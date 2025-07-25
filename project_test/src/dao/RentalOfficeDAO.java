@@ -16,15 +16,15 @@ public class RentalOfficeDAO {
 	// 구(지역)에 해당하는 대여소 정보 가져오기
 	public List<RentalOfficeDTO> getOfficesByGu(String gu) {
 		List<RentalOfficeDTO> offices = new ArrayList<>();
-		String sql = "SELECT OFFICE_ID, OFFICE_NAME FROM RENTAL_OFFICE WHERE OFFICE_GU = ?"; // OFFICE_ID 추가
+		String sql = "SELECT OFFICE_ID, OFFICE_NAME FROM RENTAL_OFFICE WHERE OFFICE_GU = ?";
 
 		try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, gu); // 바인딩 변수 설정
+			pstmt.setString(1, gu);
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
 					RentalOfficeDTO office = new RentalOfficeDTO();
-					office.setOfficeId(rs.getInt("OFFICE_ID")); // OFFICE_ID 설정
-					office.setOfficeName(rs.getString("OFFICE_NAME")); // OFFICE_NAME 설정
+					office.setOfficeId(rs.getInt("OFFICE_ID"));
+					office.setOfficeName(rs.getString("OFFICE_NAME"));
 					offices.add(office);
 				}
 			}
