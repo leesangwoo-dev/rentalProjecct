@@ -20,8 +20,7 @@ public class Session {
     // 비밀번호 필드에서 영어와 일부 특수문자 외에 입력 제어
 	public static void applyEnglishOnlyTextFormatter(PasswordField passwordField) {
 	    // 허용할 문자 패턴 정의 (영문 대소문자, 숫자, 일부 특수문자)
-	    // 여기서는 !@#$%^&*()_+-=[]{};':"|,.<>/?`~ 와 공백을 허용했습니다.
-	    // 필요에 따라 허용할 특수문자를 추가하거나 제거할 수 있습니다.
+	    // 여기서는 !@#$%^&*()_+-=[]{};':"|,.<>/?`~ 허용
 	    Pattern allowedChars = Pattern.compile("[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"|,.<>/?`~]*");
 
 	    UnaryOperator<TextFormatter.Change> filter = change -> {

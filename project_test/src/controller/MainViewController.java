@@ -93,7 +93,6 @@ public class MainViewController {
 		// 구 콤보박스 변경시 테이블 최신화
 		guComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal != null && !newVal.equals(oldVal)) {
-				System.out.println("구 콤보박스 변경: " + oldVal + " -> " + newVal);
 				loadOfficesByGu(newVal);
 				search();
 			}
@@ -101,7 +100,6 @@ public class MainViewController {
 		// 대여소 콤보박스 변경시 테이블 최신화
 		officeComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
 			if (newVal != null && !newVal.equals(oldVal)) {
-				System.out.println("대여소 콤보박스 변경: " + oldVal + " -> " + newVal);
 				search();
 			}
 		});
