@@ -12,7 +12,7 @@ import model.OverdueHistoryDTO;
 import model.RentalDTO;
 import model.RentalHistoryDTO;
 import oracle.jdbc.OracleTypes;
-import utils.DBUtil;
+import static utils.DBUtil.getConnection;;
 
 public class RentalDAO {
 	// 대여내역 가져오기 (SP_GET_RENTAL_HISTORY가 RENTAL 테이블을 사용하고 OVERDUE_FEE 등을 정확히 가져와야 함)
@@ -20,7 +20,7 @@ public class RentalDAO {
 		List<RentalHistoryDTO> list = new ArrayList<>();
 		String sql = "{call SP_GET_RENTAL_HISTORY(?, ?)}";
 
-		try (Connection conn = DBUtil.getConnection(); CallableStatement cstmt = conn.prepareCall(sql)) {
+		try (Connection conn = getConnection(); CallableStatement cstmt = conn.prepareCall(sql)) {
 
 			cstmt.setString(1, loginId);
 			cstmt.registerOutParameter(2, OracleTypes.CURSOR);
@@ -57,7 +57,7 @@ public class RentalDAO {
 	public String processReturn(Long rentalNum) {
 		String status = "ERROR";
 		String sql = "{call SP_PROCESS_RETURN(?, ?)}"; 
-		try (Connection conn = DBUtil.getConnection(); CallableStatement cstmt = conn.prepareCall(sql)) {
+		try (Connection conn = getConnection(); CallableStatement cstmt = conn.prepareCall(sql)) {
 
 			cstmt.setLong(1, rentalNum);
 			cstmt.registerOutParameter(2, OracleTypes.VARCHAR);
@@ -77,7 +77,7 @@ public class RentalDAO {
 		String status = "FAIL_UNKNOWN";
 		String sql = "{call SP_UPDATE_OVERDUE_FEE_TO_ZERO(?, ?)}";
 
-		try (Connection conn = DBUtil.getConnection(); CallableStatement cstmt = conn.prepareCall(sql)) {
+		try (Connection conn = getConnection(); CallableStatement cstmt = conn.prepareCall(sql)) {
 
 			cstmt.setLong(1, rentalNum);
 			cstmt.registerOutParameter(2, OracleTypes.VARCHAR);
@@ -96,7 +96,7 @@ public class RentalDAO {
 	public boolean insertRental(RentalDTO rental) {
 		String sql = "{ call SP_INSERT_RENTAL(?, ?, ?, ?) }";
 
-		try (Connection conn = DBUtil.getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
+		try (Connection conn = getConnection(); CallableStatement cs = conn.prepareCall(sql)) {
 
 			cs.setLong(1, rental.getUserId());
 			cs.setString(2, rental.getSerialNum());
@@ -117,7 +117,7 @@ public class RentalDAO {
 		List<OverdueHistoryDTO> rentals = new ArrayList<>();
 		String sql = "{call SP_GET_ALL_RENTALS_ADMIN_BY_GU(?)}";
 
-		try (Connection con = DBUtil.getConnection(); CallableStatement cstmt = con.prepareCall(sql)) {
+		try (Connection con = getConnection(); CallableStatement cstmt = con.prepareCall(sql)) {
 
 			cstmt.registerOutParameter(1, OracleTypes.CURSOR); // OUT 커서 등록
 			cstmt.execute();

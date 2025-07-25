@@ -15,7 +15,6 @@ import java.util.List;
 
 import model.EquipmentViewDTO;
 import oracle.jdbc.OracleTypes;
-import utils.DBUtil;
 
 public class EquipmentDAO {
 	
@@ -81,6 +80,7 @@ public class EquipmentDAO {
 		return generatedId;
 	}
 
+	// 개별장비 INSERT
 	public boolean insertEachEq(String serial, int eqNum, int officeId, String state, LocalDate getDate,
 			String imgPath) {
 		String sql = "INSERT INTO each_eq (serial_num, eq_num, office_id, state, get_date, img) VALUES (?, ?, ?, ?, ?, ?)";
@@ -111,13 +111,9 @@ public class EquipmentDAO {
 	                               Integer fee,
 	                               Integer unitPrice) {
 	    String sql = "{call SP_UPDATE_EQUIPMENT_BY_SERIAL(?,?,?,?,?,?,?)}"; // 7번째는 OUT 파라미터
-	    try (Connection conn = DBUtil.getConnection();
+	    try (Connection conn = getConnection();
 	         CallableStatement cstmt = conn.prepareCall(sql)) {
-
-	        // 1. 필수(시리얼)
 	        cstmt.setString(1, serialNum);
-
-	        // 2. 선택 파라미터들은 NULL 허용
 	        if (info != null)        cstmt.setString(2, info);
 	        else                     cstmt.setNull(2, Types.CLOB);
 
@@ -133,21 +129,19 @@ public class EquipmentDAO {
 	        if (imgPath != null)     cstmt.setString(6, imgPath);
 	        else                     cstmt.setNull(6, Types.VARCHAR);
 
-	        // 3. OUT 파라미터
 	        cstmt.registerOutParameter(7, Types.VARCHAR);
 
 	        cstmt.execute();
 	        String status = cstmt.getString(7);   // SUCCESS / NOT_FOUND / ERROR:...
 
-	        System.out.println("PROC STATUS = " + status);
 	        return "SUCCESS".equals(status);
-
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	        return false;
 	    }
 	}
 	
+	// 모든 장비이름을 가져오는 List
 	public List<String> getAllEqNames() {
 	    List<String> eqNames = new ArrayList<>();
 	    String sql = "SELECT eq_name FROM equipment ORDER BY eq_name";
@@ -164,6 +158,7 @@ public class EquipmentDAO {
 	    return eqNames;
 	}
 	
+	// 장비이름에 맞는 장비정보 가져오는 메서드
 	public EquipmentViewDTO findByName(String name) {
 	    String sql = "SELECT eq_name, eq_info, unit_price, rental_fee FROM equipment WHERE eq_name = ?";
 	    EquipmentViewDTO dto = new EquipmentViewDTO();
@@ -188,6 +183,7 @@ public class EquipmentDAO {
 	    return dto;
 	}
 
+	// 장비이름에 따른 장비번호 가져오는 메서드
 	public Integer getEqNumByName(String name) {
 	    String sql = "SELECT eq_num FROM equipment WHERE eq_name = ?";
 	    try (Connection conn = getConnection();
