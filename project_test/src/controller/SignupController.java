@@ -58,7 +58,8 @@ public class SignupController {
 				|| passwordField.getText().trim().isEmpty() || nameTextField.getText() == null
 				|| nameTextField.getText().trim().isEmpty() || phoneNumberTextField.getText() == null
 				|| phoneNumberTextField.getText().trim().isEmpty() || guChoiceBox.getValue() == null
-				|| guChoiceBox.getValue().trim().isEmpty() || infoLabel.getText().equals("이미 존재하는 아이디입니다.")) {
+				|| guChoiceBox.getValue().trim().isEmpty() || infoLabel.getText().equals("이미 존재하는 아이디입니다.")
+				|| infoLabel.getText().equals("")) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("경고");
 			alert.setHeaderText(null);
