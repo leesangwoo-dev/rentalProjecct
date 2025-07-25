@@ -50,6 +50,7 @@ public class SignupController {
 
 	UserDAO userDAO = null;
 
+	// 회원가입 시 검증 메서드
 	public void Singup(ActionEvent event) {
 		if (idTextField.getText() == null || idTextField.getText().trim().isEmpty() || passwordField.getText() == null
 				|| passwordField.getText().trim().isEmpty() || nameTextField.getText() == null
@@ -81,6 +82,7 @@ public class SignupController {
 		}
 	}
 
+	// 로그인화면을 띄워주는 메서드
 	public static void showLoginWindow() {
 		try {
 			Parent root = FXMLLoader.load(LoginController.class.getResource("/view/LoginView.fxml"));
@@ -93,6 +95,7 @@ public class SignupController {
 		}
 	}
 
+	// ID 중복확인 메서드
 	public void idCheckButton() {
 		userDAO = new UserDAO();
 		boolean check = userDAO.isIdDuplicated(idTextField.getText());
@@ -105,9 +108,9 @@ public class SignupController {
 		}
 	}
 
+	// 회원가입 창 닫을 때 로그인 창 다시 열기
 	public void setStage(Stage newStage) {
 		newStage.setOnCloseRequest(event -> {
-			// 회원가입 창 닫을 때 로그인 창 다시 열기
 			showLoginWindow();
 		});
 	}

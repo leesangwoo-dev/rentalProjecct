@@ -64,10 +64,6 @@ public class MainViewController {
 	private ImageView equipmentImage;
 	@FXML
 	private TextArea equipmentInfo;
-	@FXML
-	private Button myInfoButton;
-	@FXML
-	private Button rentalHistory;
 
 	private EquipmentDAO equipmentDAO; // EquipmentDAO 인스턴스
 	private RentalOfficeDAO rentalOfficeDAO; // RentalOfficeDAO 인스턴스
@@ -167,6 +163,7 @@ public class MainViewController {
 		});
 	}
 
+	// equipmentDAO를 통해 가져온 데이터를 테이블에 로드
 	public void loadTableData(String searchText) {
 		String selectedGu = guComboBox.getValue();
 		String selectedOffice = officeComboBox.getValue().getOfficeName();
@@ -175,43 +172,27 @@ public class MainViewController {
 		equipmentTable.getItems().setAll(equipmentData);
 	}
 
-	@FXML
-	public void doubleClickItem(MouseEvent event) {
-		if (event.getClickCount() == 2) { // 더블 클릭 확인
-			EquipmentViewDTO selectedItem = equipmentTable.getSelectionModel().getSelectedItem();
-			if (selectedItem != null) {
-				System.out.println("선택된 아이템: " + selectedItem.getEqName());
-				// 여기서 상세 정보 창을 띄우거나 다른 작업을 수행할 수 있습니다.
-			}
-		}
-	}
-
+	// 내 정보(팝업 창)을 보여주는 메서드
 	@FXML
 	private void handleMyInfo(ActionEvent event) {
 		try {
-			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
-
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml"));
 			Parent myInfoView = loader.load();
 
-			// 1. 새로운 Stage (팝업 창) 생성
+			// 새로운 Stage(팝업 창) 생성
 			Stage myInfoStage = new Stage();
 			myInfoStage.setTitle("내 정보 수정");
 			myInfoStage.setScene(new Scene(myInfoView));
 
-			// 2. 모달리티 설정: APPLICATION_MODAL 또는 WINDOW_MODAL
-			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단합니다.
-			// WINDOW_MODAL: 특정 부모 창만 차단합니다.
-			myInfoStage.initModality(Modality.APPLICATION_MODAL); // <-- 이 부분이 핵심!
+			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단
+			myInfoStage.initModality(Modality.APPLICATION_MODAL);
 
-			// 3. 부모 창 설정 (선택 사항이지만 권장):
-			// 팝업 창이 어떤 창에 종속되는지 지정합니다.
-			// 이렇게 하면 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
+			// 팝업 창이 어떤 창에 종속되는지 지정 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
 			Stage ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			myInfoStage.initOwner(ownerStage); // <-- 이 부분이 부모 창을 지정합니다.
+			myInfoStage.initOwner(ownerStage);
 
-			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록됩니다.
-			myInfoStage.showAndWait(); // <-- show() 대신 showAndWait() 사용!
+			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록
+			myInfoStage.showAndWait();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -224,12 +205,10 @@ public class MainViewController {
 		}
 	}
 
+	// 대여내역을 보여주는 메서드
 	public void handleRentalHistory(ActionEvent event) {
 		try {
-			// FXML 파일 로드 (패키지 경로 맞춰주세요!)
 			Parent handleRentalHistory = FXMLLoader.load(getClass().getResource("/view/RentalHistoryView.fxml"));
-
-			// 현재 창(Stage)을 얻어서 씬 변경
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			stage.setScene(new Scene(handleRentalHistory));
 			stage.setTitle("대여내역");
@@ -256,14 +235,10 @@ public class MainViewController {
 			if (selected != null) {
 				// 단일 클릭: 오른쪽 이미지와 설명 표시
 				equipmentInfo.setText(selected.getEqInfo());
-
 				String dbPath = selected.getImg();
-
 				File imgFile = new File(dbPath);
 				URI uri = imgFile.toURI();
-
 				equipmentImage.setImage(new Image(uri.toASCIIString()));
-
 			}
 
 			// 더블 클릭: 상세 보기 띄우기

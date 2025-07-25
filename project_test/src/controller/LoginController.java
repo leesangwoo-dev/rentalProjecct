@@ -41,6 +41,7 @@ public class LoginController {
 	    applyEnglishOnlyTextFormatter(passwordField);
 	}
 
+	// 로그인 후 성공하면 메인화면으로 가는 메서드 호출
 	public void Login(ActionEvent event) {
 		if (handleLogin(event)) {
 			try {
@@ -56,6 +57,7 @@ public class LoginController {
 		}
 	}
 	
+	// 메인화면 띄워주는 메서드
 	private void MainStage(String role) throws Exception {
 		Stage newStage = new Stage();
 		Parent parent = null;
@@ -70,6 +72,7 @@ public class LoginController {
 		newStage.show();
 	}
 
+	// 회원가입을 클릭했을 때 로그인 화면을 숨기고 회원가입 창을 띄우는 메서드 호출
 	public void signup(ActionEvent event) {
 		try {
 			Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
@@ -82,6 +85,7 @@ public class LoginController {
 
 	}
 
+	// 회원가입창을 띄우는 메서드
 	public void signUpPopup() throws Exception {
 
 		Stage newStage = new Stage();
@@ -96,6 +100,7 @@ public class LoginController {
 
 	}
 
+	// 로그인 시도 메서드
 	public boolean handleLogin(ActionEvent event) {
 		String userId = idTextField.getText();
 		String password = passwordField.getText();
