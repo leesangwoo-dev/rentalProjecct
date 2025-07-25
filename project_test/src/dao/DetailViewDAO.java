@@ -8,7 +8,7 @@ import java.sql.Types;
 import model.DetailViewDTO;
 import static utils.DBUtil.getConnection;;
 
-public class DeatilViewDAO {
+public class DetailViewDAO {
 	// 장비 상세페이지에 필요한 정보 불러오는 저장 프로시저
 	public DetailViewDTO getEachEquipmentDetail(String serialNum) {
 		DetailViewDTO dto = new DetailViewDTO();

@@ -6,7 +6,7 @@ import java.io.File;
 import java.net.URI;
 import java.time.LocalDate;
 
-import dao.DeatilViewDAO;
+import dao.DetailViewDAO;
 import dao.RentalDAO;
 import dao.UserDAO;
 import javafx.event.ActionEvent;
@@ -50,7 +50,7 @@ public class DetailViewController {
 	private DatePicker returnDatePicker; // 반납일
 
 	// DAO 인스턴스 생성
-	private final DeatilViewDAO dao = new DeatilViewDAO();
+	private final DetailViewDAO dao = new DetailViewDAO();
 	private final RentalDAO rentalDAO = new RentalDAO();
 	private final UserDAO userDAO = new UserDAO();
 
