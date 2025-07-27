@@ -39,7 +39,7 @@
 				</ImageView>
 				<HBox HBox.hgrow="ALWAYS" />
 				<!-- 각 버튼에 CSS 클래스 부여 -->
-				<Button fx:id="eqList" mnemonicParsing="false"
+				<Button mnemonicParsing="false"
 					onAction="#handleEqList" styleClass="nav-button-inactive"
 					text="장비조회" />
 				<Button mnemonicParsing="false" styleClass="nav-button"

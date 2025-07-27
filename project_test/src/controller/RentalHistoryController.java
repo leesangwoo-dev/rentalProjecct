@@ -48,17 +48,9 @@ public class RentalHistoryController implements Initializable {
 	@FXML
 	private TableColumn<RentalHistoryDTO, LocalDateTime> rentalDateCol; // 대여일 / 반납일
 	@FXML
-	private TableColumn<RentalHistoryDTO, String> returnStatusCol; // 상태
-	@FXML
 	private TableColumn<RentalHistoryDTO, Long> overdueDaysCol; // 연체일 / 연체료
 	@FXML
 	private TableColumn<RentalHistoryDTO, Void> returnActionCol; // 반납하기 버튼
-
-	@FXML
-	private Button eqList;
-	@FXML
-	private Button myInfoButton;
-
 	@FXML
 	private Separator rentalDateHeaderSeparator;
 	@FXML
@@ -105,12 +97,12 @@ public class RentalHistoryController implements Initializable {
 						actualReturnDateText.setText("");
 					}
 
-					// # 변경된 부분: 구분선 추가
+					// 구분선 추가
 					Separator separator = new Separator();
 					separator.prefWidthProperty().bind(rentalDateCol.widthProperty().subtract(5));
 					separator.setStyle("-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;");
 
-					// 만약 이 셀에도 구분선을 넣고 싶다면, 아래 라인을 추가해야 합니다.
+					// 구분선 추가
 					Separator cellSeparator = new Separator();
 					cellSeparator.prefWidthProperty().bind(rentalDateCol.widthProperty().subtract(5));
 					cellSeparator.setStyle("-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;");
@@ -137,7 +129,7 @@ public class RentalHistoryController implements Initializable {
 					Text overdueDaysText = new Text(rental.getOverdueDays() + "일");
 					Text overdueFeeText = new Text(String.format("%,d원", rental.getOverdueFee()));
 
-					// # 변경된 부분: 구분선 추가
+					// 구분선 추가
 					Separator separator = new Separator();
 					separator.prefWidthProperty().bind(overdueDaysCol.widthProperty().subtract(5));
 					separator.setStyle("-fx-background-color: #e0e0e0; -fx-min-height: 1px; -fx-max-height: 1px;");
@@ -196,7 +188,7 @@ public class RentalHistoryController implements Initializable {
 				}
 			}
 		});
-		// # 핵심 변경 부분: 테이블 너비 변경 리스너 추가 (반응형 레이아웃)
+		// 테이블 너비 변경 리스너 추가 (반응형 레이아웃)
 		rentalTable.widthProperty().addListener((obs, oldVal, newVal) -> {
 			double totalWidth = newVal.doubleValue();
 			// 스크롤바 너비를 대략적으로 고려 (Windows 기준 약 17px)
@@ -205,18 +197,15 @@ public class RentalHistoryController implements Initializable {
 
 			// 각 컬럼에 비율 할당 (총합 1.0 = 100%가 되도록 조정)
 			// 이 비율은 임의로 설정한 값이므로, 실제 UI에서 데이터가 잘 보이도록 미세 조정해야 합니다.
-			indexCol.setPrefWidth(usableWidth * 0.05); // 5%
-			eqNameCol.setPrefWidth(usableWidth * 0.23); // 20%
-			officeNameCol.setPrefWidth(usableWidth * 0.22); // 20%
-			rentalDateCol.setPrefWidth(usableWidth * 0.20); // 20%
-			returnActionCol.setPrefWidth(usableWidth * 0.12); // 10%
-//			returnStatusCol.setPrefWidth(usableWidth * 0.15); // 10%
-			overdueDaysCol.setPrefWidth(usableWidth * 0.20); // 15%
-			// 합계: 0.05 + 0.20 + 0.20 + 0.20 + 0.10 + 0.15 + 0.10 = 1.00 (100%)
+			indexCol.setPrefWidth(usableWidth * 0.05); 			// 5%
+			eqNameCol.setPrefWidth(usableWidth * 0.25); 		// 25%
+			officeNameCol.setPrefWidth(usableWidth * 0.20);		// 20%
+			rentalDateCol.setPrefWidth(usableWidth * 0.20); 	// 20%
+			returnActionCol.setPrefWidth(usableWidth * 0.10);	// 10%
+			overdueDaysCol.setPrefWidth(usableWidth * 0.20); 	// 20%
+			// 합계: 0.05 + 0.25 + 0.20 + 0.20 + 0.10 + 0.10 + 0.20 = 1.00 (100%)
 
-			// # FXML에서 fx:id를 부여한 헤더 Separator들의 너비를 바인딩합니다.
-			// null 체크를 통해 객체가 로드되었는지 확인합니다.
-			// 컬럼 너비에서 약간의 여백을 주는 것이 시각적으로 좋습니다 (예: -5px)
+			// 구분선을 컬럼 너비에서 약간의 여백을 줌 (예: -5px)
 			if (rentalDateHeaderSeparator != null) {
 				rentalDateHeaderSeparator.prefWidthProperty().bind(rentalDateCol.widthProperty().subtract(5));
 			}
@@ -228,12 +217,14 @@ public class RentalHistoryController implements Initializable {
 		loadRentalHistory();
 	}
 
+	// 대여내역 로드
 	private void loadRentalHistory() {
 		List<RentalHistoryDTO> list = rentalDAO.findRentalsByUserId(userLoginId);
 		ObservableList<RentalHistoryDTO> observableList = FXCollections.observableArrayList(list);
 		rentalTable.setItems(observableList);
 	}
 
+	// 연체료 발생 창
 	private void showOverduePaymentProcess(RentalHistoryDTO rental) {
 		showAlert(Alert.AlertType.INFORMATION, "연체료 발생",
 				rental.getEqName() + "이 장비(" + rental.getRentalNum() + ")는 현재 연체되었습니다.\n" + "연체일: "
@@ -242,7 +233,7 @@ public class RentalHistoryController implements Initializable {
 		processReturnOnly(rental);
 	}
 
-	// ========== 순수 반납 처리 로직 메서드 (새로 추가되거나 수정됨) ==========
+	// 순수 반납 처리 로직 메서드 (새로 추가되거나 수정됨)
 	private void processReturnOnly(RentalHistoryDTO rental) {
 		String resultStatus = rentalDAO.processReturn(rental.getRentalNum());
 
@@ -256,15 +247,15 @@ public class RentalHistoryController implements Initializable {
 		case "NOT_FOUND":
 			showAlert(Alert.AlertType.ERROR, "오류", "해당 대여 기록을 찾을 수 없습니다.");
 			break;
-		case "ERROR": // 기타 SQL 에러 등
+		case "ERROR":
 		default:
 			showAlert(Alert.AlertType.ERROR, "오류", "알 수 없는 오류로 반납에 실패했습니다: " + resultStatus + ". 관리자에게 문의하세요.");
 			break;
 		}
-		loadRentalHistory(); // 테이블 갱신
+		loadRentalHistory();
 	}
 
-	// ========== 내비게이션 메서드 (기존과 동일, 변경 없음) ==========
+	// 장비조회 창
 	public void handleEqList(ActionEvent event) {
 		try {
 			Parent mainView = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
@@ -277,31 +268,26 @@ public class RentalHistoryController implements Initializable {
 		}
 	}
 
+	// 내 정보 수정 창
 	@FXML
 	private void handleMyInfo(ActionEvent event) {
 		try {
-			// FXML 로더를 사용하여 "내 정보 수정" FXML 로드
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml")); // FXML 파일명 확인!
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyInfoView.fxml"));
 			Parent myInfoView = loader.load();
-
-			// 1. 새로운 Stage (팝업 창) 생성
+			// 새로운 Stage(팝업 창) 생성
 			Stage myInfoStage = new Stage();
 			myInfoStage.setTitle("내 정보 수정");
 			myInfoStage.setScene(new Scene(myInfoView));
 
-			// 2. 모달리티 설정: APPLICATION_MODAL 또는 WINDOW_MODAL
-			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단합니다.
-			// WINDOW_MODAL: 특정 부모 창만 차단합니다.
-			myInfoStage.initModality(Modality.APPLICATION_MODAL); // <-- 이 부분이 핵심!
+			// APPLICATION_MODAL: 이 애플리케이션의 모든 다른 창을 차단
+			myInfoStage.initModality(Modality.APPLICATION_MODAL);
 
-			// 3. 부모 창 설정 (선택 사항이지만 권장):
-			// 팝업 창이 어떤 창에 종속되는지 지정합니다.
-			// 이렇게 하면 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
+			// 팝업 창이 어떤 창에 종속되는지 지정 부모 창이 최소화될 때 자식 창도 함께 최소화되는 등의 동작을 합니다.
 			Stage ownerStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			myInfoStage.initOwner(ownerStage); // <-- 이 부분이 부모 창을 지정합니다.
+			myInfoStage.initOwner(ownerStage);
 
-			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록됩니다.
-			myInfoStage.showAndWait(); // <-- show() 대신 showAndWait() 사용!
+			// 팝업 창을 보여줍니다. 이 창이 닫힐 때까지 이 메서드는 블록
+			myInfoStage.showAndWait();
 
 		} catch (IOException e) {
 			e.printStackTrace();

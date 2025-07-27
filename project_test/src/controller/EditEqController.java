@@ -30,7 +30,6 @@ import model.EquipmentViewDTO;
 import utils.Session;
 
 public class EditEqController {
-
 	@FXML
 	private ComboBox<String> stateCombo;
 	@FXML
@@ -64,7 +63,7 @@ public class EditEqController {
 		event.consume();
 	}
 	
-	
+	// 이미지 드래그 앤 드랍으로 첨부
 	@FXML
 	private void handleDragDropped(DragEvent event) {
 		Dragboard db = event.getDragboard();
@@ -79,6 +78,7 @@ public class EditEqController {
 		event.consume();
 	}
 
+	// 이미지 첨부 버튼
 	@FXML
 	private void handleImageSelect(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
@@ -93,6 +93,7 @@ public class EditEqController {
 		}
 	}
 
+	// 첨부된 이미지 이미지뷰에 뿌리기
 	private void loadImagePreview(File file) {
 		if (file != null && file.exists()) {
 			imagePreview.setImage(new Image(file.toURI().toString()));
@@ -103,13 +104,7 @@ public class EditEqController {
 		}
 	}
 
-	@FXML
-	private void handleRefreshImage(ActionEvent event) {
-		FileChooser chooser = new FileChooser();
-		chooser.setTitle("새 이미지 선택");
-		chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("이미지 파일", "*.png", "*.jpg", "*.jpeg"));
-	}
-
+	// DTO에서 가져와서 수정할 장비 정보 가져오기
 	public void setEquipmentDTO(EquipmentViewDTO dto) {
 		this.equipment = dto;
 
@@ -125,23 +120,23 @@ public class EditEqController {
 		}
 	}
 
-	// ───────────────── EditEqController.java ─────────────────
+	// 수정하기 버튼
 	@FXML
 	private void handleUpdate(ActionEvent event) {
 		// ① 권한 체크
-		if (!Session.userGu.equals(equipment.getOfficeGu())) { // equipment DTO에 getGu() 메서드가 있다고 가정
+		if (!Session.userGu.equals(equipment.getOfficeGu())) { 
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("권한 오류");
 			alert.setHeaderText(null);
 			alert.setContentText("본인이 소속된 지역(구)의 장비만 수정할 수 있습니다.");
 			alert.showAndWait();
-			return; // 더 진행하지 않음
+			return;
 		}
 
 		String serial = serialNumField.getText();
 		String newState = stateCombo.getValue();
 		String newImgPath = (newImageFile != null) ? saveImageToUploads(newImageFile) : equipment.getImg();
-		// ★ 숫자 필드 : "12000원" → 12000
+		// 대여료가 원이 붙어 있어서 정규표현식이용해 제거
 		Integer fee = null;
 		String feeTxt = costField.getText().replaceAll("[^0-9]", "");
 		if (!feeTxt.isEmpty())
@@ -172,6 +167,8 @@ public class EditEqController {
 		}
 	}
 
+	
+	// uploads파일에 이미지 파일 복사 및 DB저장용 문자열 반환
 	public String saveImageToUploads(File originalFile) {
 		if (originalFile == null)
 			return null;

@@ -37,10 +37,10 @@
 						</image>
 					</ImageView>
 					<HBox HBox.hgrow="ALWAYS" />
-					<Button fx:id="adminEqList" mnemonicParsing="false"
+					<Button mnemonicParsing="false"
 						onAction="#handleAdminEqList" styleClass="nav-button-inactive"
 						text="장비조회" />
-					<Button fx:id="adminRentalList" mnemonicParsing="false"
+					<Button mnemonicParsing="false"
 						onAction="#handleAdminRentalList" styleClass="nav-button"
 						text="대여정보" />
 				</children>

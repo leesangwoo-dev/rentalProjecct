@@ -67,8 +67,9 @@
 						<!-- 휴대폰 번호 수정 -->
 						<Label text="휴대폰 번호" style="-fx-text-fill: white;"
 							GridPane.rowIndex="3" />
-						<TextField fx:id="phoneNumberTextField" promptText="010-1234-5678"
-							GridPane.columnIndex="1" GridPane.rowIndex="3" />
+						<TextField fx:id="phoneNumberTextField"
+							promptText="010-1234-5678" GridPane.columnIndex="1"
+							GridPane.rowIndex="3" />
 
 						<!-- 사는 지역 수정 -->
 						<Label text="사는 지역" style="-fx-text-fill: white;"
@@ -79,8 +80,7 @@
 				</GridPane>
 
 				<!-- 수정 완료 버튼 -->
-				<Button fx:id="updateButton" onAction="#handleUpdateButton"
-					text="수정 완료"
+				<Button onAction="#handleUpdateButton" text="수정 완료"
 					style="-fx-background-color: #f8f8f8; -fx-text-fill: #c29564; -fx-font-size: 16px; -fx-padding: 10 20; -fx-border-radius: 5; -fx-background-radius: 5;" />
 			</children>
 		</VBox>

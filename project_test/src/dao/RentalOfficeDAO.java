@@ -13,18 +13,18 @@ import model.RentalOfficeDTO;
 
 public class RentalOfficeDAO {
 
+	// 구(지역)에 해당하는 대여소 정보 가져오기
 	public List<RentalOfficeDTO> getOfficesByGu(String gu) {
 		List<RentalOfficeDTO> offices = new ArrayList<>();
-		// SQL 쿼리 문자열: OFFICE_ID도 함께 가져옵니다.
-		String sql = "SELECT OFFICE_ID, OFFICE_NAME FROM RENTAL_OFFICE WHERE OFFICE_GU = ?"; // OFFICE_ID 추가
+		String sql = "SELECT OFFICE_ID, OFFICE_NAME FROM RENTAL_OFFICE WHERE OFFICE_GU = ?";
 
 		try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, gu); // 바인딩 변수 설정
+			pstmt.setString(1, gu);
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
 					RentalOfficeDTO office = new RentalOfficeDTO();
-					office.setOfficeId(rs.getInt("OFFICE_ID")); // OFFICE_ID 설정
-					office.setOfficeName(rs.getString("OFFICE_NAME")); // OFFICE_NAME 설정
+					office.setOfficeId(rs.getInt("OFFICE_ID"));
+					office.setOfficeName(rs.getString("OFFICE_NAME"));
 					offices.add(office);
 				}
 			}
@@ -36,6 +36,7 @@ public class RentalOfficeDAO {
 		return offices;
 	}
 
+	// 모든 대여소 가져오기
 	public List<String> getAllOfficeNames() {
 		List<String> officeList = new ArrayList<>();
 		String sql = "SELECT office_name FROM rental_office ORDER BY office_name";
@@ -53,6 +54,7 @@ public class RentalOfficeDAO {
 		return officeList;
 	}
 
+	// 중복된 데이터 제거해서 구 가져오기
 	public List<String> getDistinctGuList() {
 		List<String> guList = new ArrayList<>();
 		String sql = "SELECT DISTINCT office_gu FROM rental_office ORDER BY office_gu";
@@ -71,6 +73,7 @@ public class RentalOfficeDAO {
 		return guList;
 	}
 
+	// 구에 해당하는 대여소 가져오기
 	public List<String> getOfficeNamesByGu(String officeGu) {
 		List<String> nameList = new ArrayList<>();
 		String sql = "SELECT office_name FROM rental_office WHERE office_gu = ? ORDER BY office_name";
@@ -89,6 +92,7 @@ public class RentalOfficeDAO {
 		return nameList;
 	}
 
+	// 대여소 전화번호 가져오기
 	public String getPhoneByOfficeName(String officeName) {
 		String phone = "";
 		String sql = "SELECT office_number FROM rental_office WHERE office_name = ?";
@@ -108,6 +112,7 @@ public class RentalOfficeDAO {
 		return phone;
 	}
 
+	// 대여소명으로 대여소ID(PK)가져오기
 	public int getOfficeIdByName(String name) {
 		String sql = "SELECT office_id FROM rental_office WHERE office_name = ?";
 		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

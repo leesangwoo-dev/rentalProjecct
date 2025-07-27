@@ -112,6 +112,11 @@ public class AddEqController {
 				// 새 장비모드 초기화
 				eqNameField.setVisible(false);
 				eqNameField.setManaged(false);
+				costField.setVisible(false);
+				costField.setManaged(false);
+				unitPriceField.setVisible(false);
+				unitPriceField.setManaged(false);
+
 			}
 		});
 	}
@@ -276,7 +281,7 @@ public class AddEqController {
 		selectedImageFile = null;
 	}
 
-	// uploads파일에 이미지 파일 복사 및 DB저장용 문자열 반환
+	// uploads 폴더에 이미지 파일 복사 및 DB저장용 문자열 반환
 	public String saveImageToUploads(File originalFile) {
 		if (originalFile == null)
 			return null;
